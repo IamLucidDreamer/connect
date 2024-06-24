@@ -12,6 +12,7 @@ const {
     ERRORS,
     ACCESS_TOKEN_EXPIRATION,
 } = require('../config/constants');
+const sendEmail = require("../utils/sendEmails");
 
 const generateAccessToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -29,8 +30,7 @@ const registerUser = async (req, res) => {
     const { name, email, password } = req.body;
 
     try {
-        console.log(typeof User)
-        const userExists = await User.findOne({ email});
+        const userExists = await User.findOne({ email });
 
         if (userExists) {
             logger.warn(ERRORS.USER.USER_EXISTS);
@@ -43,20 +43,50 @@ const registerUser = async (req, res) => {
             password,
         });
 
-        const accessToken = generateAccessToken(user._id);
-        const refreshToken = generateRefreshToken(user);
+        const otp = user.generateOTP();
         await user.save();
 
-        logger.info(REGISTRATION_SUCCESS);
+        // Send OTP to user's email
+        await sendEmail(user.email, 'Email Verification OTP', '../templates/otpEmail.html', { OTP: otp });
+
+        logger.info(`OTP sent to ${user.email}`);
         res.status(STATUS_CREATED).json({
+            message: 'OTP sent to email',
+            userId: user._id,
+        });
+    } catch (error) {
+        logger.error(error.message || ERRORS.SERVER.INTERNAL_ERROR);
+        res.status(STATUS_SERVER_ERROR).json({ message: error.message || ERRORS.SERVER.INTERNAL_ERROR });
+    }
+};
+
+const verifyOTP = async (req, res) => {
+    const { userId, otp } = req.body;
+
+    try {
+        const user = await User.findById(userId);
+
+        if (!user || user.otp !== otp || user.otpExpires < Date.now()) {
+            return res.status(STATUS_BAD_REQUEST).json({ message: 'Invalid or expired OTP' });
+        }
+
+        // OTP is valid
+        user.otp = undefined;
+        user.otpExpires = undefined;
+        user.isEmailVerified = true;
+        await user.save();
+
+        const accessToken = generateAccessToken(user._id);
+        const refreshToken = generateRefreshToken(user);
+
+        logger.info(REGISTRATION_SUCCESS);
+        res.status(STATUS_SUCCESS).json({
             message: REGISTRATION_SUCCESS,
-            data : {
             _id: user._id,
             name: user.name,
             email: user.email,
             accessToken,
             refreshToken,
-            }
         });
     } catch (error) {
         logger.error(error.message || ERRORS.SERVER.INTERNAL_ERROR);
@@ -133,9 +163,77 @@ const refreshTokens = async (req, res) => {
     }
 };
 
+const forgotPassword = async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(STATUS_BAD_REQUEST).json({ message: 'User not found' });
+        }
+
+        const otp = user.generateOTP();
+        await user.save();
+
+        // Send OTP to user's email
+        await sendEmail(user.email, 'Password Reset OTP', 'templates/passwordResetEmail.html', { OTP: otp });
+
+        logger.info(`OTP sent to ${user.email} for password reset`);
+        res.status(STATUS_SUCCESS).json({ message: 'OTP sent to email', userId: user._id });
+    } catch (error) {
+        logger.error(error.message || ERRORS.SERVER.INTERNAL_ERROR);
+        res.status(STATUS_SERVER_ERROR).json({ message: error.message || ERRORS.SERVER.INTERNAL_ERROR });
+    }
+};
+
+const resetPassword = async (req, res) => {
+    const { userId, otp, newPassword } = req.body;
+
+    try {
+        const user = await User.findById(userId);
+
+        if (!user || user.otp !== otp || user.otpExpires < Date.now()) {
+            return res.status(STATUS_BAD_REQUEST).json({ message: 'Invalid or expired OTP' });
+        }
+
+        // OTP is valid
+        user.password = newPassword;
+        user.otp = undefined;
+        user.otpExpires = undefined;
+        await user.save();
+
+        logger.info('Password reset successfully');
+        res.status(STATUS_SUCCESS).json({ message: 'Password reset successfully' });
+    } catch (error) {
+        logger.error(error.message || ERRORS.SERVER.INTERNAL_ERROR);
+        res.status(STATUS_SERVER_ERROR).json({ message: error.message || ERRORS.SERVER.INTERNAL_ERROR });
+    }
+};
+
+const checkEmailVerification = async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(STATUS_BAD_REQUEST).json({ message: 'User not found' });
+        }
+
+        res.status(STATUS_SUCCESS).json({ isEmailVerified: user.isEmailVerified });
+    } catch (error) {
+        logger.error(error.message || ERRORS.SERVER.INTERNAL_ERROR);
+        res.status(STATUS_SERVER_ERROR).json({ message: error.message || ERRORS.SERVER.INTERNAL_ERROR });
+    }
+};
 
 module.exports = {
     registerUser,
+    verifyOTP,
     authUser,
     refreshTokens,
+    forgotPassword,
+    resetPassword,
+    checkEmailVerification
 }
