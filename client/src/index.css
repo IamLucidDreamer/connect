@@ -1,3 +1,57 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  @variants responsive {
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .no-scrollbar {
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+    }
+  }
+}
+
+/* Style the button indicators */
+.paging-dot {
+  margin: 0px;
+  width: 0px;
+  height: 0px;
+  border-radius: 50% !important;
+  color: #fff !important;
+}
+
+.paging-dot:active {
+  background-color: #fff important;
+}
+
+[aria-label="next"] {
+  position: relative;
+  color: black !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  background-color: transparent !important;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+[aria-label="previous"] {
+  position: relative;
+  color: black !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  background-color: transparent !important;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
