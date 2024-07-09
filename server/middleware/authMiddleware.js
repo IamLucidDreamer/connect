@@ -1,34 +1,32 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const logger = require('../utils/logger');
-const {
-    STATUS_UNAUTHORIZED,
-    STATUS_FORBIDDEN,
-    ERRORS,
-} = require('../config/constants');
+const { STATUS_UNAUTHORIZED, ERRORS } = require('../config/constants');
 
 const protect = async (req, res, next) => {
     let token;
-    if (
-        req.headers.authorization &&
-        req.headers.authorization.startsWith('Bearer')
-    ) {
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         try {
             token = req.headers.authorization.split(' ')[1];
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
             req.user = await User.findById(decoded.id).select('-password');
-
             next();
         } catch (error) {
-            logger.warn(ERRORS.AUTH.TOKEN_MISSING);
-            res.status(STATUS_UNAUTHORIZED).json({ message: ERRORS.AUTH.TOKEN_MISSING });
+            res.status(STATUS_UNAUTHORIZED).json({ message: ERRORS.AUTH.NOT_AUTHORIZED });
         }
     }
+
     if (!token) {
-        logger.warn(ERRORS.AUTH.NO_TOKEN);
-        res.status(STATUS_FORBIDDEN).json({ message: ERRORS.AUTH.NO_TOKEN });
+        res.status(STATUS_UNAUTHORIZED).json({ message: ERRORS.AUTH.NOT_AUTHORIZED });
     }
 };
 
-module.exports = { protect };
+const authorize = (...roles) => {
+    return (req, res, next) => {
+        if (!roles.includes(req.user.role)) {
+            return res.status(STATUS_UNAUTHORIZED).json({ message: ERRORS.AUTH.NOT_AUTHORIZED });
+        }
+        next();
+    };
+};
+
+module.exports = { protect, authorize };

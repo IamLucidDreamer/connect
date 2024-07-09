@@ -14,7 +14,7 @@ import ErrorBoundary from "../components/errors/ErrorHandler";
 const LandingPAgeApp = lazy(() => import("../views/index"))
 const SignUp = lazy(() => import("../views/auth/Signup"));
 const Login = lazy(() => import("../views/auth/Login"))
-// const VerifyOTP = lazy(() => import("../views/auth/VerifyOTP"))
+const VerifyOTP = lazy(() => import("../views/auth/VerifyOTP"))
 const ForgotPassword = lazy(() => import("../views/auth/ForgotPassword"))
 // const NewPassword = lazy(() => import("../views/auth/NewPassword"))
 // const CompleteProfile = lazy(() => import("../views/auth/CompleteProfile"))
@@ -43,10 +43,10 @@ const router = createBrowserRouter([
         path: "/signup",
         element: <SignUp />,
     },
-    // {
-    //     path: "/verify-otp",
-    //     element: <VerifyOTP />,
-    // },
+    {
+        path: "/verify-otp",
+        element: <VerifyOTP />,
+    },
     {
         path: "/forgot-password",
         element: <ForgotPassword />,

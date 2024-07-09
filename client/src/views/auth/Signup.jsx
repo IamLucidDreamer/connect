@@ -8,8 +8,11 @@ import AuthLayout from "../layout/AuthLayout";
 import AppLogo from "../../components/images/AppIcon";
 import image from "../../assets/images/login.jpg";
 import { Link, useNavigate } from "react-router-dom";
+import {useDispatch} from "react-redux";
 import { KeyIcon, UserIcon, MailIcon } from "@heroicons/react/outline";
 import { getAuthToken } from "../../helpers/auth";
+import { signup } from "../../services/authService";
+import { setUser } from "../../store/actions/userActions";
 
 const signUpalidation = Yup.object({
   name: Yup.string()
@@ -25,6 +28,7 @@ const signUpalidation = Yup.object({
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState(true);
 
@@ -42,22 +46,19 @@ const SignUp = () => {
     }
     setLoading(true);
     try {
-      // if ((verificationId, onConfirmation)) {
-      //   toast.success(
-      //     `OTP Sent Succesfully to ${values.countryCode}${values.phoneNumber}`
-      //   );
-      //   window.confirmationResult = confirmationResult;
-      //   navigate("/verify-otp", {
-      //     state: {
-      //       values: { ...values, medicalMarks: values.medicalMarks.toString() },
-      //     },
-      //   });
-      // }
+      const response = await signup(values);
+      if(response.status >= 200 && response.status < 300){
+        console.log(response)
+        toast.success(response?.data?.message || "Sign Up Successful");
+        dispatch(setUser({email: values.email, userId: response?.data?.userId}));
+        navigate("/verify-otp");
+      }
     } catch (err) {
       console.error("Error : ", err);
-      toast.error(err?.response?.data?.error || "Something went Wrong.");
+      toast.error(err?.response?.data?.error || err?.response?.data?.message || "Something went Wrong.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -76,43 +77,38 @@ const SignUp = () => {
               classname={"mx-auto mb-4"}
             />
             <div className="w-full max-w-sm flex flex-col mx-auto text-center my-2">
-                <div className="relative w-full mt-4 rounded-lg border h-10 p-1 bg-gray-50 text-lg">
-                  <div className="relative w-full h-full flex items-center">
-                    <div
-                      onClick={() => setSelected(!selected)}
-                      className="w-full flex justify-center text-secondary cursor-pointer"
-                    >
-                      <button>Individual</button>
-                    </div>
-                    <div
-                      onClick={() => setSelected(!selected)}
-                      className="w-full flex justify-center text-secondary cursor-pointer"
-                    >
-                      <button>Organisation</button>
-                    </div>
-                  </div>
-
-                  <span
-                    className={`bg-white shadow flex items-center justify-center w-1/2 rounded h-[1.88rem] transition-all duration-150 ease-linear top-[4px] absolute ${
-                      selected
-                        ? "left-1 text-primary font-semibold"
-                        : "left-1/2 -ml-1 text-primary font-semibold"
-                    }`}
+              <div className="relative w-full mt-4 rounded-lg border h-10 p-1 bg-gray-50 text-lg">
+                <div className="relative w-full h-full flex items-center">
+                  <div
+                    onClick={() => setSelected(!selected)}
+                    className="w-full flex justify-center text-secondary cursor-pointer"
                   >
-                    {selected ? "Individual" : "Organisation"}
-                  </span>
+                    <button>Individual</button>
+                  </div>
+                  <div
+                    onClick={() => setSelected(!selected)}
+                    className="w-full flex justify-center text-secondary cursor-pointer"
+                  >
+                    <button>Organisation</button>
+                  </div>
                 </div>
+
+                <span
+                  className={`bg-white shadow flex items-center justify-center w-1/2 rounded h-[1.88rem] transition-all duration-150 ease-linear top-[4px] absolute ${
+                    selected
+                      ? "left-1 text-primary font-semibold"
+                      : "left-1/2 -ml-1 text-primary font-semibold"
+                  }`}
+                >
+                  {selected ? "Individual" : "Organisation"}
+                </span>
+              </div>
             </div>
             <Formik
               initialValues={{
                 name: "",
-                countryCode: "+91",
-                phoneNumber: "",
                 email: "",
                 password: "",
-                examType: "",
-                course: "",
-                medicalMarks: "",
                 consent: false,
               }}
               validationSchema={signUpalidation}
@@ -128,7 +124,9 @@ const SignUp = () => {
                         <UserIcon className="w-5 h-5" />
                         <input
                           id="name"
-                          placeholder={selected ? "Your Name" : "Organisation Name"}
+                          placeholder={
+                            selected ? "Your Name" : "Organisation Name"
+                          }
                           className="p-2.5 text-lg rounded-lg gray-50 w-full focus:outline-none"
                           type="text"
                           value={values.name}

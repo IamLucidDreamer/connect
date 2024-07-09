@@ -8,13 +8,12 @@ import CustomValidationErrorMessage from "../../components/errors/CustomValidati
 import Loader from "../../components/loader/index";
 import { sendOtp, signup } from "../../services/authService";
 import AuthLayout from "../layout/AuthLayout";
-import AppLogo from "../../components/images/AppLogo";
-import image from "../../assets/images/verify_otp_bg.jpg";
+import AppLogo from "../../components/images/AppIcon";
+import image from "../../assets/images/login.jpg";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { setUser } from "../../store/actions/userActions";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 
 const loginValidation = Yup.object({
   otp: Yup.string()
@@ -23,44 +22,25 @@ const loginValidation = Yup.object({
 });
 
 const VerifyOTP = () => {
-  const { state } = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const appInApp = useSelector((state) => state.appInApp.appInApp);
+  const user = useSelector((state) => state?.user);
 
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
+  console.log("User : ", user);
 
   useEffect(() => {
-    if (!state) {
+    if (!user?.email) {
       navigate("/signup");
     }
   }, []);
 
-  const setUpRecaptha = async (number) => {
-    const recaptchaVerifier = new RecaptchaVerifier(
-      "recaptcha-container",
-      { size: "invisible" },
-      auth
-    );
-    recaptchaVerifier.render();
-    return signInWithPhoneNumber(auth, number, recaptchaVerifier);
-  };
-
   const resenOTP = async () => {
     setResendLoading(true);
     try {
-      const confirmationResult = await setUpRecaptha(
-        `${state.values.countryCode}${state.values.phoneNumber}`
-      );
-      const { verificationId, onConfirmation } = confirmationResult;
-      if ((verificationId, onConfirmation)) {
-        toast.success(
-          `OTP Re-Sent Succesfully to ${state.values.countryCode}${state.values.phoneNumber}`
-        );
-        window.confirmationResult = confirmationResult;
-      }
+
     } catch (err) {
       console.error("Error : ", err);
       toast.error(err?.message || "Something went Wrong");
@@ -70,43 +50,8 @@ const VerifyOTP = () => {
 
   const handleSignUp = async (values) => {
     setLoading(true);
-    const data = { ...state.values, ...values };
     try {
-      window.confirmationResult
-        .confirm(values.otp)
-        .then(async (res) => {
-          data.otp = 12345678;
-          data.ref_code = localStorage.getItem("ref_code");
-          const response = await signup(data);
-          const { status } = response;
-          if (status >= 200 && status < 300) {
-            if(response?.data?.referral)
-            {
-              if(response?.data?.referral === "Valid")
-              {
-                toast.success("Referral Code Validated Succesfully")
-              }
-              else
-              {
-                toast.success("Referral Code is InValidated")
-              }
-            }
-            if (appInApp) {
-              navigate(
-                `/login-success?app_in_app=true&auth_token=${response?.data?.token}&user_id=${response?.data?.data?._id}`
-              );
-            } else {
-              dispatch(setUser(response?.data?.data));
-              localStorage.setItem("authToken", response?.data?.token);
-              navigate("/profile");
-            }
-            toast.success("Welcome to Career Kick");
-          }
-        })
-        .catch((err) => {
-          console.log("Error : ", err);
-          toast.error(err?.response?.data?.error || "Invalid OTP");
-        });
+
     } catch (err) {
       console.error("Error : ", err);
       toast.error(err?.response?.data?.error || "Something went Wrong");
@@ -150,9 +95,7 @@ const VerifyOTP = () => {
                   <>
                     <div className="w-11/12">
                       <h1 className="text-lg text-secondary">
-                        {`Enter the OTP sent to : ${
-                          state?.values?.countryCode || ""
-                        }${state?.values?.phoneNumber || ""}`}
+                        {`Enter the OTP sent to : ${user?.email} `}
                       </h1>
                       <div className="text-secondary items-center rounded-lg my-3">
                         <OTPInput

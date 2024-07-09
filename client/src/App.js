@@ -8,8 +8,6 @@ import { XIcon } from "@heroicons/react/outline";
 import { server } from "./helpers/apiCall";
 import { setUser } from "./store/actions/userActions";
 
-import imageCelebrations from "./assets/images/seminar_banner.jpg";
-
 function App() {
   const searchParams = new URLSearchParams(document.location.search);
 
@@ -112,45 +110,45 @@ const Development = () => {
   );
 };
 
-const Banner = () => {
-  const [show, setShow] = useState(false);
+// const Banner = () => {
+//   const [show, setShow] = useState(false);
 
-  useEffect(() => {
-    if (
-      window.location.pathname === "/" ||
-      window.location.pathname === "/home"
-    ) {
-      setShow(true);
-    } else {
-      const showMessage = setTimeout(() => {
-        setShow(false);
-      }, 10000);
+//   useEffect(() => {
+//     if (
+//       window.location.pathname === "/" ||
+//       window.location.pathname === "/home"
+//     ) {
+//       setShow(true);
+//     } else {
+//       const showMessage = setTimeout(() => {
+//         setShow(false);
+//       }, 10000);
 
-      return () => clearTimeout(showMessage);
-    }
-  }, []);
+//       return () => clearTimeout(showMessage);
+//     }
+//   }, []);
 
-  if (!show) {
-    return;
-  }
+//   if (!show) {
+//     return;
+//   }
 
-  return (
-    <div
-      className="flex flex-1 fixed top-0 bottom-0 right-0 left-0 min-h-screen"
-      style={{ zIndex: 999999 }}
-    >
-      <div className="flex flex-1 bg-black bg-opacity-50">
-        <button
-          onClick={() => setShow(false)}
-          className="text-base inline-flex items-center fixed top-5 right-5 text-white"
-          style={{ zIndex: 999999 }}
-        >
-          <XIcon className="w-7 h-7" /> Dismiss
-        </button>
-        <div className="flex justify-center px-4 items-center fixed bottom-0 w-full text-left text-base md:text-xl shadow-2xl p-4 gap-4">
-          <img src={imageCelebrations} className="w-10/12 lg:w-1/2" />
-        </div>
-      </div>
-    </div>
-  );
-};
+//   return (
+//     <div
+//       className="flex flex-1 fixed top-0 bottom-0 right-0 left-0 min-h-screen"
+//       style={{ zIndex: 999999 }}
+//     >
+//       <div className="flex flex-1 bg-black bg-opacity-50">
+//         <button
+//           onClick={() => setShow(false)}
+//           className="text-base inline-flex items-center fixed top-5 right-5 text-white"
+//           style={{ zIndex: 999999 }}
+//         >
+//           <XIcon className="w-7 h-7" /> Dismiss
+//         </button>
+//         <div className="flex justify-center px-4 items-center fixed bottom-0 w-full text-left text-base md:text-xl shadow-2xl p-4 gap-4">
+//           <img src={imageCelebrations} className="w-10/12 lg:w-1/2" />
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };

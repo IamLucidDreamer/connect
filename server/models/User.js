@@ -2,6 +2,24 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken'); // Ensure you have this import
 
+const educationSchema = new mongoose.Schema({
+    school: String,
+    degree: String,
+    fieldOfStudy: String,
+    startDate: Date,
+    endDate: Date,
+    description: String
+});
+
+const professionalSchema = new mongoose.Schema({
+    company: String,
+    title: String,
+    location: String,
+    startDate: Date,
+    endDate: Date,
+    description: String
+});
+
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -21,6 +39,7 @@ const userSchema = new mongoose.Schema({
         required: true,
         minlength: 6
     },
+    
     refreshTokens: [{
         token: String,
         expires: Date
@@ -35,6 +54,13 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    role: {
+        type: String,
+        enum: ['user', 'organisation-admin', 'admin'],
+        default: 'user'
+    },
+    education: [educationSchema],
+    professional: [professionalSchema]
 });
 
 // Hash the password before saving the user

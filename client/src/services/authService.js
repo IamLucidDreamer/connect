@@ -1,7 +1,7 @@
-import { serverUnauth } from "../helpers/apiCall";
+import server from "../helpers/apiCall";
 
 export const sendOtp = async (phoneNumber) => await new Promise((resolve, reject) => {
-    serverUnauth
+    server
         .post('/send-otp', {
             phoneNumber: phoneNumber,
         })
@@ -12,8 +12,8 @@ export const sendOtp = async (phoneNumber) => await new Promise((resolve, reject
 });
 
 export const signup = async (values) => await new Promise((resolve, reject) => {
-    serverUnauth
-        .post('/signup', values)
+    server
+        .post('/auth/register', values)
         .then((response) => {
             resolve(response);
         })
@@ -21,7 +21,7 @@ export const signup = async (values) => await new Promise((resolve, reject) => {
 });
 
 export const forgotPassword = async (values) => await new Promise((resolve, reject) => {
-    serverUnauth
+    server
         .post('/forgot-password', values)
         .then((response) => {
             resolve(response);
@@ -30,7 +30,7 @@ export const forgotPassword = async (values) => await new Promise((resolve, reje
 });
 
 export const login = async (values) => await new Promise((resolve, reject) => {
-    serverUnauth
+    server
         .post('/signin', values)
         .then((response) => {
             resolve(response);
