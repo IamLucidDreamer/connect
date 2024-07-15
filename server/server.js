@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path');
+
 const express = require('express');
 // const cors = require('cors');
 const dotenv = require('dotenv');
@@ -29,6 +32,11 @@ app.use('/api', routes);
 app.get('/api/status', (req, res) => {
     logger.info('Server Status Requested');
     res.send('Backend Server is Up and Running!');
+});
+
+app.get('/api/v1/status', (req, res) => {
+    logger.info('Server Status Page Requested');
+    res.send(fs.readFileSync(path.resolve(__dirname, "./templates/statusPage.html"), 'utf8'));
 });
 
 
