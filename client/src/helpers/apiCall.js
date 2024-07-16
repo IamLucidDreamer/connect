@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getAuthToken } from './auth';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = `${process.env.REACT_APP_BASE_URL}/api/v1`;
 
 export const server = axios.create({
   baseURL: `${BASE_URL}`,

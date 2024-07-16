@@ -18,7 +18,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 const corsOptions = {
-    origin: ['http://localhost:3000', "https://new.d1ivogcauayjj5.amplifyapp.com/" ], // Allow only this origin
+    origin: ['http://localhost:3000', "https://new.d1ivogcauayjj5.amplifyapp.com" ], // Allow only this origin
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
     optionsSuccessStatus: 204,
