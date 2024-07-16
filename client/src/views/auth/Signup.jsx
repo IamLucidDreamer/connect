@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import CustomValidationErrorMessage from "../../components/errors/CustomValidationErrorMessage";
@@ -10,7 +10,6 @@ import image from "../../assets/images/login.jpg";
 import { Link, useNavigate } from "react-router-dom";
 import {useDispatch} from "react-redux";
 import { KeyIcon, UserIcon, MailIcon } from "@heroicons/react/outline";
-import { getAuthToken } from "../../helpers/auth";
 import { signup } from "../../services/authService";
 import { setUser } from "../../store/actions/userActions";
 
@@ -32,12 +31,6 @@ const SignUp = () => {
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState(true);
 
-  useEffect(() => {
-    const authToken = getAuthToken();
-    if (authToken?.length) {
-      navigate("/dashboard");
-    }
-  }, []);
 
   const handleSignUp = async (values, setErrors) => {
     if (!values.consent) {
@@ -178,7 +171,7 @@ const SignUp = () => {
                           value={values.consent}
                           onChange={handleChange}
                         />
-                        <div className="mt-2">
+                        <div className="">
                           <h1 className="text-sm">
                             I accept the{" "}
                             <a

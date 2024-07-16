@@ -17,7 +17,7 @@ import { getAuthToken } from "../../helpers/auth";
 import { useSelector } from "react-redux";
 
 const loginValidation = Yup.object({
-  username: Yup.string().required("This field is Required").email("Invalid Email"),
+  email: Yup.string().required("This field is Required").email("Invalid Email"),
   password: Yup.string()
     .required("Password field is required")
     .min(8, "The Password lenght should be atleast 8 characters"),
@@ -26,40 +26,21 @@ const loginValidation = Yup.object({
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const appInApp = useSelector((state) => state.appInApp.appInApp);
 
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const authToken = getAuthToken();
     if (authToken?.length) {
-      navigate("/dashboard/predictor");
+      navigate("/dashboard");
     }
   }, []);
 
   const handleLogin = async (values, resetForm) => {
     setLoading(true);
     try {
-      if (/^(\d+-)*(\d+)$/.test(values.username)) {
-        values.phoneNumber = values.username;
-        delete values.username;
-      } else {
-        values.email = values.username;
-        delete values.username;
-      }
       const response = await login(values);
-      const { status } = response;
-      if (status >= 200 && status < 300) {
-        if (appInApp) {
-          navigate(
-            `/login-success?app_in_app=true&auth_token=${response?.data?.token}&user_id=${response?.data?.user?._id}`
-          );
-        } else {
-          delete response?.data?.user?.encrypted_password;
-          dispatch(setUser(response?.data?.user));
-          localStorage.setItem("authToken", response?.data?.token);
-          navigate("/dashboard/predictor");
-        }
+      if (response?.data) {
         toast.success("Login Was Success");
       }
     } catch (err) {
@@ -87,7 +68,7 @@ const Login = () => {
             />
             <Formik
               initialValues={{
-                username: "",
+                email: "",
                 password: "",
               }}
               validationSchema={loginValidation}
@@ -102,19 +83,19 @@ const Login = () => {
                       <div className="bg-gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg my-5 shadow-lg">
                         <UserIcon className="w-5 h-5" />
                         <input
-                          id="username"
+                          id="email"
                           placeholder="Email"
                           className="p-2.5 text-lg rounded-lg bg-gray-50 w-full focus:outline-none"
-                          type="username"
-                          value={values.username}
+                          type="email"
+                          value={values.email}
                           onChange={handleChange}
                         />
                       </div>
                       <CustomValidationErrorMessage
                         show={
-                          touched.username && errors.username ? true : false
+                          touched.email && errors.email ? true : false
                         }
-                        error={errors.username}
+                        error={errors.email}
                       />
                       <div className="bg-gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg my-5 shadow-lg">
                         <KeyIcon className="w-5 h-5" />

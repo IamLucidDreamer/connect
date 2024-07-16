@@ -4,7 +4,7 @@ import * as Yup from "yup";
 
 import CustomValidationErrorMessage from "../../components/errors/CustomValidationErrorMessage";
 import Loader from "../../components/loader/index";
-import { sendOtp } from "../../services/authService";
+import { reSendOtp, sendOtp } from "../../services/authService";
 import { toast } from "react-toastify";
 import AuthLayout from "../layout/AuthLayout";
 import AppLogo from "../../components/images/AppIcon";
@@ -33,7 +33,7 @@ const ForgotPassword = () => {
   const handleSendOTP = async (values) => {
     setLoading(true);
     try {
-      const response = await sendOtp(
+      const response = await reSendOtp(
         `${values.countryCode}${values.phoneNumber}`
       );
       const { status } = response;

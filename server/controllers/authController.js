@@ -85,9 +85,34 @@ const verifyOTP = async (req, res) => {
             _id: user._id,
             name: user.name,
             email: user.email,
+            emailVerified: user.isEmailVerified,
             accessToken,
             refreshToken,
         });
+    } catch (error) {
+        logger.error(error.message || ERRORS.SERVER.INTERNAL_ERROR);
+        res.status(STATUS_SERVER_ERROR).json({ message: error.message || ERRORS.SERVER.INTERNAL_ERROR });
+    }
+};
+
+const resendOTP = async (req, res) => {
+    const { userId } = req.body;
+
+    try {
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(STATUS_BAD_REQUEST).json({ message: 'User not found' });
+        }
+
+        const otp = user.generateOTP();
+        await user.save();
+
+        // Send OTP to user's email
+        await sendEmail(user.email, 'Resend Email Verification OTP', '../templates/otpEmail.html', { OTP: otp });
+
+        logger.info(`Resend OTP sent to ${user.email}`);
+        res.status(STATUS_SUCCESS).json({ message: 'OTP resent to email' });
     } catch (error) {
         logger.error(error.message || ERRORS.SERVER.INTERNAL_ERROR);
         res.status(STATUS_SERVER_ERROR).json({ message: error.message || ERRORS.SERVER.INTERNAL_ERROR });
@@ -231,6 +256,7 @@ const checkEmailVerification = async (req, res) => {
 module.exports = {
     registerUser,
     verifyOTP,
+    resendOTP,
     authUser,
     refreshTokens,
     forgotPassword,

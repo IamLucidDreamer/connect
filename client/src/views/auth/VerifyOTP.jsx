@@ -3,17 +3,16 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import OTPInput, { ResendOTP } from "otp-input-react";
 import { toast } from "react-toastify";
-
 import CustomValidationErrorMessage from "../../components/errors/CustomValidationErrorMessage";
 import Loader from "../../components/loader/index";
-import { sendOtp, signup } from "../../services/authService";
 import AuthLayout from "../layout/AuthLayout";
 import AppLogo from "../../components/images/AppIcon";
 import image from "../../assets/images/login.jpg";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { setUser } from "../../store/actions/userActions";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
+import { verifyOtp , reSendOtp} from "../../services/authService";
 
 const loginValidation = Yup.object({
   otp: Yup.string()
@@ -29,7 +28,6 @@ const VerifyOTP = () => {
 
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
-  console.log("User : ", user);
 
   useEffect(() => {
     if (!user?.email) {
@@ -40,7 +38,10 @@ const VerifyOTP = () => {
   const resenOTP = async () => {
     setResendLoading(true);
     try {
-
+      const response = await reSendOtp(user?.userId);
+      if (response?.data) {
+        toast.success("OTP sent successfully");
+      }
     } catch (err) {
       console.error("Error : ", err);
       toast.error(err?.message || "Something went Wrong");
@@ -51,7 +52,16 @@ const VerifyOTP = () => {
   const handleSignUp = async (values) => {
     setLoading(true);
     try {
-
+      const data = {
+        otp: values.otp,
+        userId: user?.userId,
+      };
+      const response = await verifyOtp(data);
+      if (response?.data) {
+        toast.success("OTP Verified successfully");
+        dispatch(setUser(response?.data));
+      }
+      console.log("response", response);
     } catch (err) {
       console.error("Error : ", err);
       toast.error(err?.response?.data?.error || "Something went Wrong");

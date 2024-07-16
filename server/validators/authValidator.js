@@ -20,6 +20,10 @@ const otpValidation = [
     check('otp').not().isEmpty().withMessage('OTP is required')
 ];
 
+const otpResendValidation = [
+    check('userId').not().isEmpty().withMessage('User ID is required'),
+];
+
 const passwordResetValidation = [
     check('userId').not().isEmpty().withMessage('User ID is required'),
     check('otp').not().isEmpty().withMessage('OTP is required'),
@@ -35,6 +39,7 @@ module.exports = {
     loginValidation,
     refreshTokenValidation,
     otpValidation,
+    otpResendValidation,
     passwordResetValidation,
     forgotPasswordValidation
 };
