@@ -3,7 +3,7 @@ import server from "../helpers/apiCall";
 export const reSendOtp = async (userId) =>
   await new Promise((resolve, reject) => {
     server
-      .post("/resend-otp", {
+      .post("/auth/resend-otp", {
         userId: userId,
       })
       .then((response) => {
@@ -36,7 +36,7 @@ export const verifyOtp = async (values) =>
 export const forgotPassword = async (values) =>
   await new Promise((resolve, reject) => {
     server
-      .post("/forgot-password", values)
+      .post("/auth/forgot-password", values)
       .then((response) => {
         resolve(response);
       })

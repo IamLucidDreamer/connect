@@ -4,19 +4,17 @@ import * as Yup from "yup";
 
 import CustomValidationErrorMessage from "../../components/errors/CustomValidationErrorMessage";
 import Loader from "../../components/loader/index";
-import { reSendOtp, sendOtp } from "../../services/authService";
+import { forgotPassword } from "../../services/authService";
 import { toast } from "react-toastify";
 import AuthLayout from "../layout/AuthLayout";
 import AppLogo from "../../components/images/AppIcon";
 import image from "../../assets/images/login.jpg";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  MailIcon,
-} from "@heroicons/react/outline";
+import { MailIcon } from "@heroicons/react/outline";
 import { getAuthToken } from "../../helpers/auth";
 
 const forgotPasswordValidation = Yup.object({
-  email : Yup.string().required("This field is Required").email("Invalid Email"),
+  email: Yup.string().required("This field is Required").email("Invalid Email"),
 });
 
 const ForgotPassword = () => {
@@ -33,13 +31,11 @@ const ForgotPassword = () => {
   const handleSendOTP = async (values) => {
     setLoading(true);
     try {
-      const response = await reSendOtp(
-        `${values.countryCode}${values.phoneNumber}`
-      );
+      const response = await forgotPassword(values.email);
       const { status } = response;
       if (status >= 200 && status < 300) {
         toast.success(
-          `OTP Sent Succesfully to ${values.countryCode}${values.phoneNumber}`
+          `OTP Sent Succesfully to ${values.email}`
         );
         navigate("/new-password", { state: { values } });
       }
@@ -85,17 +81,17 @@ const ForgotPassword = () => {
                           placeholder="name@example.com"
                           className="p-2.5 text-lg rounded-lg bg-gray-100 w-full focus:outline-none"
                           type="tel"
-                          value={values.phoneNumber}
+                          value={values.email}
                           onChange={handleChange}
                         />
                       </div>
                       <CustomValidationErrorMessage
                         show={
-                          touched.phoneNumber && errors.phoneNumber
+                          touched.email && errors.email
                             ? true
                             : false
                         }
-                        error={errors.phoneNumber}
+                        error={errors.email}
                       />
                       <button
                         className="p-2.5 text-lg rounded-lg bg-secondary text-white my-4 w-full shadow-lg"

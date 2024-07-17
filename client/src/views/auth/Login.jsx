@@ -13,7 +13,7 @@ import image from "../../assets/images/login.jpg";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../store/actions/userActions";
-import { getAuthToken } from "../../helpers/auth";
+import { getAuthToken, setAuthToken, setRefreshToken } from "../../helpers/auth";
 import { useSelector } from "react-redux";
 
 const loginValidation = Yup.object({
@@ -41,7 +41,11 @@ const Login = () => {
     try {
       const response = await login(values);
       if (response?.data) {
-        toast.success("Login Was Success");
+        toast.success(response?.data?.message ||  "Login Was Success");
+        dispatch(setUser(response?.data?.data));
+        setAuthToken(response?.data?.data?.accessToken);
+        setRefreshToken(response?.data?.data?.refreshToken);
+        navigate("/dashboard");
       }
     } catch (err) {
       console.error("Error : ", err);

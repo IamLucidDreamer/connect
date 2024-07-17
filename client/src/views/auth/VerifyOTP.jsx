@@ -13,6 +13,7 @@ import { setUser } from "../../store/actions/userActions";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { verifyOtp , reSendOtp} from "../../services/authService";
+import { setAuthToken, setRefreshToken } from "../../helpers/auth";
 
 const loginValidation = Yup.object({
   otp: Yup.string()
@@ -40,7 +41,7 @@ const VerifyOTP = () => {
     try {
       const response = await reSendOtp(user?.userId);
       if (response?.data) {
-        toast.success("OTP sent successfully");
+        toast.success("OTP re-sent successfully");
       }
     } catch (err) {
       console.error("Error : ", err);
@@ -58,8 +59,11 @@ const VerifyOTP = () => {
       };
       const response = await verifyOtp(data);
       if (response?.data) {
-        toast.success("OTP Verified successfully");
-        dispatch(setUser(response?.data));
+        toast.success(response?.data?.message ||  "OTP Verified Successfully");
+        dispatch(setUser(response?.data?.data));
+        setAuthToken(response?.data?.data?.accessToken);
+        setRefreshToken(response?.data?.data?.refreshToken);
+        navigate("/dashboard");
       }
       console.log("response", response);
     } catch (err) {
