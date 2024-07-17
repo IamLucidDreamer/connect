@@ -202,7 +202,7 @@ const forgotPassword = async (req, res) => {
         await user.save();
 
         // Send OTP to user's email
-        await sendEmail(user.email, 'Password Reset OTP', 'templates/passwordResetEmail.html', { OTP: otp });
+        await sendEmail(user.email, 'Password Reset OTP', '../templates/passwordResetEmail.html', { OTP: otp });
 
         logger.info(`OTP sent to ${user.email} for password reset`);
         res.status(STATUS_SUCCESS).json({ message: 'OTP sent to email', userId: user._id });

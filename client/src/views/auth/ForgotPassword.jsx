@@ -31,7 +31,7 @@ const ForgotPassword = () => {
   const handleSendOTP = async (values) => {
     setLoading(true);
     try {
-      const response = await forgotPassword(values.email);
+      const response = await forgotPassword({email :values.email});
       const { status } = response;
       if (status >= 200 && status < 300) {
         toast.success(
