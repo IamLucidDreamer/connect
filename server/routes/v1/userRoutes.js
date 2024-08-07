@@ -8,7 +8,11 @@ const {
     addProfessional,
     getProfessional,
     updateProfessional,
-    deleteProfessional
+    deleteProfessional,
+    followUser,
+    unfollowUser,
+    getFollowers,
+    getFollowing,
 } = require('../../controllers/userController');
 
 const router = express.Router();
