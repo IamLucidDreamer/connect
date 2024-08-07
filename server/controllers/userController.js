@@ -324,6 +324,30 @@ const getFollowing = async (req, res) => {
   }
 };
 
+// Get a list of users to recommend to the current user
+const getRecommendationList = async (req, res) => {
+  try {
+    const currentUser = await User.findById(req.user._id).populate("following");
+
+    if (!currentUser) {
+      return res.status(STATUS_BAD_REQUEST).json({ message: "User not found" });
+    }
+
+    // Get users from the same organizations and batch, excluding those already followed
+    const usersToRecommend = await User.find({
+      _id: { $ne: req.user._id, $nin: currentUser.following },
+      organizations: { $in: currentUser.organizations },
+      batch: currentUser.batch,
+    }).select("name email");
+
+    res.status(STATUS_SUCCESS).json({ recommendations: usersToRecommend });
+  } catch (error) {
+    res
+      .status(STATUS_SERVER_ERROR)
+      .json({ message: error.message || ERRORS.SERVER.INTERNAL_ERROR });
+  }
+};
+
 module.exports = {
   addEducation,
   getEducation,
@@ -337,4 +361,5 @@ module.exports = {
   unfollowUser,
   getFollowers,
   getFollowing,
+  getRecommendationList,
 };

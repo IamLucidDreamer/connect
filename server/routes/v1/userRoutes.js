@@ -35,4 +35,7 @@ router.post('/unfollow/:id', protect, unfollowUser);
 router.get('/followers/:userId', protect, getFollowers);
 router.get('/following/:userId', protect, getFollowing);
 
+// Recommendation route
+router.get('/recommendations', protect, getRecommendationList);
+
 module.exports = router;
