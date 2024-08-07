@@ -25,4 +25,10 @@ router.get('/professional/:userId', protect, getProfessional);
 router.put('/professional', protect, updateProfessional);
 router.delete('/professional', protect, deleteProfessional);
 
+// Follow routes
+router.post('/follow/:id', protect, followUser);
+router.post('/unfollow/:id', protect, unfollowUser);
+router.get('/followers/:userId', protect, getFollowers);
+router.get('/following/:userId', protect, getFollowing);
+
 module.exports = router;
