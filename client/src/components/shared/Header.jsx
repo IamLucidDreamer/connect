@@ -1,14 +1,12 @@
 import React, { Fragment, useEffect, useState } from "react";
-import AppLogo from "../images/AppLogo";
 import { Transition, Dialog } from "@headlessui/react";
 import {
-  OfficeBuildingIcon,
   UserCircleIcon,
   XIcon,
   AcademicCapIcon,
   ArrowCircleRightIcon,
 } from "@heroicons/react/outline";
-import { clearAuth, getAuthToken } from "../../helpers/auth";
+import { clearAuth } from "../../helpers/auth";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { logout } from "../../store/actions/userActions";
@@ -17,6 +15,7 @@ import { LibraryIcon } from "@heroicons/react/outline";
 import { BellIcon } from "@heroicons/react/outline";
 import { DocumentTextIcon } from "@heroicons/react/outline";
 import { InformationCircleIcon } from "@heroicons/react/outline";
+import AppIcon from "../images/AppIcon";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -48,63 +47,15 @@ const Header = () => {
     >
       <div className="container mx-auto px-2 lg:px-10 py-3">
         <div className="flex items-center justify-between">
-          {appInApp ? (
-            <AppLogo logotType={1} width={"175px"} />
-          ) : (
-            <Link to={"/"}>
-              <AppLogo logotType={1} width={"175px"} />
-            </Link>
-          )}
+          <Link to={"/"}>
+            <AppIcon logotType={1} width={"175px"} />
+          </Link>
           <nav className="hidden lg:flex gap-10 text-secondary font-semibold items-center uppercase">
-            <Link to={"/dashboard/predictor"}>
+            <Link to={"/dashboard/link"}>
               <button className="uppercase border-b-2 border-white hover:border-primary duration-300">
-                Predictor
+                Some Link
               </button>
             </Link>
-            <Link to={"/dashboard/colleges"}>
-              <button className="uppercase border-b-2 border-white hover:border-primary duration-300">
-                Colleges
-              </button>
-            </Link>
-            <Link to={"/dashboard/blogs"}>
-              <button className="uppercase border-b-2 border-white hover:border-primary duration-300">
-                Blogs
-              </button>
-            </Link>
-            <Link to={"/dashboard/updates"}>
-              <button className="uppercase border-b-2 border-white hover:border-primary duration-300">
-                Updates
-              </button>
-            </Link>
-            <Link to={"/about"}>
-              <button className="uppercase border-b-2 border-white hover:border-primary duration-300">
-                About
-              </button>
-            </Link>
-            {/* <div className="flex gap-2 items-center capitalize rounded-full border-2 border-secondary border-opacity-50 text-sm group w-32 duration-500">
-              <h1 className="group-hover:hidden group-hover:pl-0 pl-2 truncate w-24 duration-500">
-                {user?.name}
-              </h1>
-              {user?.profileImage ? (
-                <img
-                  src={
-                    "https://documents-.s3.ap-south-1.amazonaws.com/my image.jfif"
-                  }
-                  className="w-8 h-8 rounded-full"
-                />
-              ) : (
-                <UserCircleIcon className="w-8 h-8 text-primary" />
-              )}
-              <button
-                className="hidden group-hover:block group-hover:pl-0 pl-2 truncate w-24"
-                onClick={() => {
-                  clearAuth();
-                  navigate("/");
-                }}
-              >
-                Logout
-              </button>
-            </div> */}
             {user?.name ? (
               <div className="relative group">
                 <div className="w-45 flex gap-2 items-center capitalize rounded-full border-2 border-secondary border-opacity-50 cursor-pointer">
@@ -209,35 +160,6 @@ const DrawerMenu = ({ openModal, closeModal, navigate, appInApp }) => {
                     />
                   </div>
                   <nav className="flex flex-col text-secondary font-semibold text-xl">
-                    <Link to={"/dashboard/predictor"}>
-                      <button className="my-4 flex gap-2 items-center">
-                        <AcademicCapIcon className="w-5 h-5" />
-                        Predictor
-                      </button>
-                    </Link>
-                    <Link to={"/dashboard/colleges"}>
-                      <button className="my-4 flex gap-2 items-center">
-                        <LibraryIcon className="w-5 h-5" /> Colleges
-                      </button>
-                    </Link>
-                    <Link to={"/dashboard/blogs"}>
-                      <button className="my-4 flex gap-2 items-center">
-                        <DocumentTextIcon className="w-5 h-5" />
-                        Blogs
-                      </button>
-                    </Link>
-                    <Link to={"/dashboard/updates"}>
-                      <button className="my-4 flex gap-2 items-center">
-                        <BellIcon className="w-5 h-5" />
-                        Updates
-                      </button>
-                    </Link>
-                    <Link to={"/about"}>
-                      <button className="my-4 flex gap-2 items-center">
-                        <InformationCircleIcon className="w-5 h-5" />
-                        About
-                      </button>
-                    </Link>
                     <Link to={"/profile"}>
                       <button className="my-4 flex gap-2 items-center">
                         <UserCircleIcon className="w-5 h-5" />
@@ -259,8 +181,8 @@ const DrawerMenu = ({ openModal, closeModal, navigate, appInApp }) => {
                     </button>
                   </nav>
                 </div>
-                <div className="absolute bottom-0 w-full mb-2">
-                  <AppLogo logotType={1} width={"175px"} classname="mx-auto" />
+                <div className="absolute bottom-0 w-full mb-2 ml-4">
+                  <AppIcon logotType={1} width={"175px"} classname="mx-auto" />
                 </div>
               </div>
             </Transition.Child>

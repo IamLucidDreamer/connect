@@ -1,31 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import AppLogo from "../images/AppIcon";
-import { serverUnauth } from "../../helpers/apiCall";
-import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { Link } from "react-router-dom";
 
 const Footer = () => {
-  const appInApp = useSelector((state) => state.appInApp.appInApp);
-  const [success, setSuccess] = useState(false);
-  if (appInApp === "true") {
-    return;
-  }
-
-  const handleSubscribe = (values, resetForm, setSubmitting, setErrors) => {
-    serverUnauth
-      .post("/subscriber/create", { email: values.email })
-      .then((res) => {
-        resetForm();
-        setSuccess(true);
-      })
-      .catch((err) => {
-        setErrors({ email: err?.response?.data?.error });
-      })
-      .finally(() => setSubmitting(false));
-  };
 
   return (
     <footer className="text-gray-200 body-font bg-secondary">
@@ -61,8 +39,7 @@ const Footer = () => {
                   target="_blank"
                 >
                   <span className="font-bold text-white">Address :</span>{" "}
-                  117/H-1/606, Model Town, Pandu Nagar, Kanpur, Uttar Pradesh
-                  208005
+                  123, XYZ Road, XYZ City, 123456
                 </a>
               </li>
             </nav>
@@ -74,67 +51,10 @@ const Footer = () => {
             <h2 className="title-font font-medium text-white tracking-widest text-base lg:text-lg mb-3">
               NEWSLETTER
             </h2>
-            <Formik
-              initialValues={{ email: "" }}
-              validationSchema={Yup.object({
-                email: Yup.string()
-                  .email("Not a valid Email.")
-                  .required("This is required."),
-              })}
-              onSubmit={(values, { resetForm, setSubmitting, setErrors }) => {
-                handleSubscribe(values, resetForm, setSubmitting, setErrors);
-              }}
-            >
-              {({
-                handleChange,
-                handleSubmit,
-                values,
-                isSubmitting,
-                touched,
-                errors,
-              }) => {
-                return (
-                  <div className="flex flex-col items-start gap-2">
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      placeholder="hello@careerkick.in"
-                      value={values.email}
-                      onChange={handleChange}
-                      className=" border-2 border-secondary bg-white w-full rounded text-secondary p-2 focus:border-white focus:outline-0"
-                    />
-                    {success &&
-                    !touched.email &&
-                    !errors.email &&
-                    values.email.length === 0 ? (
-                      <p className="text-sm text-green-400 mt-1">
-                        Successfully Subscribed to the Newsletter
-                      </p>
-                    ) : null}
-                    {touched.email && errors.email ? (
-                      <p className="text-sm text-red-400 mt-1">
-                        {errors.email}
-                      </p>
-                    ) : null}
-                    <button
-                      type="submit"
-                      onClick={handleSubmit}
-                      className={`w-2/3 lg:w-44 text-whitetext-2xl bg-primary rounded p-2 text-white uppercase ${
-                        isSubmitting ? "opacity-50" : "opacity-100"
-                      } `}
-                      disabled={isSubmitting}
-                    >
-                      SUBSCRIBE
-                    </button>
-                  </div>
-                );
-              }}
-            </Formik>
             <span className="inline-flex lg:ml-auto lg:mt-4 mt-6 w-full justify-center md:justify-start md:w-auto">
               <a
                 className="text-gray-200 hover:text-white"
-                href="https://www.facebook.com/CAREERKICKSERVICES/"
+                href="https://www.facebook.com/"
                 target="_blank"
               >
                 <svg
@@ -150,7 +70,7 @@ const Footer = () => {
               </a>
               <a
                 className="ml-3 text-gray-200 hover:text-white"
-                href="https://twitter.com/careerkick01"
+                href="https://twitter.com/"
                 target="_blank"
               >
                 <svg
@@ -166,7 +86,7 @@ const Footer = () => {
               </a>
               <a
                 className="ml-3 text-gray-200 hover:text-white"
-                href="https://www.instagram.com/careerkickservices/"
+                href="https://www.instagram.com/"
                 target="_blank"
               >
                 <svg
@@ -184,7 +104,7 @@ const Footer = () => {
               </a>
               <a
                 className="ml-3 text-gray-200 hover:text-white"
-                href="https://www.linkedin.com/company/careerkick-services-kanpur/"
+                href="https://www.linkedin.com/company/"
                 target="_blank"
               >
                 <svg
@@ -210,10 +130,10 @@ const Footer = () => {
       <div className="bg-gray-100">
         <div className="max-w-screen-xl mx-auto py-4 px-5 flex flex-wrap flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-gray-500 text-sm text-center sm:text-left">
-            © 2023 CareerKick
+            © 2024 ALUMNS
           </p>
           <div className="sm:ml-auto sm:mt-0 mt-2 sm:w-auto w-full sm:text-left text-center text-gray-500 text-sm">
-            Your Career is our Success.
+            Lorem ipsum, dolor sit amet consectetur adipisicing elit.
           </div>
         </div>
       </div>
