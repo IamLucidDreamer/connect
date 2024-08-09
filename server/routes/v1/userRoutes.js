@@ -13,6 +13,7 @@ const {
     unfollowUser,
     getFollowers,
     getFollowing,
+    getRecommendationList,
 } = require('../../controllers/userController');
 
 const router = express.Router();
