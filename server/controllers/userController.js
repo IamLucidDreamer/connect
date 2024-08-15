@@ -9,7 +9,8 @@ const logger = require("../utils/logger");
 
 // Education CRUD operations
 const addEducation = async (req, res) => {
-  const { userId, education } = req.body;
+  const { education } = req.body;
+  const userId = req.user._id;
 
   try {
     const user = await User.findById(userId);
@@ -28,11 +29,13 @@ const addEducation = async (req, res) => {
   } catch (error) {
     logger.error(error.message);
     res.status(STATUS_SERVER_ERROR).json({ message: "Error adding education" });
+  } finally {
+    logger.info("Education added API Called");
   }
 };
 
 const getEducation = async (req, res) => {
-  const { userId } = req.params;
+  const userId = req.user._id;
 
   try {
     const user = await User.findById(userId);
@@ -47,11 +50,14 @@ const getEducation = async (req, res) => {
     res
       .status(STATUS_SERVER_ERROR)
       .json({ message: "Error fetching education details" });
+  } finally {
+    logger.info("Education Retrive API Called");
   }
 };
 
 const updateEducation = async (req, res) => {
-  const { userId, educationId, education } = req.body;
+  const { educationId, education } = req.body;
+  const userId = req.user._id;
 
   try {
     const user = await User.findById(userId);
@@ -81,11 +87,14 @@ const updateEducation = async (req, res) => {
     res
       .status(STATUS_SERVER_ERROR)
       .json({ message: "Error updating education" });
+  } finally {
+    logger.info("Education Update API Called");
   }
 };
 
 const deleteEducation = async (req, res) => {
-  const { userId, educationId } = req.body;
+  const { educationId } = req.body;
+  const userId = req.user._id;
 
   try {
     const user = await User.findById(userId);
@@ -108,12 +117,15 @@ const deleteEducation = async (req, res) => {
     res
       .status(STATUS_SERVER_ERROR)
       .json({ message: "Error deleting education" });
+  } finally {
+    logger.info("Education Delete API Called");
   }
 };
 
 // Professional CRUD operations
 const addProfessional = async (req, res) => {
-  const { userId, professional } = req.body;
+  const { professional } = req.body;
+  const userId = req.user._id;
 
   try {
     const user = await User.findById(userId);
@@ -134,11 +146,13 @@ const addProfessional = async (req, res) => {
     res
       .status(STATUS_SERVER_ERROR)
       .json({ message: "Error adding professional details" });
+  } finally {
+    logger.info("Professional Details Added API Called");
   }
 };
 
 const getProfessional = async (req, res) => {
-  const { userId } = req.params;
+  const userId = req.user._id;
 
   try {
     const user = await User.findById(userId);
@@ -153,11 +167,14 @@ const getProfessional = async (req, res) => {
     res
       .status(STATUS_SERVER_ERROR)
       .json({ message: "Error fetching professional details" });
+  } finally {
+    logger.info("Professional Details Retrive API Called");
   }
 };
 
 const updateProfessional = async (req, res) => {
-  const { userId, professionalId, professional } = req.body;
+  const { professionalId, professional } = req.body;
+  const userId = req.user._id;
 
   try {
     const user = await User.findById(userId);
@@ -190,11 +207,14 @@ const updateProfessional = async (req, res) => {
     res
       .status(STATUS_SERVER_ERROR)
       .json({ message: "Error updating professional details" });
+  } finally {
+    logger.info("Professional Details Update API Called");
   }
 };
 
 const deleteProfessional = async (req, res) => {
-  const { userId, professionalId } = req.body;
+  const { professionalId } = req.body;
+  const userId = req.user._id;
 
   try {
     const user = await User.findById(userId);
@@ -217,6 +237,8 @@ const deleteProfessional = async (req, res) => {
     res
       .status(STATUS_SERVER_ERROR)
       .json({ message: "Error deleting professional details" });
+  } finally {
+    logger.info("Professional Details Delete API Called");
   }
 };
 
@@ -247,6 +269,8 @@ const followUser = async (req, res) => {
     res
       .status(STATUS_SERVER_ERROR)
       .json({ message: error.message || ERRORS.SERVER.INTERNAL_ERROR });
+  } finally {
+    logger.info("Follow User API Called");
   }
 };
 
@@ -283,6 +307,8 @@ const unfollowUser = async (req, res) => {
     res
       .status(STATUS_SERVER_ERROR)
       .json({ message: error.message || ERRORS.SERVER.INTERNAL_ERROR });
+  } finally {
+    logger.info("Unfollow User API Called");
   }
 };
 
@@ -302,6 +328,8 @@ const getFollowers = async (req, res) => {
     res
       .status(STATUS_SERVER_ERROR)
       .json({ message: error.message || ERRORS.SERVER.INTERNAL_ERROR });
+  } finally {
+    logger.info("Get Followers API Called");
   }
 };
 
@@ -321,6 +349,8 @@ const getFollowing = async (req, res) => {
     res
       .status(STATUS_SERVER_ERROR)
       .json({ message: error.message || ERRORS.SERVER.INTERNAL_ERROR });
+  } finally {
+    logger.info("Get Following API Called");
   }
 };
 
@@ -345,6 +375,8 @@ const getRecommendationList = async (req, res) => {
     res
       .status(STATUS_SERVER_ERROR)
       .json({ message: error.message || ERRORS.SERVER.INTERNAL_ERROR });
+  } finally {
+    logger.info("Get Recommendation List API Called");
   }
 };
 

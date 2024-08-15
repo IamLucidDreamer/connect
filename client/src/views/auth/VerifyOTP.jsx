@@ -132,7 +132,7 @@ const VerifyOTP = () => {
                           OTPLength={6}
                           otpType="number"
                           disabled={false}
-                          secure
+                          secure={false}
                         />
                       </div>
                       <CustomValidationErrorMessage

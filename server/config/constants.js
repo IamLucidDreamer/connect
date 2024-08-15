@@ -39,6 +39,7 @@ module.exports = {
             AUTHENTICATION_FAILED: 'Authentication failed. Invalid credentials.',
             TOKEN_MISSING: 'Authentication token is missing or invalid.',
             ACCESS_DENIED: 'Access denied. You do not have permission to perform this action.',
+            NOT_AUTHORIZED: 'You are not authorized to perform this action.',
         },
         SERVER: {
             INTERNAL_ERROR: 'Internal server error. Please try again later.',

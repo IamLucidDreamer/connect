@@ -67,7 +67,7 @@ const Header = () => {
                 <div className="w-full bg-white px-2 absolute -bottom-16 rounded shadow-md hidden duration-300 group-hover:block">
                   <button
                     className="hover:opacity-60 w-full text-left py-1"
-                    onClick={() => navigate("/profile")}
+                    onClick={() => navigate("/dashboard/profile")}
                   >
                     Profile
                   </button>

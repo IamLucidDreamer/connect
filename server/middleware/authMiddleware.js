@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { STATUS_UNAUTHORIZED, ERRORS } = require('../config/constants');
+const logger = require('../utils/logger');
 
 const protect = async (req, res, next) => {
     let token;
@@ -11,11 +12,13 @@ const protect = async (req, res, next) => {
             req.user = await User.findById(decoded.id).select('-password');
             next();
         } catch (error) {
+            logger.error(error.message);
             res.status(STATUS_UNAUTHORIZED).json({ message: ERRORS.AUTH.NOT_AUTHORIZED });
         }
     }
 
     if (!token) {
+        logger.error(ERRORS.AUTH.NO_TOKEN);
         res.status(STATUS_UNAUTHORIZED).json({ message: ERRORS.AUTH.NOT_AUTHORIZED });
     }
 };

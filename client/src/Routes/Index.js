@@ -15,7 +15,7 @@ const ForgotPassword = lazy(() => import("../views/auth/ForgotPassword"));
 // const CompleteProfile = lazy(() => import("../views/auth/CompleteProfile"))
 
 const MainPage = lazy(() => import("../views/website/Home"));
-// const DashboardProfile = lazy(() => import("../views/dashboardPages/Profile"))
+const DashboardProfile = lazy(() => import("../views/dashboardPages/Profile"))
 
 const router = createBrowserRouter([
   {
@@ -51,18 +51,8 @@ const router = createBrowserRouter([
     element: <Dashboard />,
     children: [
       {
-        path: "/dashboard/blogs/:blogId",
-        element: (
-          <button
-            className="p-4 bg-primary text-white"
-            onClick={() => {
-              localStorage.clear();
-              window.location.reload();
-            }}
-          >
-            Logout
-          </button>
-        ),
+        path: "profile",
+        element: <DashboardProfile/>,
       },
     ],
   },
