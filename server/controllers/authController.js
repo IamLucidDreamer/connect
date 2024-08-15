@@ -62,6 +62,7 @@ const registerUser = async (req, res) => {
             });
         
             await organization.save();
+            await User.findByIdAndUpdate(user._id, { organization: organization._id });
         }
 
         // Send OTP to user's email
