@@ -35,6 +35,11 @@ module.exports = {
             UNAUTHORIZED: 'You are not authorized to perform this action.',
             NO_TOKEN: 'Access denied. No token provided.',
         },
+        ORGANIZATION: {
+            ORGANIZATION_EXISTS: 'Organization already exists with the provided name.',
+            NOT_FOUND: 'Organization not found.',
+            UNAUTHORIZED: 'You are not authorized to perform this action.',
+        },
         AUTH: {
             AUTHENTICATION_FAILED: 'Authentication failed. Invalid credentials.',
             TOKEN_MISSING: 'Authentication token is missing or invalid.',

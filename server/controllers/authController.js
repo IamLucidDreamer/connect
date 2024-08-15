@@ -13,6 +13,7 @@ const {
     ACCESS_TOKEN_EXPIRATION,
 } = require('../config/constants');
 const sendEmail = require("../utils/sendEmails");
+const Organization = require("../models/Organization");
 
 const generateAccessToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -27,14 +28,20 @@ const generateRefreshToken = (user) => {
 };
 
 const registerUser = async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, organizationName, organizationDescription , email, password } = req.body;
 
     try {
         const userExists = await User.findOne({ email });
-
+        const organizationExists = await Organization.findOne({ name : organizationName});
+        
         if (userExists) {
             logger.warn(ERRORS.USER.USER_EXISTS);
             return res.status(STATUS_BAD_REQUEST).json({ message: ERRORS.USER.USER_EXISTS });
+        }
+
+        if(organizationExists){
+            logger.warn(ERRORS.ORGANIZATION.ORGANIZATION_EXISTS);
+            return res.status(STATUS_BAD_REQUEST).json({ message: ERRORS.ORGANIZATION.ORGANIZATION_EXISTS });
         }
 
         const user = await User.create({
@@ -45,6 +52,17 @@ const registerUser = async (req, res) => {
 
         const otp = user.generateOTP();
         await user.save();
+        
+        if(organizationName){
+            const organization = new Organization({
+                name: organizationName,
+                description: 'Default Organization' || organizationDescription,
+                admin: user._id,
+                members: [user._id],
+            });
+        
+            await organization.save();
+        }
 
         // Send OTP to user's email
         await sendEmail(user.email, 'Email Verification OTP', '../templates/otpEmail.html', { OTP: otp });
