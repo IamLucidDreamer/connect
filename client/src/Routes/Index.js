@@ -4,7 +4,6 @@ import React, { lazy, Suspense } from "react";
 import ProtectedRoute from "./ProtectedRoute";
 import Loader from "../components/loader/index";
 import Dashboard from "../views/layout/Dashboard";
-// import UserProfile from "../views/layout/UserProfile";
 import ErrorBoundary from "../components/errors/ErrorHandler";
 
 const SignUp = lazy(() => import("../views/auth/Signup"));
@@ -16,6 +15,7 @@ const ForgotPassword = lazy(() => import("../views/auth/ForgotPassword"));
 
 const MainPage = lazy(() => import("../views/website/Home"));
 const DashboardProfile = lazy(() => import("../views/dashboardPages/Profile"))
+const Feed = lazy(() => import("../views/dashboardPages/Feed"))
 
 const router = createBrowserRouter([
   {
@@ -50,6 +50,10 @@ const router = createBrowserRouter([
     path: "/dashboard",
     element: <Dashboard />,
     children: [
+      {
+        path: "",
+        element: <Feed/>,
+      },
       {
         path: "profile",
         element: <DashboardProfile/>,

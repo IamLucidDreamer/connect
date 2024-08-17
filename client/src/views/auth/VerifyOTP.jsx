@@ -63,7 +63,7 @@ const VerifyOTP = () => {
         dispatch(setUser(response?.data?.data));
         setAuthToken(response?.data?.data?.accessToken);
         setRefreshToken(response?.data?.data?.refreshToken);
-        navigate("/dashboard");
+        navigate("/dashboard/profile");
       }
       console.log("response", response);
     } catch (err) {

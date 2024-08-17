@@ -8,8 +8,14 @@ import AuthLayout from "../layout/AuthLayout";
 import AppLogo from "../../components/images/AppIcon";
 import image from "../../assets/images/login.jpg";
 import { Link, useNavigate } from "react-router-dom";
-import {useDispatch} from "react-redux";
-import { KeyIcon, UserIcon, MailIcon } from "@heroicons/react/outline";
+import { useDispatch } from "react-redux";
+import {
+  KeyIcon,
+  UserIcon,
+  MailIcon,
+  LibraryIcon,
+  PencilIcon,
+} from "@heroicons/react/outline";
 import { signup } from "../../services/authService";
 import { setUser } from "../../store/actions/userActions";
 
@@ -25,30 +31,82 @@ const signUpalidation = Yup.object({
     .min(8, "The Password length should be atleast 8 characters"),
 });
 
+const organizationList = [
+  {
+    id: 1,
+    name: "IIT Madras",
+    email: "iitmadras.ac.in",
+  },
+  {
+    id: 2,
+    name: "IIT Bombay",
+    email: "iitb.ac.in",
+  },
+  {
+    id: 3,
+    name: "IIT Delhi",
+    email: "iitd.ac.in",
+  },
+  {
+    id: 4,
+    name: "IIT Kanpur",
+    email: "iitk.ac.in",
+  },
+  {
+    id: 5,
+    name: "IIT Kharagpur",
+    email: "iitkgp.ac.in",
+  },
+  {
+    id: 6,
+    name: "IIT Roorkee",
+    email: "iitr.ac.in",
+  },
+  {
+    id: 7,
+    name: "NIT Allahabad",
+    email: "mnnit.ac.in",
+  },
+];
+
 const SignUp = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState(true);
 
-
   const handleSignUp = async (values, setErrors) => {
     if (!values.consent) {
       setErrors({ consent: "Please accept the terms of service." });
       return;
     }
+    if (
+      !selected &&
+      !values.organizationName.length === 0 &&
+      !values.organizationDescription.length === 0
+    ) {
+      setErrors({
+        organizationName: "Organization Name & Description are required.",
+      });
+      return;
+    }
     setLoading(true);
     try {
       const response = await signup(values);
-      if(response.status >= 200 && response.status < 300){
-        console.log(response)
+      if (response.status >= 200 && response.status < 300) {
         toast.success(response?.data?.message || "Sign Up Successful");
-        dispatch(setUser({email: values.email, userId: response?.data?.userId}));
+        dispatch(
+          setUser({ email: values.email, userId: response?.data?.userId })
+        );
         navigate("/verify-otp");
       }
     } catch (err) {
       console.error("Error : ", err);
-      toast.error(err?.response?.data?.error || err?.response?.data?.message || "Something went Wrong.");
+      toast.error(
+        err?.response?.data?.error ||
+          err?.response?.data?.message ||
+          "Something went Wrong."
+      );
     } finally {
       setLoading(false);
     }
@@ -99,7 +157,9 @@ const SignUp = () => {
             </div>
             <Formik
               initialValues={{
-                name: "",
+                organizationName: "",
+                organizationDescription: "",
+                organizationDescriptionname: "",
                 email: "",
                 password: "",
                 consent: false,
@@ -117,9 +177,7 @@ const SignUp = () => {
                         <UserIcon className="w-5 h-5" />
                         <input
                           id="name"
-                          placeholder={
-                            selected ? "Your Name" : "Organisation Name"
-                          }
+                          placeholder="Your Name"
                           className="p-2.5 text-lg rounded-lg gray-50 w-full focus:outline-none"
                           type="text"
                           value={values.name}
@@ -130,6 +188,62 @@ const SignUp = () => {
                         show={touched.name && errors.name ? true : false}
                         error={errors.name}
                       />
+                      {!selected && (
+                        <>
+                          <div className="gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg my-5 shadow-lg">
+                            <LibraryIcon className="w-5 h-5" />
+                            <select
+                              id="organizationName"
+                              name="organizationName"
+                              className="p-2.5 text-lg rounded-lg gray-50 w-full focus:outline-none"
+                              value={values.organizationName}
+                              onChange={handleChange}
+                            >
+                              <option value="" disabled selected>
+                                Select Your Organization
+                              </option>
+                              {organizationList.map((org) => (
+                                <option key={org.id} value={org.id}>
+                                  {org.name}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                          <CustomValidationErrorMessage
+                            show={
+                              touched.organizationName &&
+                              errors.organizationName
+                                ? true
+                                : false
+                            }
+                            error={errors.organizationName}
+                          />
+                        </>
+                      )}
+                      {!selected && (
+                        <>
+                          <div className="gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg my-5 shadow-lg">
+                            <PencilIcon className="w-5 h-5" />
+                            <textarea
+                              id="organizationDescription"
+                              name="organizationDescription"
+                              placeholder="Organization Description"
+                              className="p-2.5 text-lg rounded-lg gray-50 w-full focus:outline-none h-12"
+                              value={values.organizationDescription}
+                              onChange={handleChange}
+                            />
+                          </div>
+                          <CustomValidationErrorMessage
+                            show={
+                              touched.organizationDescription &&
+                              errors.organizationDescription
+                                ? true
+                                : false
+                            }
+                            error={errors.name}
+                          />
+                        </>
+                      )}
                       <div className="gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg my-5 shadow-lg">
                         <MailIcon className="w-5 h-5" />
                         <input
