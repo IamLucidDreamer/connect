@@ -229,7 +229,7 @@ const FeedCard = ({ id }) => {
 
 const Profile = () => {
   return (
-    <div className="sticky top-20">
+    <div className="sticky top-20 flex flex-col gap-5">
       <div className="rounded-lg border-gray-200 bg-white border-2 pb-2">
         <div className="flex flex-col relative pb- ">
           <img
@@ -270,13 +270,19 @@ const Profile = () => {
           </div>
         </div>
       </div>
+      <div className="rounded-lg border-gray-200 bg-white border-2 p-3">
+        <h4 className="text-left text-lg font-semibold">Recommendations</h4>
+      </div>
+      <div className="rounded-lg border-gray-200 bg-white border-2 p-3">
+        <h4 className="text-left text-lg font-semibold">Following</h4>
+      </div>
     </div>
   );
 };
 
 const OrganizationActivity = () => {
   return (
-    <div className="sticky top-20">
+    <div className="sticky top-20 flex gap-4 flex-col">
       <div className="rounded-lg border-gray-200 bg-white border-2 pb-2 px-3 py-2">
         <h4 className="text-left text-lg font-semibold">My Organization (5)</h4>
         <div className="flex flex-row items-center my-2">
@@ -338,7 +344,7 @@ const OrganizationActivity = () => {
       </div>
       {/* Recent Events */}
 
-      <div className="rounded-lg border-gray-200 bg-white border-2 pb-2 mt-2 px-3 py-2">
+      <div className="rounded-lg border-gray-200 bg-white border-2 pb-2 px-3 py-2">
         <p className="font-SourceSansProLight text-left text-sm font-semibold my-2">
           Events
         </p>
@@ -358,7 +364,7 @@ const OrganizationActivity = () => {
           </sm>
         </div>
         <p className="font-SourceSansProLight text-left text-sm font-semibold my-2">
-         Sub-Groups
+          Sub-Groups
         </p>
         <div className="flex flex-row align-middle items-center mb-1">
           <sm className="ml-2 flex-grow text-left text-sm font-SourceSansProSemibold text-gray-600">
