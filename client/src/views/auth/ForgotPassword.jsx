@@ -37,6 +37,8 @@ const ForgotPassword = () => {
         toast.success(
           `OTP Sent Succesfully to ${values.email}`
         );
+        sessionStorage.setItem("email", values.email);
+        sessionStorage.setItem("userId", response.data.userId);
         navigate("/new-password", { state: { values } });
       }
     } catch (err) {

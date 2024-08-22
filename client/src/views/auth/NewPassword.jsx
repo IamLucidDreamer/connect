@@ -6,15 +6,14 @@ import { toast } from "react-toastify";
 
 import CustomValidationErrorMessage from "../../components/errors/CustomValidationErrorMessage";
 import Loader from "../../components/loader/index";
-import { forgotPassword, sendOtp } from "../../services/authService";
+import { forgotPassword, resetPassword } from "../../services/authService";
 import AuthLayout from "../layout/AuthLayout";
-import AppLogo from "../../components/images/AppLogo";
+import AppIcon from "../../components/images/AppIcon";
 import image from "../../assets/images/verify_otp_bg.jpg";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { setUser } from "../../store/actions/userActions";
 import { useDispatch } from "react-redux";
 import { KeyIcon, CheckIcon } from "@heroicons/react/outline";
-import { useSelector } from "react-redux";
 
 const newPassworValidation = Yup.object({
   otp: Yup.string()
@@ -34,8 +33,6 @@ const NewPassword = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const appInApp = useSelector((state) => state.appInApp.appInApp);
-
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
 
@@ -48,9 +45,9 @@ const NewPassword = () => {
   const resenOTP = async () => {
     setResendLoading(true);
     try {
-      const response = await sendOtp(
-        `${state.values.countryCode}${state.values.phoneNumber}`
-      );
+      const response = await forgotPassword({
+        email: sessionStorage.getItem("email"),
+      });
       const { status } = response;
       if (status >= 200 && status < 300) {
         toast.success(
@@ -66,23 +63,15 @@ const NewPassword = () => {
 
   const handleNewPassword = async (values) => {
     setLoading(true);
-    const data = { ...state.values, ...values };
+    const data = { userId: sessionStorage.getItem("userId"), ...values };
     try {
-      const response = await forgotPassword(data);  
+      const response = await resetPassword(data);
       const { status } = response;
       if (status >= 200 && status < 300) {
-        if (appInApp) {
-          navigate(
-            `/login-success?app_in_app=true&auth_token=${response?.data?.token}&user_id=${response?.data?.data?._id}`
-          );
-        } else {
-          dispatch(setUser(response?.data?.data));
-          localStorage.setItem("authToken", response?.data?.token);
-          navigate("/dashboard/predictor");
-        }
-        toast.success(
-          "Password Reset Succesfully, Welcome back to Career Kick"
-        );
+        dispatch(setUser(response?.data?.data));
+        localStorage.setItem("authToken", response?.data?.token);
+        navigate("/login");
+        toast.success("Password Reset Succesfully, Welcome back to Alumns");
       }
     } catch (err) {
       console.error("Error : ", err);
@@ -102,7 +91,7 @@ const NewPassword = () => {
         }
         form={
           <div className="w-11/12 lg:w-10/12 xl:w-2/3 flex flex-col items-center justify-center max-w-sm">
-            <AppLogo
+            <AppIcon
               width={"250px"}
               height={"250px"}
               classname={"mx-auto mb-4"}

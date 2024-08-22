@@ -43,6 +43,16 @@ export const forgotPassword = async (values) =>
       .catch(reject);
   });
 
+  export const resetPassword = async (values) =>
+    await new Promise((resolve, reject) => {
+      server
+        .post("/auth/reset-password", values)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch(reject);
+    });
+
 export const login = async (values) =>
   await new Promise((resolve, reject) => {
     server

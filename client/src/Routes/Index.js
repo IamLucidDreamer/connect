@@ -10,7 +10,7 @@ const SignUp = lazy(() => import("../views/auth/Signup"));
 const Login = lazy(() => import("../views/auth/Login"));
 const VerifyOTP = lazy(() => import("../views/auth/VerifyOTP"));
 const ForgotPassword = lazy(() => import("../views/auth/ForgotPassword"));
-// const NewPassword = lazy(() => import("../views/auth/NewPassword"))
+const NewPassword = lazy(() => import("../views/auth/NewPassword"))
 // const CompleteProfile = lazy(() => import("../views/auth/CompleteProfile"))
 
 const MainPage = lazy(() => import("../views/website/Home"));
@@ -38,10 +38,10 @@ const router = createBrowserRouter([
     path: "/forgot-password",
     element: <ForgotPassword />,
   },
-  // {
-  //     path: "/new-password",
-  //     element: <NewPassword />,
-  // },
+  {
+      path: "/new-password",
+      element: <NewPassword />,
+  },
   // {
   //     path: "/complete-profile",
   //     element: <CompleteProfile />,
