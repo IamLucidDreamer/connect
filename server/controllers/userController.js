@@ -7,6 +7,26 @@ const {
 } = require("../config/constants");
 const logger = require("../utils/logger");
 
+const getUserDetails = async (req, res) => {
+  const {userId} = req.params;
+  try{
+    const user = await User.findById(userId)
+    if(!user){
+      return res.status(STATUS_BAD_REQUEST).json({message: "User not found"})
+    }
+    delete user.password;
+    res.status(STATUS_SUCCESS).json({user})
+  }
+  catch (error) {
+    logger.error(error.message);
+    res
+      .status(STATUS_SERVER_ERROR)
+      .json({ message: "Error fetching User details" });
+  } finally {
+    logger.info("Get User Details API Called");
+  }
+}
+
 // Education CRUD operations
 const addEducation = async (req, res) => {
   const { education } = req.body;
@@ -381,6 +401,7 @@ const getRecommendationList = async (req, res) => {
 };
 
 module.exports = {
+  getUserDetails,
   addEducation,
   getEducation,
   updateEducation,

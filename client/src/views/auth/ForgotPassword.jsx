@@ -23,7 +23,7 @@ const ForgotPassword = () => {
 
   useEffect(() => {
     const authToken = getAuthToken();
-    if (authToken?.length) {
+    if ( authToken?.length && authToken !== "undefined") {
       navigate("/dashboard");
     }
   }, []);
