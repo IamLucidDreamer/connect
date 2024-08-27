@@ -7,17 +7,16 @@ const {
 } = require("../config/constants");
 const logger = require("../utils/logger");
 
-const getUserDetails = async (req, res) => {
-  const {userId} = req.params;
-  try{
-    const user = await User.findById(userId)
-    if(!user){
-      return res.status(STATUS_BAD_REQUEST).json({message: "User not found"})
+const getUser = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(STATUS_BAD_REQUEST).json({ message: "User not found" });
     }
     delete user.password;
-    res.status(STATUS_SUCCESS).json({user})
-  }
-  catch (error) {
+    res.status(STATUS_SUCCESS).json({ user });
+  } catch (error) {
     logger.error(error.message);
     res
       .status(STATUS_SERVER_ERROR)
@@ -25,7 +24,27 @@ const getUserDetails = async (req, res) => {
   } finally {
     logger.info("Get User Details API Called");
   }
-}
+};
+
+const updateUser = async (req, res) => {
+  const userId = req.params.userId;
+  const { user } = req.body;
+
+  try {
+    const userToUpdate = await User.findById(userId);
+    const updatedUserData = { ...userToUpdate, ...user };
+    userToUpdate = updatedUserData;
+    await userToUpdate.save();
+    res.status(STATUS_SUCCESS).json({ message: "User updated successfully" });
+  } catch (error) {
+    logger.error(error.message);
+    res
+      .status(STATUS_SERVER_ERROR)
+      .json({ message: "Error updating user details" });
+  } finally {
+    logger.info("User Update API Called");
+  }
+};
 
 // Education CRUD operations
 const addEducation = async (req, res) => {
@@ -401,7 +420,8 @@ const getRecommendationList = async (req, res) => {
 };
 
 module.exports = {
-  getUserDetails,
+  getUser,
+  updateUser,
   addEducation,
   getEducation,
   updateEducation,

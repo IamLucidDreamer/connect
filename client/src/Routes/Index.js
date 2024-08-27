@@ -15,6 +15,7 @@ const NewPassword = lazy(() => import("../views/auth/NewPassword"))
 
 const MainPage = lazy(() => import("../views/website/Home"));
 const DashboardProfile = lazy(() => import("../views/dashboardPages/Profile"))
+const DashboardEditProfile = lazy(() => import("../views/dashboardPages/EditProfile"))
 const Feed = lazy(() => import("../views/dashboardPages/Feed"))
 
 const router = createBrowserRouter([
@@ -57,6 +58,10 @@ const router = createBrowserRouter([
       {
         path: "profile",
         element: <DashboardProfile/>,
+      },
+      {
+        path: "profile/edit",
+        element: <DashboardEditProfile/>,
       },
     ],
   },

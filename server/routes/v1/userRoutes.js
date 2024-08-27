@@ -14,13 +14,15 @@ const {
     getFollowers,
     getFollowing,
     getRecommendationList,
-    getUserDetails,
+    getUser,
+    updateUser
 } = require('../../controllers/userController');
 
 const router = express.Router();
 
 // User routes
-router.get('/:userId', protect, getUserDetails)
+router.get('/:userId', protect, getUser)
+router.put('/update/:userId', protect, updateUser);
 
 // Education routes
 router.post('/education', protect, addEducation);

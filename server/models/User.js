@@ -20,6 +20,14 @@ const professionalSchema = new mongoose.Schema({
   description: String,
 });
 
+const addressSchema = new mongoose.Schema({
+  street: String,
+  city: String,
+  state: String,
+  country: String,
+  postalCode: String,
+});
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -39,7 +47,19 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 6,
   },
-
+  phone: {
+    type: String,
+    unique: true,
+    sparse: true,
+  },
+  profileImage: {
+    type: String,
+  },
+  bio: {
+    type: String, // A short bio for the user profile
+    maxlength: 500,
+  },
+  address: addressSchema,
   refreshTokens: [
     {
       token: String,
@@ -53,6 +73,10 @@ const userSchema = new mongoose.Schema({
     type: Date,
   },
   isEmailVerified: {
+    type: Boolean,
+    default: false,
+  },
+  isPhoneVerified: {
     type: Boolean,
     default: false,
   },
@@ -83,6 +107,15 @@ const userSchema = new mongoose.Schema({
   ],
   batch: {
     type: String,
+  },
+  socialLinks: {
+    linkedin: String,
+    twitter: String,
+    github: String,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 
