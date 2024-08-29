@@ -24,7 +24,7 @@ const loginValidation = Yup.object({
 const VerifyOTP = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [showOTP, setShowOTP] = useState(false);
+  const [showOTP, setShowOTP] = useState(true);
 
   const user = useSelector((state) => state?.user);
 
@@ -129,7 +129,7 @@ const VerifyOTP = () => {
                         />
                       </div>
                       <button onClick={() => setShowOTP(!showOTP)}>
-                        {showOTP ? "Show" : "Hide"} OTP OTP
+                        {showOTP ? "Show" : "Hide"} OTP
                       </button>
                       <CustomValidationErrorMessage
                         show={touched.otp && errors.otp ? true : false}

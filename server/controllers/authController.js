@@ -130,10 +130,11 @@ const verifyOTP = async (req, res) => {
       message: REGISTRATION_SUCCESS,
       _id: user._id,
       firstName : user.firstName,
-      middleName : user.middleName,
-      lastName : user.lastName,
+      middleName : user.middleName || null,
+      lastName : user.lastName || null,
       email: user.email,
       emailVerified: user.isEmailVerified,
+      phoneVerified: user.isPhoneVerified,
       accessToken,
       refreshToken,
     });

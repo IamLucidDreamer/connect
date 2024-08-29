@@ -35,8 +35,8 @@ const NewPassword = () => {
 
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
-  const [showOTP, setShowOTP] = useState(false);
-  const [showPassword , setShowPassword] = useState(false);
+  const [showOTP, setShowOTP] = useState(true);
+  const [showPassword , setShowPassword] = useState(true);
 
   useEffect(() => {
     if (!state) {
