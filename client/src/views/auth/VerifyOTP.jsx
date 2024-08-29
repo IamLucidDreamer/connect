@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { setUser } from "../../store/actions/userActions";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { verifyOtp , reSendOtp} from "../../services/authService";
+import { verifyOtp, reSendOtp } from "../../services/authService";
 import { setAuthToken, setRefreshToken } from "../../helpers/auth";
 
 const loginValidation = Yup.object({
@@ -24,6 +24,7 @@ const loginValidation = Yup.object({
 const VerifyOTP = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [showOTP, setShowOTP] = useState(false);
 
   const user = useSelector((state) => state?.user);
 
@@ -59,7 +60,7 @@ const VerifyOTP = () => {
       };
       const response = await verifyOtp(data);
       if (response?.data) {
-        toast.success(response?.data?.message ||  "OTP Verified Successfully");
+        toast.success(response?.data?.message || "OTP Verified Successfully");
         dispatch(setUser(response?.data?.data));
         setAuthToken(response?.data?.data?.accessToken);
         setRefreshToken(response?.data?.data?.refreshToken);
@@ -70,7 +71,6 @@ const VerifyOTP = () => {
       console.error("Error : ", err);
       toast.error(err?.response?.data?.error || "Something went Wrong");
     }
-
     setLoading(false);
   };
 
@@ -97,14 +97,7 @@ const VerifyOTP = () => {
               validationSchema={loginValidation}
               onSubmit={(values) => handleSignUp(values)}
             >
-              {({
-                values,
-                touched,
-                errors,
-                setFieldValue,
-                handleChange,
-                handleSubmit,
-              }) => {
+              {({ values, touched, errors, setFieldValue, handleSubmit }) => {
                 return (
                   <>
                     <div className="w-11/12">
@@ -132,9 +125,12 @@ const VerifyOTP = () => {
                           OTPLength={6}
                           otpType="number"
                           disabled={false}
-                          secure={false}
+                          secure={showOTP}
                         />
                       </div>
+                      <button onClick={() => setShowOTP(!showOTP)}>
+                        {showOTP ? "Show" : "Hide"} OTP OTP
+                      </button>
                       <CustomValidationErrorMessage
                         show={touched.otp && errors.otp ? true : false}
                         error={errors.otp}

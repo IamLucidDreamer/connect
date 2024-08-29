@@ -15,6 +15,7 @@ import {
   MailIcon,
   LibraryIcon,
   PencilIcon,
+  EyeIcon,
 } from "@heroicons/react/outline";
 import { signup } from "../../services/authService";
 import { setUser } from "../../store/actions/userActions";
@@ -74,6 +75,7 @@ const SignUp = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSignUp = async (values, setErrors) => {
     if (!values.consent) {
@@ -265,10 +267,11 @@ const SignUp = () => {
                           id="password"
                           placeholder="Password"
                           className="p-2.5 text-lg rounded-lg gray-50 w-full focus:outline-none"
-                          type="password"
+                          type={showPassword ? "text" : "password" }
                           value={values.password}
                           onChange={handleChange}
                         />
+                        <EyeIcon onClick={() => setShowPassword(!showPassword)} className="w-5 h-5 cursor-pointer" />
                       </div>
                       <CustomValidationErrorMessage
                         show={

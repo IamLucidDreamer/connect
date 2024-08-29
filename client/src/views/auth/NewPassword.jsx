@@ -13,7 +13,7 @@ import image from "../../assets/images/verify_otp_bg.jpg";
 import { useLocation, useNavigate } from "react-router-dom";
 import { setUser } from "../../store/actions/userActions";
 import { useDispatch } from "react-redux";
-import { KeyIcon, CheckIcon } from "@heroicons/react/outline";
+import { KeyIcon, CheckIcon, EyeIcon } from "@heroicons/react/outline";
 
 const newPassworValidation = Yup.object({
   otp: Yup.string()
@@ -35,6 +35,8 @@ const NewPassword = () => {
 
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
+  const [showOTP, setShowOTP] = useState(false);
+  const [showPassword , setShowPassword] = useState(false);
 
   useEffect(() => {
     if (!state) {
@@ -117,7 +119,7 @@ const NewPassword = () => {
                   <>
                     <div className="w-11/12">
                       <h1 className="text-lg text-secondary">
-                        {`Enter the OTP sent to : ${
+                        {`Enter the OTP sent to your registered Email Address ${
                           state?.values?.countryCode || ""
                         }${state?.values?.phoneNumber || ""}`}
                       </h1>
@@ -142,9 +144,12 @@ const NewPassword = () => {
                           OTPLength={6}
                           otpType="number"
                           disabled={false}
-                          secure
+                          secure={showOTP}
                         />
                       </div>
+                      <button onClick={() => setShowOTP(!showOTP)}>
+                        {showOTP ? "Show" : "Hide"} OTP
+                      </button>
                       <CustomValidationErrorMessage
                         show={touched.otp && errors.otp ? true : false}
                         error={errors.otp}
@@ -155,10 +160,11 @@ const NewPassword = () => {
                           id="newPassword"
                           placeholder="New Password"
                           className="p-2.5 text-lg rounded-lg bg-gray-100 w-full focus:outline-none"
-                          type="password"
+                          type={showPassword ? "text" : "password"}
                           value={values.newPassword}
                           onChange={handleChange}
                         />
+                        <EyeIcon onClick={() => setShowPassword(!showPassword)} className="w-5 h-5 cursor-pointer" />
                       </div>
                       <CustomValidationErrorMessage
                         show={
@@ -174,10 +180,11 @@ const NewPassword = () => {
                           id="confirmPassword"
                           placeholder="Confirm Password"
                           className="p-2.5 text-lg rounded-lg bg-gray-100 w-full focus:outline-none"
-                          type="password"
+                          type={showPassword ? "text" : "password"}
                           value={values.confirmPassword}
                           onChange={handleChange}
                         />
+                        <EyeIcon onClick={() => setShowPassword(!showPassword)} className="w-5 h-5 cursor-pointer" />
                       </div>
                       <CustomValidationErrorMessage
                         show={

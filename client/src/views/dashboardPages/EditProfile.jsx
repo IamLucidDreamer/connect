@@ -30,6 +30,7 @@ const EducationForm = () => {
     fieldOfStudy: "",
     startDate: "",
     endDate: "",
+    description: "",
   });
 
   const validationSchema = Yup.object({
@@ -40,6 +41,7 @@ const EducationForm = () => {
     endDate: Yup.date()
       .nullable()
       .min(Yup.ref("startDate"), "End Date cannot be before Start Date"),
+      description: Yup.string().required("Description is required"),
   });
 
   useEffect(() => {
@@ -234,6 +236,28 @@ const EducationForm = () => {
               </div>
             </div>
 
+            <div className="sm:col-span-4">
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Description
+              </label>
+              <div className="mt-2">
+                <Field
+                  as="textarea"
+                  name="description"
+                  className="block w-full flex-1 border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm bg-white border-gray-300 rounded-lg p-1"
+                  placeholder="Enter description (optional)"
+                />
+                <ErrorMessage
+                  name="description"
+                  component="div"
+                  className="text-red-600 text-sm mt-1"
+                />
+              </div>
+            </div>
+
             <div className="sm:col-span-full">
               <button
                 type="submit"
@@ -259,6 +283,7 @@ const EducationForm = () => {
               <strong>{edu.school}</strong> - {edu.degree} in {edu.fieldOfStudy}
               <br />
               {edu.startDate} to {edu.endDate || "Present"}
+              <em>{edu.description}</em>
             </p>
             <div className="mt-2 flex space-x-2">
               <button
@@ -306,7 +331,7 @@ const ProfessionalForm = () => {
     endDate: Yup.date()
       .nullable()
       .min(Yup.ref("startDate"), "End Date cannot be before Start Date"),
-    description: Yup.string(),
+    description: Yup.string().required("Description is required"),
   });
 
   useEffect(() => {

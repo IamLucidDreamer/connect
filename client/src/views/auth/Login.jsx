@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { KeyIcon, UserIcon } from "@heroicons/react/outline";
+import { EyeIcon, KeyIcon, UserIcon } from "@heroicons/react/outline";
 import { toast } from "react-toastify";
 
 import CustomValidationErrorMessage from "../../components/errors/CustomValidationErrorMessage";
@@ -26,6 +26,7 @@ const loginValidation = Yup.object({
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [showPassword , setShowPassword] = useState(false);
 
   const [loading, setLoading] = useState(false);
 
@@ -107,10 +108,11 @@ const Login = () => {
                           id="password"
                           placeholder="Password"
                           className="p-2.5 text-lg rounded-lg bg-gray-50 w-full focus:outline-none"
-                          type="password"
+                          type={showPassword ? "text" : "password"}
                           value={values.password}
                           onChange={handleChange}
                         />
+                        <EyeIcon onClick={() => setShowPassword(!showPassword)} className="w-5 h-5 cursor-pointer" />
                       </div>
                       <CustomValidationErrorMessage
                         show={
