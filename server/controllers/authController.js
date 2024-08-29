@@ -128,6 +128,7 @@ const verifyOTP = async (req, res) => {
     logger.info(REGISTRATION_SUCCESS);
     res.status(STATUS_SUCCESS).json({
       message: REGISTRATION_SUCCESS,
+      data: {
       _id: user._id,
       firstName : user.firstName,
       middleName : user.middleName || null,
@@ -137,6 +138,7 @@ const verifyOTP = async (req, res) => {
       phoneVerified: user.isPhoneVerified,
       accessToken,
       refreshToken,
+      }
     });
   } catch (error) {
     logger.error(error.message || ERRORS.SERVER.INTERNAL_ERROR);
