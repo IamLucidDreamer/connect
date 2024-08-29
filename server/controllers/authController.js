@@ -308,7 +308,6 @@ const resetPassword = async (req, res) => {
       .json({ message: error.message || ERRORS.SERVER.INTERNAL_ERROR });
   } finally {
     logger.info("Password reset API called");
-    X;
   }
 };
 
