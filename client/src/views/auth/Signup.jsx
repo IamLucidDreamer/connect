@@ -16,12 +16,14 @@ import {
   LibraryIcon,
   PencilIcon,
   EyeIcon,
+  TagIcon,
+  UsersIcon,
 } from "@heroicons/react/outline";
 import { signup } from "../../services/authService";
 import { setUser } from "../../store/actions/userActions";
 
 const signUpalidation = Yup.object({
-  name: Yup.string()
+  firstName: Yup.string()
     .required("Name field is required")
     .min(3, "The Name length should be atleast 3 characters"),
   email: Yup.string()
@@ -162,6 +164,9 @@ const SignUp = () => {
                 organizationName: "",
                 organizationDescription: "",
                 organizationDescriptionname: "",
+                firstName: "",
+                middleName: "",
+                lastName: "",
                 email: "",
                 password: "",
                 consent: false,
@@ -178,17 +183,47 @@ const SignUp = () => {
                       <div className="gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg my-5 shadow-lg">
                         <UserIcon className="w-5 h-5" />
                         <input
-                          id="name"
-                          placeholder="Your Name"
+                          id="firstName"
+                          placeholder="First Name"
                           className="p-2.5 text-lg rounded-lg gray-50 w-full focus:outline-none"
                           type="text"
-                          value={values.name}
+                          value={values.firstName}
                           onChange={handleChange}
                         />
                       </div>
                       <CustomValidationErrorMessage
-                        show={touched.name && errors.name ? true : false}
-                        error={errors.name}
+                        show={touched.firstName && errors.firstName ? true : false}
+                        error={errors.firstName}
+                      />
+                      <div className="gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg my-5 shadow-lg">
+                        <TagIcon className="w-5 h-5" />
+                        <input
+                          id="middleName"
+                          placeholder="Middle Name"
+                          className="p-2.5 text-lg rounded-lg gray-50 w-full focus:outline-none"
+                          type="text"
+                          value={values.middleName}
+                          onChange={handleChange}
+                        />
+                      </div>
+                      <CustomValidationErrorMessage
+                        show={touched.middleName && errors.middleName ? true : false}
+                        error={errors.middleName}
+                      />
+                      <div className="gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg my-5 shadow-lg">
+                        <UsersIcon className="w-5 h-5" />
+                        <input
+                          id="lastName"
+                          placeholder="Last Name"
+                          className="p-2.5 text-lg rounded-lg gray-50 w-full focus:outline-none"
+                          type="text"
+                          value={values.lastName}
+                          onChange={handleChange}
+                        />
+                      </div>
+                      <CustomValidationErrorMessage
+                        show={touched.lastName && errors.lastName ? true : false}
+                        error={errors.lastName}
                       />
                       {!selected && (
                         <>

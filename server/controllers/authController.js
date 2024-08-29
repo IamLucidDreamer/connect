@@ -28,8 +28,15 @@ const generateRefreshToken = (user) => {
 };
 
 const registerUser = async (req, res) => {
-  const { name, organizationName, organizationDescription, email, password } =
-    req.body;
+  const {
+    firstName,
+    middleName,
+    lastName,
+    organizationName,
+    organizationDescription,
+    email,
+    password,
+  } = req.body;
 
   try {
     const userExists = await User.findOne({ email });
@@ -52,7 +59,9 @@ const registerUser = async (req, res) => {
     }
 
     const user = await User.create({
-      name,
+      firstName,
+      middleName,
+      lastName,
       email,
       password,
     });
@@ -120,7 +129,9 @@ const verifyOTP = async (req, res) => {
     res.status(STATUS_SUCCESS).json({
       message: REGISTRATION_SUCCESS,
       _id: user._id,
-      name: user.name,
+      firstName : user.firstName,
+      middleName : user.middleName,
+      lastName : user.lastName,
       email: user.email,
       emailVerified: user.isEmailVerified,
       accessToken,

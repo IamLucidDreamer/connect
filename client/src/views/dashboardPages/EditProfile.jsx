@@ -16,6 +16,10 @@ const Profile = () => {
 
 export default Profile;
 
+const editProfileForm = () => {
+  
+}
+
 const EducationForm = () => {
   const userId = useSelector((state) => state?.user?._id);
   const [educationList, setEducationList] = useState([]);
@@ -25,23 +29,37 @@ const EducationForm = () => {
 
   // State for form initial values
   const [formInitialValues, setFormInitialValues] = useState({
-    school: "",
-    degree: "",
-    fieldOfStudy: "",
-    startDate: "",
-    endDate: "",
-    description: "",
+    qualification: "",
+    program: "",
+    specialization: "",
+    programType: "",
+    university: "",
+    institute: "",
+    startYear: "",
+    completionYear: "",
+    percentageOrCGPA: "",
   });
 
   const validationSchema = Yup.object({
-    school: Yup.string().required("School name is required"),
-    degree: Yup.string().required("Degree is required"),
-    fieldOfStudy: Yup.string().required("Field of Study is required"),
-    startDate: Yup.date().required("Start Date is required").nullable(),
-    endDate: Yup.date()
-      .nullable()
-      .min(Yup.ref("startDate"), "End Date cannot be before Start Date"),
-      description: Yup.string().required("Description is required"),
+    qualification: Yup.string().required("Qualification is required"),
+    program: Yup.string().required("Program is required"),
+    specialization: Yup.string().required("Specialization is required"),
+    programType: Yup.string()
+      .oneOf(["regular", "parttime"], "Invalid Program Type")
+      .required("Program Type is required"),
+    university: Yup.string().required("University/Board is required"),
+    institute: Yup.string().required("Institute/School/College is required"),
+    startYear: Yup.number()
+      .required("Start Year is required")
+      .min(1900, "Invalid Year")
+      .max(new Date().getFullYear(), "Start Year cannot be in the future"),
+    completionYear: Yup.number()
+      .required("Completion Year is required")
+      .min(Yup.ref("startYear"), "Completion Year cannot be before Start Year")
+      .max(new Date().getFullYear(), "Completion Year cannot be in the future"),
+    percentageOrCGPA: Yup.number()
+      .min(0, "Percentage/CGPA cannot be less than 0")
+      .max(100, "Percentage cannot exceed 100"), // Assuming a max limit of 100 for percentage
   });
 
   useEffect(() => {
@@ -90,11 +108,15 @@ const EducationForm = () => {
     setIsEditMode(true);
     setEditEducationId(education._id);
     setFormInitialValues({
-      school: education.school,
-      degree: education.degree,
-      fieldOfStudy: education.fieldOfStudy,
-      startDate: education.startDate.split("T")[0],
-      endDate: education.endDate ? education.endDate.split("T")[0] : "",
+      qualification: education.qualification,
+      program: education.program,
+      specialization: education.specialization,
+      programType: education.programType,
+      university: education.university,
+      institute: education.institute,
+      startYear: education.startYear,
+      completionYear: education.completionYear,
+      percentageOrCGPA: education.percentageOrCGPA || "",
     });
   };
 
@@ -130,20 +152,20 @@ const EducationForm = () => {
           <Form className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="sm:col-span-4">
               <label
-                htmlFor="school"
+                htmlFor="qualification"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                School
+                Qualification
               </label>
               <div className="mt-2">
                 <Field
                   type="text"
-                  name="school"
-                  className="block w-full flex-1 border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm bg-white border-gray-300 rounded-lg p-1"
-                  placeholder="Enter your school"
+                  name="qualification"
+                  className="block w-full border-gray-300 rounded-lg p-1"
+                  placeholder="Enter your qualification"
                 />
                 <ErrorMessage
-                  name="school"
+                  name="qualification"
                   component="div"
                   className="text-red-600 text-sm mt-1"
                 />
@@ -152,20 +174,20 @@ const EducationForm = () => {
 
             <div className="sm:col-span-4">
               <label
-                htmlFor="degree"
+                htmlFor="program"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Degree
+                Program
               </label>
               <div className="mt-2">
                 <Field
                   type="text"
-                  name="degree"
-                  className="block w-full flex-1 border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm bg-white border-gray-300 rounded-lg p-1"
-                  placeholder="Enter your degree"
+                  name="program"
+                  className="block w-full border-gray-300 rounded-lg p-1"
+                  placeholder="Enter your program"
                 />
                 <ErrorMessage
-                  name="degree"
+                  name="program"
                   component="div"
                   className="text-red-600 text-sm mt-1"
                 />
@@ -174,20 +196,20 @@ const EducationForm = () => {
 
             <div className="sm:col-span-4">
               <label
-                htmlFor="fieldOfStudy"
+                htmlFor="specialization"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Field of Study
+                Specialization
               </label>
               <div className="mt-2">
                 <Field
                   type="text"
-                  name="fieldOfStudy"
-                  className="block w-full flex-1 border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm bg-white border-gray-300 rounded-lg p-1"
-                  placeholder="Enter your field of study"
+                  name="specialization"
+                  className="block w-full border-gray-300 rounded-lg p-1"
+                  placeholder="Enter your specialization"
                 />
                 <ErrorMessage
-                  name="fieldOfStudy"
+                  name="specialization"
                   component="div"
                   className="text-red-600 text-sm mt-1"
                 />
@@ -196,19 +218,23 @@ const EducationForm = () => {
 
             <div className="sm:col-span-4">
               <label
-                htmlFor="startDate"
+                htmlFor="programType"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Start Date
+                Program Type
               </label>
               <div className="mt-2">
                 <Field
-                  type="date"
-                  name="startDate"
-                  className="block w-full flex-1 border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm bg-white border-gray-300 rounded-lg p-1"
-                />
+                  as="select"
+                  name="programType"
+                  className="block w-full border-gray-300 rounded-lg p-1"
+                >
+                  <option value="">Select Program Type</option>
+                  <option value="regular">Regular</option>
+                  <option value="parttime">Part-time</option>
+                </Field>
                 <ErrorMessage
-                  name="startDate"
+                  name="programType"
                   component="div"
                   className="text-red-600 text-sm mt-1"
                 />
@@ -217,19 +243,20 @@ const EducationForm = () => {
 
             <div className="sm:col-span-4">
               <label
-                htmlFor="endDate"
+                htmlFor="university"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                End Date
+                University/Board
               </label>
               <div className="mt-2">
                 <Field
-                  type="date"
-                  name="endDate"
-                  className="block w-full flex-1 border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm bg-white border-gray-300 rounded-lg p-1"
+                  type="text"
+                  name="university"
+                  className="block w-full border-gray-300 rounded-lg p-1"
+                  placeholder="Enter your university/board"
                 />
                 <ErrorMessage
-                  name="endDate"
+                  name="university"
                   component="div"
                   className="text-red-600 text-sm mt-1"
                 />
@@ -238,20 +265,86 @@ const EducationForm = () => {
 
             <div className="sm:col-span-4">
               <label
-                htmlFor="description"
+                htmlFor="institute"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Description
+                Institute/School/College
               </label>
               <div className="mt-2">
                 <Field
-                  as="textarea"
-                  name="description"
-                  className="block w-full flex-1 border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm bg-white border-gray-300 rounded-lg p-1"
-                  placeholder="Enter description (optional)"
+                  type="text"
+                  name="institute"
+                  className="block w-full border-gray-300 rounded-lg p-1"
+                  placeholder="Enter your institute/school/college"
                 />
                 <ErrorMessage
-                  name="description"
+                  name="institute"
+                  component="div"
+                  className="text-red-600 text-sm mt-1"
+                />
+              </div>
+            </div>
+
+            <div className="sm:col-span-4">
+              <label
+                htmlFor="startYear"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Start Year
+              </label>
+              <div className="mt-2">
+                <Field
+                  type="number"
+                  name="startYear"
+                  className="block w-full border-gray-300 rounded-lg p-1"
+                  placeholder="Enter start year"
+                />
+                <ErrorMessage
+                  name="startYear"
+                  component="div"
+                  className="text-red-600 text-sm mt-1"
+                />
+              </div>
+            </div>
+
+            <div className="sm:col-span-4">
+              <label
+                htmlFor="completionYear"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Completion Year
+              </label>
+              <div className="mt-2">
+                <Field
+                  type="number"
+                  name="completionYear"
+                  className="block w-full border-gray-300 rounded-lg p-1"
+                  placeholder="Enter completion year"
+                />
+                <ErrorMessage
+                  name="completionYear"
+                  component="div"
+                  className="text-red-600 text-sm mt-1"
+                />
+              </div>
+            </div>
+
+            <div className="sm:col-span-4">
+              <label
+                htmlFor="percentageOrCGPA"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Percentage/CGPA
+              </label>
+              <div className="mt-2">
+                <Field
+                  type="number"
+                  name="percentageOrCGPA"
+                  className="block w-full border-gray-300 rounded-lg p-1"
+                  placeholder="Enter percentage or CGPA"
+                />
+                <ErrorMessage
+                  name="percentageOrCGPA"
                   component="div"
                   className="text-red-600 text-sm mt-1"
                 />
@@ -261,7 +354,7 @@ const EducationForm = () => {
             <div className="sm:col-span-full">
               <button
                 type="submit"
-                className="mt-4 inline-flex justify-center rounded-md bg-indigo-600 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="mt-4 inline-flex justify-center rounded-md bg-indigo-600 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
                 disabled={loading}
               >
                 {loading ? "Submitting..." : isEditMode ? "Update" : "Submit"}
@@ -280,10 +373,14 @@ const EducationForm = () => {
         {educationList.map((edu) => (
           <li key={edu._id} className="mb-4">
             <p className="text-gray-700">
-              <strong>{edu.school}</strong> - {edu.degree} in {edu.fieldOfStudy}
+              <strong>{edu.qualification}</strong> - {edu.program} in{" "}
+              {edu.specialization}
               <br />
-              {edu.startDate} to {edu.endDate || "Present"}
-              <em>{edu.description}</em>
+              {edu.startYear} to {edu.completionYear || "Present"}
+              <br />
+              University/Board: {edu.university}, Institute: {edu.institute}
+              <br />
+              Percentage/CGPA: {edu.percentageOrCGPA}
             </p>
             <div className="mt-2 flex space-x-2">
               <button
@@ -306,6 +403,7 @@ const EducationForm = () => {
   );
 };
 
+
 const ProfessionalForm = () => {
   const userId = useSelector((state) => state?.user?._id);
   const [professionalList, setProfessionalList] = useState([]);
@@ -315,23 +413,33 @@ const ProfessionalForm = () => {
 
   // State for form initial values
   const [formInitialValues, setFormInitialValues] = useState({
-    company: "",
-    title: "",
+    currentEmployment: "",
+    employmentType: "",
+    companyName: "",
+    designation: "",
     location: "",
-    startDate: "",
-    endDate: "",
-    description: "",
+    startYear: "",
+    completionYear: "",
+    salaryBand: "",
   });
 
   const validationSchema = Yup.object({
-    company: Yup.string().required("Company name is required"),
-    title: Yup.string().required("Title is required"),
-    location: Yup.string(),
-    startDate: Yup.date().required("Start Date is required").nullable(),
-    endDate: Yup.date()
-      .nullable()
-      .min(Yup.ref("startDate"), "End Date cannot be before Start Date"),
-    description: Yup.string().required("Description is required"),
+    currentEmployment: Yup.string().required("Current Employment is required"),
+    employmentType: Yup.string()
+      .oneOf(["Regular", "Freelancer", "Contract", "Parttime"], "Invalid Employment Type")
+      .required("Employment Type is required"),
+    companyName: Yup.string().required("Company Name is required"),
+    designation: Yup.string().required("Designation is required"),
+    location: Yup.string().required("Location is required"),
+    startYear: Yup.number()
+      .required("Start Year is required")
+      .min(1900, "Invalid Year")
+      .max(new Date().getFullYear(), "Start Year cannot be in the future"),
+    completionYear: Yup.number()
+      .min(Yup.ref("startYear"), "Completion Year cannot be before Start Year")
+      .max(new Date().getFullYear(), "Completion Year cannot be in the future")
+      .nullable(),
+    salaryBand: Yup.string(), // Optional field
   });
 
   useEffect(() => {
@@ -380,12 +488,14 @@ const ProfessionalForm = () => {
     setIsEditMode(true);
     setEditProfessionalId(professional._id);
     setFormInitialValues({
-      company: professional.company,
-      title: professional.title,
+      currentEmployment: professional.currentEmployment,
+      employmentType: professional.employmentType,
+      companyName: professional.companyName,
+      designation: professional.designation,
       location: professional.location,
-      startDate: professional.startDate.split("T")[0],
-      endDate: professional.endDate ? professional.endDate.split("T")[0] : "",
-      description: professional.description,
+      startYear: professional.startYear,
+      completionYear: professional.completionYear || "",
+      salaryBand: professional.salaryBand || "",
     });
   };
 
@@ -423,20 +533,20 @@ const ProfessionalForm = () => {
           <Form className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="sm:col-span-4">
               <label
-                htmlFor="company"
+                htmlFor="currentEmployment"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Company
+                Current Employment
               </label>
               <div className="mt-2">
                 <Field
                   type="text"
-                  name="company"
-                  className="block w-full flex-1 border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm bg-white border-gray-300 rounded-lg p-1"
-                  placeholder="Enter your company"
+                  name="currentEmployment"
+                  className="block w-full border-gray-300 rounded-lg p-1"
+                  placeholder="Enter your current employment"
                 />
                 <ErrorMessage
-                  name="company"
+                  name="currentEmployment"
                   component="div"
                   className="text-red-600 text-sm mt-1"
                 />
@@ -445,20 +555,69 @@ const ProfessionalForm = () => {
 
             <div className="sm:col-span-4">
               <label
-                htmlFor="title"
+                htmlFor="employmentType"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Title
+                Employment Type
+              </label>
+              <div className="mt-2">
+                <Field
+                  as="select"
+                  name="employmentType"
+                  className="block w-full border-gray-300 rounded-lg p-1"
+                >
+                  <option value="">Select Employment Type</option>
+                  <option value="Regular">Regular</option>
+                  <option value="Freelancer">Freelancer</option>
+                  <option value="Contract">Contract</option>
+                  <option value="Parttime">Part-time</option>
+                </Field>
+                <ErrorMessage
+                  name="employmentType"
+                  component="div"
+                  className="text-red-600 text-sm mt-1"
+                />
+              </div>
+            </div>
+
+            <div className="sm:col-span-4">
+              <label
+                htmlFor="companyName"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Company Name
               </label>
               <div className="mt-2">
                 <Field
                   type="text"
-                  name="title"
-                  className="block w-full flex-1 border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm bg-white border-gray-300 rounded-lg p-1"
-                  placeholder="Enter your title"
+                  name="companyName"
+                  className="block w-full border-gray-300 rounded-lg p-1"
+                  placeholder="Enter your company name"
                 />
                 <ErrorMessage
-                  name="title"
+                  name="companyName"
+                  component="div"
+                  className="text-red-600 text-sm mt-1"
+                />
+              </div>
+            </div>
+
+            <div className="sm:col-span-4">
+              <label
+                htmlFor="designation"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Designation
+              </label>
+              <div className="mt-2">
+                <Field
+                  type="text"
+                  name="designation"
+                  className="block w-full border-gray-300 rounded-lg p-1"
+                  placeholder="Enter your designation"
+                />
+                <ErrorMessage
+                  name="designation"
                   component="div"
                   className="text-red-600 text-sm mt-1"
                 />
@@ -476,7 +635,7 @@ const ProfessionalForm = () => {
                 <Field
                   type="text"
                   name="location"
-                  className="block w-full flex-1 border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm bg-white border-gray-300 rounded-lg p-1"
+                  className="block w-full border-gray-300 rounded-lg p-1"
                   placeholder="Enter your location"
                 />
                 <ErrorMessage
@@ -489,19 +648,20 @@ const ProfessionalForm = () => {
 
             <div className="sm:col-span-4">
               <label
-                htmlFor="startDate"
+                htmlFor="startYear"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Start Date
+                Start Year
               </label>
               <div className="mt-2">
                 <Field
-                  type="date"
-                  name="startDate"
-                  className="block w-full flex-1 border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm bg-white border-gray-300 rounded-lg p-1"
+                  type="number"
+                  name="startYear"
+                  className="block w-full border-gray-300 rounded-lg p-1"
+                  placeholder="Enter start year"
                 />
                 <ErrorMessage
-                  name="startDate"
+                  name="startYear"
                   component="div"
                   className="text-red-600 text-sm mt-1"
                 />
@@ -510,19 +670,20 @@ const ProfessionalForm = () => {
 
             <div className="sm:col-span-4">
               <label
-                htmlFor="endDate"
+                htmlFor="completionYear"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                End Date
+                Completion Year
               </label>
               <div className="mt-2">
                 <Field
-                  type="date"
-                  name="endDate"
-                  className="block w-full flex-1 border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm bg-white border-gray-300 rounded-lg p-1"
+                  type="number"
+                  name="completionYear"
+                  className="block w-full border-gray-300 rounded-lg p-1"
+                  placeholder="Enter completion year"
                 />
                 <ErrorMessage
-                  name="endDate"
+                  name="completionYear"
                   component="div"
                   className="text-red-600 text-sm mt-1"
                 />
@@ -531,20 +692,20 @@ const ProfessionalForm = () => {
 
             <div className="sm:col-span-4">
               <label
-                htmlFor="description"
+                htmlFor="salaryBand"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Description
+                Salary Band
               </label>
               <div className="mt-2">
                 <Field
-                  as="textarea"
-                  name="description"
-                  className="block w-full flex-1 border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm bg-white border-gray-300 rounded-lg p-1"
-                  placeholder="Enter description (optional)"
+                  type="text"
+                  name="salaryBand"
+                  className="block w-full border-gray-300 rounded-lg p-1"
+                  placeholder="Enter salary band (optional)"
                 />
                 <ErrorMessage
-                  name="description"
+                  name="salaryBand"
                   component="div"
                   className="text-red-600 text-sm mt-1"
                 />
@@ -554,7 +715,7 @@ const ProfessionalForm = () => {
             <div className="sm:col-span-full">
               <button
                 type="submit"
-                className="mt-4 inline-flex justify-center rounded-md bg-indigo-600 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="mt-4 inline-flex justify-center rounded-md bg-indigo-600 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
                 disabled={loading}
               >
                 {loading ? "Submitting..." : isEditMode ? "Update" : "Submit"}
@@ -573,11 +734,14 @@ const ProfessionalForm = () => {
         {professionalList.map((prof) => (
           <li key={prof._id} className="mb-4">
             <p className="text-gray-700">
-              <strong>{prof.company}</strong> - {prof.title} in {prof.location}
+              <strong>{prof.currentEmployment}</strong> - {prof.designation} at{" "}
+              {prof.companyName}
               <br />
-              {prof.startDate} to {prof.endDate || "Present"}
+              {prof.startYear} to {prof.completionYear || "Present"}
               <br />
-              <em>{prof.description}</em>
+              Employment Type: {prof.employmentType}, Location: {prof.location}
+              <br />
+              Salary Band: {prof.salaryBand || "N/A"}
             </p>
             <div className="mt-2 flex space-x-2">
               <button

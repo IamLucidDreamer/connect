@@ -30,7 +30,6 @@ function App() {
     const authToken = searchParams.get("auth_token");
     const userId = searchParams.get("user_id");
     const refCode = searchParams.get("ref_code");
-    console.log(refCode);
     if (refCode) {
       localStorage.setItem("ref_code", refCode);
     }
