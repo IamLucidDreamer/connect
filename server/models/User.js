@@ -3,36 +3,36 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const educationSchema = new mongoose.Schema({
-  qualification: { type: String, required: true }, 
-  program: { type: String, required: true }, 
-  specialization: { type: String, required: true }, 
-  programType: { type: String, required: true, enum: ["regular", "parttime"] }, 
-  university: { type: String, required: true }, 
-  institute: { type: String, required: true }, 
-  startYear: { type: Number, required: true }, 
-  completionYear: { type: Number, required: true }, 
-  percentageOrCGPA: { type: Number }, 
+  qualification: { type: String, required: true },
+  program: { type: String, required: true },
+  specialization: { type: String, required: true },
+  programType: { type: String, required: true, enum: ["regular", "parttime"] },
+  university: { type: String, required: true },
+  institute: { type: String, required: true },
+  startYear: { type: Number, required: true },
+  completionYear: { type: Number, required: true },
+  percentageOrCGPA: { type: Number },
 });
 
 const professionalSchema = new mongoose.Schema({
-  currentEmployment: { type: String, required: true }, 
+  currentEmployment: { type: String, required: true },
   employmentType: {
     type: String,
     required: true,
     enum: ["Regular", "Freelancer", "Contract", "Parttime"],
-  }, 
-  companyName: { type: String, required: true }, 
-  designation: { type: String, required: true }, 
-  location: { type: String, required: true }, 
-  startYear: { type: Number, required: true }, 
-  completionYear: { type: Number, required: true }, 
-  salaryBand: { type: String }, 
+  },
+  companyName: { type: String, required: true },
+  designation: { type: String, required: true },
+  location: { type: String, required: true },
+  startYear: { type: Number, required: true },
+  completionYear: { type: Number, required: true },
+  salaryBand: { type: String },
 });
 
 const userSchema = new mongoose.Schema({
-  firstName: { type: String, required: true }, 
-  middleName: { type: String }, 
-  lastName: { type: String }, 
+  firstName: { type: String, required: true },
+  middleName: { type: String },
+  lastName: { type: String },
   email: {
     type: String,
     required: true,
@@ -41,18 +41,21 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     match: [/.+@.+\..+/, "Please enter a valid email address"],
   },
-  gender: { type: String }, 
-  dateOfBirth: { type: Date }, 
-  mobileNumber: { type: String, unique: true, sparse: true }, 
-  maritalStatus: { type: String }, 
-  anniversaryDate: { type: Date }, 
+  gender: {
+    type: String,
+    enum: ["Male", "Female", "Non-binary", "Other", "Prefer not to say"],
+  },
+  dateOfBirth: { type: Date },
+  mobileNumber: { type: String, unique: true, sparse: true },
+  maritalStatus: { type: String },
+  anniversaryDate: { type: Date },
   password: {
     type: String,
     required: true,
     minlength: 6,
   },
   profileImage: { type: String },
-  bio: { type: String, maxlength: 500 }, 
+  bio: { type: String, maxlength: 500 },
   address: {
     street: { type: String },
     city: { type: String },
@@ -79,7 +82,9 @@ const userSchema = new mongoose.Schema({
   professional: [professionalSchema], // Professional Info
   followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-  organizations: [{ type: mongoose.Schema.Types.ObjectId, ref: "Organization" }],
+  organizations: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "Organization" },
+  ],
   batch: { type: String },
   socialLinks: {
     linkedin: String,
