@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Formik, Field, Form, ErrorMessage } from "formik";
-import * as Yup from "yup";
 import { toast } from "react-toastify";
-import server from "../../helpers/apiCall";
+import server from "../../../helpers/apiCall";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "../../store/actions/userActions";
+import { setUser } from "../../../store/actions/userActions";
 import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
@@ -228,7 +226,7 @@ const Profile = () => {
                   </div>
                 ))
               ) : (
-                <button className="px-4 py-2 bg-primary text-white rounded-md mx-auto">
+                <button className="px-4 py-2 bg-primary text-white rounded-md mx-auto" onClick={() => navigate("/dashboard/profile/education/edit")}>
                   Add Education
                 </button>
               )}

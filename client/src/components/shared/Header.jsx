@@ -22,27 +22,12 @@ const Header = () => {
   const dispatch = useDispatch();
 
   const [open, setOpen] = useState(false);
-  const [top, setTop] = useState(false);
 
   const user = useSelector((state) => state?.user);
-  const appInApp = useSelector((state) => state.appInApp.appInApp);
-
-  useEffect(() => {
-    window.addEventListener("scroll", () => {
-      if (window.pageYOffset > 100) {
-        setTop(true);
-      } else {
-        setTop(false);
-      }
-    });
-    return () => window.removeEventListener("scroll", setTop(false));
-  }, []);
 
   return (
     <div
-      className={`bg-white sticky top-0 z-50 duration-500 ${
-        top ? "shadow-lg" : "shadow-none"
-      }`}
+      className={"bg-white sticky top-0 z-50 duration-500 shadow-lg"}
       style={{ zIndex: 999 }}
     >
       <div className="container mx-auto px-2 lg:px-10 py-3">
@@ -56,11 +41,11 @@ const Header = () => {
                 Some Link
               </button>
             </Link>
-            {user?.name ? (
+            {user?.firstName ? (
               <div className="relative group">
                 <div className="w-45 flex gap-2 items-center capitalize rounded-full border-2 border-secondary border-opacity-50 cursor-pointer">
                   <h1 className="pl-2 truncate w-24 duration-500">
-                    {user?.name}
+                    {user?.firstName}
                   </h1>
                   <UserCircleIcon className="w-8 h-8 text-primary" />
                 </div>
@@ -92,16 +77,14 @@ const Header = () => {
               </button>
             )}
           </nav>
-          {!appInApp && (
-            <button
-              className="lg:hidden h-7 flex flex-col justify-between items-stretch"
-              onClick={() => setOpen(true)}
-            >
-              <div className="w-8 h-1 bg-secondary" />
-              <div className="w-8 h-1 bg-secondary" />
-              <div className="w-8 h-1 bg-secondary" />
-            </button>
-          )}
+          <button
+            className="lg:hidden h-7 flex flex-col justify-between items-stretch"
+            onClick={() => setOpen(true)}
+          >
+            <div className="w-8 h-1 bg-secondary" />
+            <div className="w-8 h-1 bg-secondary" />
+            <div className="w-8 h-1 bg-secondary" />
+          </button>
         </div>
       </div>
 
@@ -109,7 +92,6 @@ const Header = () => {
         openModal={open}
         closeModal={() => setOpen(false)}
         navigate={navigate}
-        appInApp={appInApp}
       />
     </div>
   );
@@ -117,7 +99,7 @@ const Header = () => {
 
 export default Header;
 
-const DrawerMenu = ({ openModal, closeModal, navigate, appInApp }) => {
+const DrawerMenu = ({ openModal, closeModal, navigate }) => {
   const dispatch = useDispatch();
 
   return (
@@ -173,7 +155,7 @@ const DrawerMenu = ({ openModal, closeModal, navigate, appInApp }) => {
                       onClick={() => {
                         dispatch(logout());
                         clearAuth();
-                        appInApp ? navigate("/login") : navigate("/");
+                        navigate("/");
                       }}
                     >
                       <ArrowCircleRightIcon className="w-5 h-5" />

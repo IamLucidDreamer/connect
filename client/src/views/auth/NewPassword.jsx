@@ -35,8 +35,8 @@ const NewPassword = () => {
 
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
-  const [showOTP, setShowOTP] = useState(true);
-  const [showPassword , setShowPassword] = useState(true);
+  const [showOTP, setShowOTP] = useState(false);
+  const [showPassword , setShowPassword] = useState(false);
 
   useEffect(() => {
     if (!state) {
@@ -144,11 +144,11 @@ const NewPassword = () => {
                           OTPLength={6}
                           otpType="number"
                           disabled={false}
-                          secure={showOTP}
+                          secure={!showOTP}
                         />
                       </div>
                       <button onClick={() => setShowOTP(!showOTP)}>
-                        {showOTP ? "Show" : "Hide"} OTP
+                        {showOTP ? "Hide" : "Show"} OTP
                       </button>
                       <CustomValidationErrorMessage
                         show={touched.otp && errors.otp ? true : false}

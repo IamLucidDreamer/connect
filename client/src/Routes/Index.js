@@ -14,8 +14,10 @@ const NewPassword = lazy(() => import("../views/auth/NewPassword"))
 // const CompleteProfile = lazy(() => import("../views/auth/CompleteProfile"))
 
 const MainPage = lazy(() => import("../views/website/Home"));
-const DashboardProfile = lazy(() => import("../views/dashboardPages/Profile"))
-const DashboardEditProfile = lazy(() => import("../views/dashboardPages/EditProfile"))
+const DashboardProfile = lazy(() => import("../views/dashboardPages/profile/Profile"))
+const UserEditProfile = lazy(() => import("../views/dashboardPages/profile/EditProfile"))
+const UserEditEducation = lazy(() => import("../views/dashboardPages/profile/EditEducation"))
+const UserEditProfessional = lazy(() => import("../views/dashboardPages/profile/EditProfessional"))
 const Feed = lazy(() => import("../views/dashboardPages/Feed"))
 
 const router = createBrowserRouter([
@@ -61,7 +63,15 @@ const router = createBrowserRouter([
       },
       {
         path: "profile/edit",
-        element: <DashboardEditProfile/>,
+        element: <UserEditProfile/>,
+      },
+      {
+        path: "profile/professional/edit",
+        element: <UserEditProfessional/>,
+      },
+      {
+        path: "profile/education/edit",
+        element: <UserEditEducation/>,
       },
     ],
   },

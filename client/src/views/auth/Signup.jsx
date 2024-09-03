@@ -11,16 +11,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   KeyIcon,
-  UserIcon,
   MailIcon,
   LibraryIcon,
   PencilIcon,
   EyeIcon,
-  TagIcon,
-  UsersIcon,
+  ChevronRightIcon,
 } from "@heroicons/react/outline";
 import { signup } from "../../services/authService";
 import { setUser } from "../../store/actions/userActions";
+import { parseErrorMessage } from "../../helpers/apiCallHerlper";
 
 const signUpalidation = Yup.object({
   firstName: Yup.string()
@@ -100,17 +99,13 @@ const SignUp = () => {
       if (response.status >= 200 && response.status < 300) {
         toast.success(response?.data?.message || "Sign Up Successful");
         dispatch(
-          setUser({ email: values.email, userId: response?.data?.userId })
+          setUser({ email: values.email, userId: response?.data?.data?.userId })
         );
         navigate("/verify-otp");
       }
     } catch (err) {
       console.error("Error : ", err);
-      toast.error(
-        err?.response?.data?.error ||
-          err?.response?.data?.message ||
-          "Something went Wrong."
-      );
+      toast.error(parseErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -180,38 +175,46 @@ const SignUp = () => {
                 return (
                   <>
                     <div className="w-11/12">
-                      <div className="gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg my-5 shadow-lg">
-                        <UserIcon className="w-5 h-5" />
-                        <input
-                          id="firstName"
-                          placeholder="First Name"
-                          className="p-2.5 text-lg rounded-lg gray-50 w-full focus:outline-none"
-                          type="text"
-                          value={values.firstName}
-                          onChange={handleChange}
+                      <div className="flex items-center justify-between gap-8 mt-6">
+                        <div className="gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg shadow-lg">
+                          <ChevronRightIcon className="w-5 h-5" />
+                          <input
+                            id="firstName"
+                            placeholder="First Name"
+                            className="p-2.5 text-lg rounded-lg gray-50 w-full focus:outline-none"
+                            type="text"
+                            value={values.firstName}
+                            onChange={handleChange}
+                          />
+                        </div>
+                        <CustomValidationErrorMessage
+                          show={
+                            touched.firstName && errors.firstName ? true : false
+                          }
+                          error={errors.firstName}
+                        />
+                        <div className="gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg shadow-lg">
+                          <ChevronRightIcon className="w-5 h-5" />
+                          <input
+                            id="middleName"
+                            placeholder="Middle Name"
+                            className="p-2.5 text-lg rounded-lg gray-50 w-full focus:outline-none"
+                            type="text"
+                            value={values.middleName}
+                            onChange={handleChange}
+                          />
+                        </div>
+                        <CustomValidationErrorMessage
+                          show={
+                            touched.middleName && errors.middleName
+                              ? true
+                              : false
+                          }
+                          error={errors.middleName}
                         />
                       </div>
-                      <CustomValidationErrorMessage
-                        show={touched.firstName && errors.firstName ? true : false}
-                        error={errors.firstName}
-                      />
                       <div className="gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg my-5 shadow-lg">
-                        <TagIcon className="w-5 h-5" />
-                        <input
-                          id="middleName"
-                          placeholder="Middle Name"
-                          className="p-2.5 text-lg rounded-lg gray-50 w-full focus:outline-none"
-                          type="text"
-                          value={values.middleName}
-                          onChange={handleChange}
-                        />
-                      </div>
-                      <CustomValidationErrorMessage
-                        show={touched.middleName && errors.middleName ? true : false}
-                        error={errors.middleName}
-                      />
-                      <div className="gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg my-5 shadow-lg">
-                        <UsersIcon className="w-5 h-5" />
+                        <ChevronRightIcon className="w-5 h-5" />
                         <input
                           id="lastName"
                           placeholder="Last Name"
@@ -222,7 +225,9 @@ const SignUp = () => {
                         />
                       </div>
                       <CustomValidationErrorMessage
-                        show={touched.lastName && errors.lastName ? true : false}
+                        show={
+                          touched.lastName && errors.lastName ? true : false
+                        }
                         error={errors.lastName}
                       />
                       {!selected && (
@@ -302,11 +307,14 @@ const SignUp = () => {
                           id="password"
                           placeholder="Password"
                           className="p-2.5 text-lg rounded-lg gray-50 w-full focus:outline-none"
-                          type={showPassword ? "text" : "password" }
+                          type={showPassword ? "text" : "password"}
                           value={values.password}
                           onChange={handleChange}
                         />
-                        <EyeIcon onClick={() => setShowPassword(!showPassword)} className="w-5 h-5 cursor-pointer" />
+                        <EyeIcon
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="w-5 h-5 cursor-pointer"
+                        />
                       </div>
                       <CustomValidationErrorMessage
                         show={

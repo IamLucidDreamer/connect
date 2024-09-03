@@ -15,6 +15,7 @@ import { useDispatch } from "react-redux";
 import { setUser } from "../../store/actions/userActions";
 import { getAuthToken, setAuthToken, setRefreshToken } from "../../helpers/auth";
 import { useSelector } from "react-redux";
+import { parseErrorMessage } from "../../helpers/apiCallHerlper";
 
 const loginValidation = Yup.object({
   email: Yup.string().required("This field is Required").email("Invalid Email"),
@@ -50,7 +51,7 @@ const Login = () => {
       }
     } catch (err) {
       console.error("Error : ", err);
-      toast.error(err?.response?.data?.error || "Something went Wrong");
+      toast.error(parseErrorMessage(err));
     }
     setLoading(false);
     resetForm();

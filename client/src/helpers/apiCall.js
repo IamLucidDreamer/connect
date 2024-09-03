@@ -42,6 +42,9 @@ server.interceptors.response.use(
         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`
         return server(originalRequest)
       }
+      else{
+        return Promise.reject(error)
+      }
     }
     return Promise.reject(error)
   }
