@@ -95,7 +95,7 @@ const addEducation = async (req, res) => {
 
     res.status(STATUS_SUCCESS).json({
       message: "Education added successfully",
-      data: { ...user.education },
+      data: user.education || [],
     });
   } catch (error) {
     logger.error(error.message);
@@ -106,7 +106,7 @@ const addEducation = async (req, res) => {
 };
 
 const getEducation = async (req, res) => {
-  const userId = req.user._id;
+  const userId = req.params.userId;
 
   try {
     const user = await User.findById(userId);
@@ -117,7 +117,7 @@ const getEducation = async (req, res) => {
 
     res.status(STATUS_SUCCESS).json({
       message: "User Education details fetched successfully.",
-      data: { ...user.education },
+      data: user.education || [],
     });
   } catch (error) {
     logger.error(error.message);
@@ -154,7 +154,7 @@ const updateEducation = async (req, res) => {
 
     res.status(STATUS_SUCCESS).json({
       message: "Education updated successfully",
-      data: { ...user.education },
+      data: user.education || [],
     });
   } catch (error) {
     logger.error(error.message);
@@ -184,7 +184,7 @@ const deleteEducation = async (req, res) => {
 
     res.status(STATUS_SUCCESS).json({
       message: "Education deleted successfully",
-      data: { ...user.education },
+      data: user.education || [],
     });
   } catch (error) {
     logger.error(error.message);
@@ -213,7 +213,7 @@ const addProfessional = async (req, res) => {
 
     res.status(STATUS_SUCCESS).json({
       message: "Professional details added successfully",
-      data: { ...user.professional },
+      data: user.professional || [],
     });
   } catch (error) {
     logger.error(error.message);
@@ -237,7 +237,7 @@ const getProfessional = async (req, res) => {
 
     res.status(STATUS_SUCCESS).json({
       message: "User Professional details fetched successfully.",
-      data: { ...user.professional },
+      data: user.professional || [],
     });
   } catch (error) {
     logger.error(error.message);
@@ -277,7 +277,7 @@ const updateProfessional = async (req, res) => {
 
     res.status(STATUS_SUCCESS).json({
       message: "Professional details updated successfully",
-      data: { ...user.professional },
+      data: user.professional || [],
     });
   } catch (error) {
     logger.error(error.message);
@@ -307,7 +307,7 @@ const deleteProfessional = async (req, res) => {
 
     res.status(STATUS_SUCCESS).json({
       message: "Professional details deleted successfully",
-      data: { ...user.professional}
+      data: user.professional || [],
     });
   } catch (error) {
     logger.error(error.message);
