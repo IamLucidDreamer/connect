@@ -23,7 +23,14 @@ const generateAccessToken = (id) => {
 
 const generateRefreshToken = (user) => {
   const token = jwt.sign({ id: user._id }, process.env.REFRESH_TOKEN_SECRET);
+  if (!user.refreshTokens) {
+    user.refreshTokens = [];
+  }
+  if (user.refreshTokens.length >= 5) {
+    user.refreshTokens = user.refreshTokens.slice(-4);
+  }
   user.refreshTokens.push({ token });
+
   return token;
 };
 
@@ -94,7 +101,7 @@ const registerUser = async (req, res) => {
     logger.info(`OTP sent to ${user.email}`);
     res.status(STATUS_CREATED).json({
       message: "OTP sent to email",
-      userId: user._id,
+      data: { userId: user._id },
     });
   } catch (error) {
     logger.error(error.message || ERRORS.SERVER.INTERNAL_ERROR);
@@ -125,20 +132,21 @@ const verifyOTP = async (req, res) => {
     const accessToken = generateAccessToken(user._id);
     const refreshToken = generateRefreshToken(user);
 
+    const {
+      password,
+      otp: otpField,
+      otpExpires,
+      ...safeUser
+    } = user.toObject();
+
     logger.info(REGISTRATION_SUCCESS);
     res.status(STATUS_SUCCESS).json({
       message: REGISTRATION_SUCCESS,
       data: {
-      _id: user._id,
-      firstName : user.firstName,
-      middleName : user.middleName || null,
-      lastName : user.lastName || null,
-      email: user.email,
-      emailVerified: user.isEmailVerified,
-      phoneVerified: user.isPhoneVerified,
-      accessToken,
-      refreshToken,
-      }
+        ...safeUser,
+        accessToken,
+        refreshToken,
+      },
     });
   } catch (error) {
     logger.error(error.message || ERRORS.SERVER.INTERNAL_ERROR);
@@ -190,13 +198,14 @@ const authUser = async (req, res) => {
       const refreshToken = generateRefreshToken(user);
       await user.save();
 
+      const { password, otp, otpExpires, refreshTokens, ...safeUser } =
+        user.toObject();
+
       logger.info(LOGIN_SUCCESS);
       res.status(STATUS_SUCCESS).json({
         message: LOGIN_SUCCESS,
         data: {
-          _id: user._id,
-          name: user.name,
-          email: user.email,
+          ...safeUser,
           accessToken,
           refreshToken,
         },
@@ -234,25 +243,23 @@ const refreshTokens = async (req, res) => {
         .json({ message: ERRORS.AUTH.TOKEN_MISSING });
     }
 
-    const refreshTokenExists = user.refreshTokens.some(
-      (rt) => rt.token === token
-    );
+    const tokenIndex = user.refreshTokens.findIndex((rt) => rt.token === token);
 
-    if (!refreshTokenExists) {
+    if (tokenIndex === -1) {
       return res
         .status(STATUS_UNAUTHORIZED)
         .json({ message: ERRORS.AUTH.TOKEN_MISSING });
     }
 
-    user.refreshTokens = user.refreshTokens.filter((rt) => rt.token !== token);
     const accessToken = generateAccessToken(user._id);
-    const refreshToken = generateRefreshToken(user);
+    const newRefreshToken = generateRefreshToken(user);
+    user.refreshTokens[tokenIndex] = { token: newRefreshToken };
     await user.save();
 
     res.status(STATUS_SUCCESS).json({
       data: {
         accessToken,
-        refreshToken,
+        refreshToken: newRefreshToken,
       },
     });
   } catch (error) {
@@ -286,7 +293,7 @@ const forgotPassword = async (req, res) => {
     logger.info(`OTP sent to ${user.email} for password reset`);
     res
       .status(STATUS_SUCCESS)
-      .json({ message: "OTP sent to email", userId: user._id });
+      .json({ message: "OTP sent to email", data: { userId: user._id } });
   } catch (error) {
     logger.error(error.message || ERRORS.SERVER.INTERNAL_ERROR);
     res
@@ -335,7 +342,10 @@ const checkEmailVerification = async (req, res) => {
       return res.status(STATUS_BAD_REQUEST).json({ message: "User not found" });
     }
 
-    res.status(STATUS_SUCCESS).json({ isEmailVerified: user.isEmailVerified });
+    res.status(STATUS_SUCCESS).json({
+      message: "User Email has been verified.",
+      data: { isEmailVerified: user.isEmailVerified },
+    });
   } catch (error) {
     logger.error(error.message || ERRORS.SERVER.INTERNAL_ERROR);
     res

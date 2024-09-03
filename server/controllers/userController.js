@@ -9,21 +9,47 @@ const logger = require("../utils/logger");
 
 const getUser = async (req, res) => {
   const { userId } = req.params;
+  const authenticatedUserId = req.user._id; // Assuming req.user contains the authenticated user data
+
   try {
-    const user = await User.findById(userId).select('-password');
+    const user = await User.findById(userId).select("-password");
+
     if (!user) {
       return res.status(STATUS_BAD_REQUEST).json({ message: "User not found" });
     }
-    res.status(STATUS_SUCCESS).json({ user });
+    const isSelf = authenticatedUserId.toString() === userId;
+
+    const { password, otp, otpExpires, ...safeData } = user.toObject();
+    const userData = isSelf
+      ? { ...safeData }
+      : {
+          _id: user._id,
+          firstName: user.firstName,
+          middleName: user.middleName || null,
+          lastName: user.lastName || null,
+          email: user.email,
+          emailVerified: user.isEmailVerified,
+          bio: user.bio || null,
+          gender: user.gender || null,
+          profilePicture: user.profilePicture || null,
+          education: user.education || null,
+          professional: user.professional || null,
+          socialLinks: user.socialLinks || null,
+        };
+
+    res.status(STATUS_SUCCESS).json({
+      message: "User fetched successfully.",
+      data: { user: userData },
+    });
   } catch (error) {
     logger.error(error.message);
-    res.status(STATUS_SERVER_ERROR).json({ message: "Error fetching User details" });
+    res
+      .status(STATUS_SERVER_ERROR)
+      .json({ message: "Error fetching User details" });
   } finally {
     logger.info("Get User Details API Called");
   }
 };
-
-
 
 const updateUser = async (req, res) => {
   const { userId } = req.params;
@@ -37,10 +63,16 @@ const updateUser = async (req, res) => {
     Object.assign(userToUpdate, user);
     await userToUpdate.save();
 
-    res.status(STATUS_SUCCESS).json({ message: "User updated successfully" });
+    const { password, otp, otpExpires, refreshTokens, ...safeData } =
+      userToUpdate.toObject();
+    res
+      .status(STATUS_SUCCESS)
+      .json({ message: "User updated successfully", data: { ...safeData } });
   } catch (error) {
     logger.error(error.message);
-    res.status(STATUS_SERVER_ERROR).json({ message: "Error updating user details" });
+    res
+      .status(STATUS_SERVER_ERROR)
+      .json({ message: "Error updating user details" });
   } finally {
     logger.info("User Update API Called");
   }
@@ -63,7 +95,7 @@ const addEducation = async (req, res) => {
 
     res.status(STATUS_SUCCESS).json({
       message: "Education added successfully",
-      education: user.education,
+      data: { ...user.education },
     });
   } catch (error) {
     logger.error(error.message);
@@ -83,7 +115,10 @@ const getEducation = async (req, res) => {
       return res.status(STATUS_BAD_REQUEST).json({ message: "User not found" });
     }
 
-    res.status(STATUS_SUCCESS).json({ education: user.education });
+    res.status(STATUS_SUCCESS).json({
+      message: "User Education details fetched successfully.",
+      data: { ...user.education },
+    });
   } catch (error) {
     logger.error(error.message);
     res
@@ -119,7 +154,7 @@ const updateEducation = async (req, res) => {
 
     res.status(STATUS_SUCCESS).json({
       message: "Education updated successfully",
-      education: user.education,
+      data: { ...user.education },
     });
   } catch (error) {
     logger.error(error.message);
@@ -149,7 +184,7 @@ const deleteEducation = async (req, res) => {
 
     res.status(STATUS_SUCCESS).json({
       message: "Education deleted successfully",
-      education: user.education,
+      data: { ...user.education },
     });
   } catch (error) {
     logger.error(error.message);
@@ -178,7 +213,7 @@ const addProfessional = async (req, res) => {
 
     res.status(STATUS_SUCCESS).json({
       message: "Professional details added successfully",
-      professional: user.professional,
+      data: { ...user.professional },
     });
   } catch (error) {
     logger.error(error.message);
@@ -200,7 +235,10 @@ const getProfessional = async (req, res) => {
       return res.status(STATUS_BAD_REQUEST).json({ message: "User not found" });
     }
 
-    res.status(STATUS_SUCCESS).json({ professional: user.professional });
+    res.status(STATUS_SUCCESS).json({
+      message: "User Professional details fetched successfully.",
+      data: { ...user.professional },
+    });
   } catch (error) {
     logger.error(error.message);
     res
@@ -239,7 +277,7 @@ const updateProfessional = async (req, res) => {
 
     res.status(STATUS_SUCCESS).json({
       message: "Professional details updated successfully",
-      professional: user.professional,
+      data: { ...user.professional },
     });
   } catch (error) {
     logger.error(error.message);
@@ -269,7 +307,7 @@ const deleteProfessional = async (req, res) => {
 
     res.status(STATUS_SUCCESS).json({
       message: "Professional details deleted successfully",
-      professional: user.professional,
+      data: { ...user.professional}
     });
   } catch (error) {
     logger.error(error.message);
@@ -411,12 +449,13 @@ const getRecommendationList = async (req, res) => {
 
     res.status(STATUS_SUCCESS).json({ recommendations: usersToRecommend });
   } catch (error) {
-    res.status(STATUS_SERVER_ERROR).json({ message: error.message || ERRORS.SERVER.INTERNAL_ERROR });
+    res
+      .status(STATUS_SERVER_ERROR)
+      .json({ message: error.message || ERRORS.SERVER.INTERNAL_ERROR });
   } finally {
     logger.info("Get Recommendation List API Called");
   }
 };
-
 
 module.exports = {
   getUser,

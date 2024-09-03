@@ -54,6 +54,6 @@ module.exports = {
         },
     },
 
-    ACCESS_TOKEN_EXPIRATION: '15m', // 15 minutes
+    ACCESS_TOKEN_EXPIRATION: '1m', // 15 minutes
     REFRESH_TOKEN_EXPIRATION: '30d', // 30 days
 };
