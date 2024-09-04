@@ -9,8 +9,8 @@ const educationSchema = new mongoose.Schema({
   programType: { type: String, required: true, enum: ["regular", "parttime"] },
   university: { type: String, required: true },
   institute: { type: String, required: true },
-  startYear: { type: Number, required: true },
-  completionYear: { type: Number, required: true },
+  startYear: { type: Date, required: true },
+  completionYear: { type: Date},
   percentageOrCGPA: { type: Number },
 });
 
@@ -24,8 +24,8 @@ const professionalSchema = new mongoose.Schema({
   companyName: { type: String, required: true },
   designation: { type: String, required: true },
   location: { type: String, required: true },
-  startYear: { type: Number, required: true },
-  completionYear: { type: Number, required: true },
+  startYear: { type: Date, required: true },
+  completionYear: { type: Date },
   salaryBand: { type: String },
 });
 

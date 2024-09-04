@@ -35,13 +35,14 @@ const ProfessionalForm = () => {
     companyName: Yup.string().required("Company Name is required"),
     designation: Yup.string().required("Designation is required"),
     location: Yup.string().required("Location is required"),
-    startYear: Yup.number()
-      .required("Start Year is required")
-      .min(1900, "Invalid Year")
-      .max(new Date().getFullYear(), "Start Year cannot be in the future"),
-    completionYear: Yup.number()
-      .min(Yup.ref("startYear"), "Completion Year cannot be before Start Year")
-      .max(new Date().getFullYear(), "Completion Year cannot be in the future")
+    startDate: Yup.date()
+      .required("Start Date is required")
+      .min(new Date(1900, 0, 1), "Invalid Start Date")
+      .max(new Date(), "Start Date cannot be in the future"),
+    completionDate: Yup.date()
+      .required("Completion Date is required")
+      .min(Yup.ref("startDate"), "Completion Date cannot be before Start Date")
+      .max(new Date(), "Completion Date cannot be in the future")
       .nullable(),
     salaryBand: Yup.string(), // Optional field
   });
@@ -259,7 +260,7 @@ const ProfessionalForm = () => {
               </label>
               <div className="mt-2">
                 <Field
-                  type="number"
+                  type="month"
                   name="startYear"
                   className="block w-full border-gray-300 rounded-lg p-1"
                   placeholder="Enter start year"
@@ -281,7 +282,7 @@ const ProfessionalForm = () => {
               </label>
               <div className="mt-2">
                 <Field
-                  type="number"
+                  type="month"
                   name="completionYear"
                   className="block w-full border-gray-300 rounded-lg p-1"
                   placeholder="Enter completion year"
@@ -303,11 +304,26 @@ const ProfessionalForm = () => {
               </label>
               <div className="mt-2">
                 <Field
-                  type="text"
+                  as="select"
                   name="salaryBand"
                   className="block w-full border-gray-300 rounded-lg p-1"
-                  placeholder="Enter salary band (optional)"
-                />
+                >
+                  <option value="" disabled>
+                    Select Salary Band (Optional) Your data is secured and not
+                    shared with anyone
+                  </option>
+                  <option value="0-5 LPA">0-5 LPA</option>
+                  <option value="5-10 LPA">5-10 LPA</option>
+                  <option value="10-15 LPA">10-15 LPA</option>
+                  <option value="15-20 LPA">15-20 LPA</option>
+                  <option value="20-25 LPA">20-25 LPA</option>
+                  <option value="25-30 LPA">25-30 LPA</option>
+                  <option value="30-35 LPA">30-35 LPA</option>
+                  <option value="35-40 LPA">35-40 LPA</option>
+                  <option value="40-45 LPA">40-45 LPA</option>
+                  <option value="45-50 LPA">45-50 LPA</option>
+                  <option value="50+ LPA">50+ LPA</option>
+                </Field>
                 <ErrorMessage
                   name="salaryBand"
                   component="div"
