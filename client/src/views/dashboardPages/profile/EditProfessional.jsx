@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { toast } from "react-toastify";
 import server from "../../../helpers/apiCall";
 import { useSelector } from "react-redux";
+import formatDateToMonthYear from "../../../helpers";
 
 const ProfessionalForm = () => {
   const userId = useSelector((state) => state?.user?._id);
@@ -35,13 +36,12 @@ const ProfessionalForm = () => {
     companyName: Yup.string().required("Company Name is required"),
     designation: Yup.string().required("Designation is required"),
     location: Yup.string().required("Location is required"),
-    startDate: Yup.date()
+    startYear: Yup.date()
       .required("Start Date is required")
       .min(new Date(1900, 0, 1), "Invalid Start Date")
       .max(new Date(), "Start Date cannot be in the future"),
-    completionDate: Yup.date()
-      .required("Completion Date is required")
-      .min(Yup.ref("startDate"), "Completion Date cannot be before Start Date")
+    completionYear: Yup.date()
+      .min(Yup.ref("startYear"), "Completion Date cannot be before Start Date")
       .max(new Date(), "Completion Date cannot be in the future")
       .nullable(),
     salaryBand: Yup.string(), // Optional field
@@ -127,7 +127,7 @@ const ProfessionalForm = () => {
 
   return (
     <>
-      <h1 className="text-2xl py-4 font-semibold">Professional Details</h1>
+      <h1 className="text-2xl py-6">Professional Details</h1>
       <Formik
         initialValues={formInitialValues}
         validationSchema={validationSchema}
@@ -139,7 +139,7 @@ const ProfessionalForm = () => {
             <div className="sm:col-span-4">
               <label
                 htmlFor="currentEmployment"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-500"
               >
                 Current Employment
               </label>
@@ -147,7 +147,7 @@ const ProfessionalForm = () => {
                 <Field
                   type="text"
                   name="currentEmployment"
-                  className="block w-full border-gray-300 rounded-lg p-1"
+                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   placeholder="Enter your current employment"
                 />
                 <ErrorMessage
@@ -161,7 +161,7 @@ const ProfessionalForm = () => {
             <div className="sm:col-span-4">
               <label
                 htmlFor="employmentType"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-500"
               >
                 Employment Type
               </label>
@@ -169,7 +169,7 @@ const ProfessionalForm = () => {
                 <Field
                   as="select"
                   name="employmentType"
-                  className="block w-full border-gray-300 rounded-lg p-1"
+                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 >
                   <option value="">Select Employment Type</option>
                   <option value="Regular">Regular</option>
@@ -188,7 +188,7 @@ const ProfessionalForm = () => {
             <div className="sm:col-span-4">
               <label
                 htmlFor="companyName"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-500"
               >
                 Company Name
               </label>
@@ -196,7 +196,7 @@ const ProfessionalForm = () => {
                 <Field
                   type="text"
                   name="companyName"
-                  className="block w-full border-gray-300 rounded-lg p-1"
+                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   placeholder="Enter your company name"
                 />
                 <ErrorMessage
@@ -210,7 +210,7 @@ const ProfessionalForm = () => {
             <div className="sm:col-span-4">
               <label
                 htmlFor="designation"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-500"
               >
                 Designation
               </label>
@@ -218,7 +218,7 @@ const ProfessionalForm = () => {
                 <Field
                   type="text"
                   name="designation"
-                  className="block w-full border-gray-300 rounded-lg p-1"
+                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   placeholder="Enter your designation"
                 />
                 <ErrorMessage
@@ -232,7 +232,7 @@ const ProfessionalForm = () => {
             <div className="sm:col-span-4">
               <label
                 htmlFor="location"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-500"
               >
                 Location
               </label>
@@ -240,7 +240,7 @@ const ProfessionalForm = () => {
                 <Field
                   type="text"
                   name="location"
-                  className="block w-full border-gray-300 rounded-lg p-1"
+                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   placeholder="Enter your location"
                 />
                 <ErrorMessage
@@ -254,7 +254,7 @@ const ProfessionalForm = () => {
             <div className="sm:col-span-4">
               <label
                 htmlFor="startYear"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-500"
               >
                 Start Year
               </label>
@@ -262,7 +262,7 @@ const ProfessionalForm = () => {
                 <Field
                   type="month"
                   name="startYear"
-                  className="block w-full border-gray-300 rounded-lg p-1"
+                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   placeholder="Enter start year"
                 />
                 <ErrorMessage
@@ -276,7 +276,7 @@ const ProfessionalForm = () => {
             <div className="sm:col-span-4">
               <label
                 htmlFor="completionYear"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-500"
               >
                 Completion Year
               </label>
@@ -284,7 +284,7 @@ const ProfessionalForm = () => {
                 <Field
                   type="month"
                   name="completionYear"
-                  className="block w-full border-gray-300 rounded-lg p-1"
+                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   placeholder="Enter completion year"
                 />
                 <ErrorMessage
@@ -298,7 +298,7 @@ const ProfessionalForm = () => {
             <div className="sm:col-span-4">
               <label
                 htmlFor="salaryBand"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-500"
               >
                 Salary Band
               </label>
@@ -306,7 +306,7 @@ const ProfessionalForm = () => {
                 <Field
                   as="select"
                   name="salaryBand"
-                  className="block w-full border-gray-300 rounded-lg p-1"
+                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 >
                   <option value="" disabled>
                     Select Salary Band (Optional) Your data is secured and not
@@ -335,7 +335,7 @@ const ProfessionalForm = () => {
             <div className="sm:col-span-full">
               <button
                 type="submit"
-                className="mt-4 inline-flex justify-center rounded-md bg-indigo-600 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
+                className="px-4 py-2 bg-primary text-white rounded-md mx-auto"
                 disabled={loading}
               >
                 {loading ? "Submitting..." : isEditMode ? "Update" : "Submit"}
@@ -347,7 +347,7 @@ const ProfessionalForm = () => {
 
       <hr className="my-6 border-t border-gray-300" />
 
-      <h3 className="text-lg font-medium leading-6 text-gray-900">
+      <h3 className="text-2xl font-semibold leading-6 text-gray-900 py-2">
         Professional History
       </h3>
       {professionalList.length === 0 ? (
@@ -360,23 +360,25 @@ const ProfessionalForm = () => {
                 <strong>{prof.currentEmployment}</strong> - {prof.designation}{" "}
                 at {prof.companyName}
                 <br />
-                {prof.startYear} to {prof.completionYear || "Present"}
+                {formatDateToMonthYear(prof.startYear)} to{" "}
+                {formatDateToMonthYear(prof.completionYear) || "Present"}
                 <br />
-                Employment Type: {prof.employmentType}, Location:{" "}
-                {prof.location}
+                Employment Type: {prof.employmentType}
+                <br />
+                Location: {prof.location}
                 <br />
                 Salary Band: {prof.salaryBand || "N/A"}
               </p>
-              <div className="mt-2 flex space-x-2">
+              <div className="mt-2 flex space-x-4">
                 <button
                   onClick={() => handleEdit(prof)}
-                  className="text-indigo-600 hover:text-indigo-900"
+                  className="text-primary border px-3 py-1 rounded-md border-primary text-sm"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => handleDelete(prof._id)}
-                  className="text-red-600 hover:text-red-900"
+                  className="px-3 py-1 rounded-md text-sm bg-red-500 text-white"
                 >
                   Delete
                 </button>

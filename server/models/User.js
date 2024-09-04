@@ -33,6 +33,7 @@ const userSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
   middleName: { type: String },
   lastName: { type: String },
+  introLine: { type: String },
   email: {
     type: String,
     required: true,
@@ -47,8 +48,6 @@ const userSchema = new mongoose.Schema({
   },
   dateOfBirth: { type: Date },
   mobileNumber: { type: String, unique: true, sparse: true },
-  maritalStatus: { type: String },
-  anniversaryDate: { type: Date },
   password: {
     type: String,
     required: true,

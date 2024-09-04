@@ -21,8 +21,6 @@ const profileValidationSchema = Yup.object({
     .matches(/^[0-9]+$/, "Mobile number must be only digits")
     .min(10, "Mobile number must be at least 10 digits")
     .max(15, "Mobile number cannot exceed 15 digits"),
-  maritalStatus: Yup.string(),
-  anniversaryDate: Yup.date().nullable(),
   bio: Yup.string().max(500, "Bio cannot exceed 500 characters"),
   address: Yup.object({
     street: Yup.string(),
@@ -46,12 +44,14 @@ const ProfileUpdateForm = () => {
   const handleUpdateProfile = async (values, setErrors) => {
     setLoading(true);
     try {
-      const response = await server.put(`/user/update/${user?._id}`, values);
+      const response = await server.put(`/user/update/${user?._id}`, {
+        user: { values },
+      });
       if (response.status >= 200 && response.status < 300) {
         toast.success(
           response?.data?.message || "Profile Updated Successfully"
         );
-        dispatch(setUser(response.data.user));
+        dispatch(setUser(response.data.data));
       }
     } catch (err) {
       console.error("Error : ", err);
@@ -63,7 +63,7 @@ const ProfileUpdateForm = () => {
 
   return (
     <>
-      <h1 className="text-2xl py-4 font-semibold">Update Profile</h1>
+      <h1 className="text-2xl py-6">Update Profile</h1>
       <Formik
         initialValues={{
           firstName: user.firstName || "",
@@ -72,8 +72,6 @@ const ProfileUpdateForm = () => {
           gender: user.gender || "",
           dateOfBirth: user.dateOfBirth || "",
           mobileNumber: user.mobileNumber || "",
-          maritalStatus: user.maritalStatus || "",
-          anniversaryDate: user.anniversaryDate || "",
           bio: user.bio || "",
           address: {
             street: user.address?.street || "",
@@ -100,15 +98,15 @@ const ProfileUpdateForm = () => {
             <div className="sm:col-span-4">
               <label
                 htmlFor="firstName"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-500"
               >
                 First Name
               </label>
-              <div className="mt-2">
+              <div className="mt-1">
                 <Field
                   type="text"
                   name="firstName"
-                  className="block w-full border-gray-300 rounded-lg p-1"
+                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   placeholder="Enter your first name"
                 />
                 <ErrorMessage
@@ -122,7 +120,7 @@ const ProfileUpdateForm = () => {
             <div className="sm:col-span-4">
               <label
                 htmlFor="middleName"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-500"
               >
                 Middle Name
               </label>
@@ -130,7 +128,7 @@ const ProfileUpdateForm = () => {
                 <Field
                   type="text"
                   name="middleName"
-                  className="block w-full border-gray-300 rounded-lg p-1"
+                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   placeholder="Enter your middle name"
                 />
               </div>
@@ -139,7 +137,7 @@ const ProfileUpdateForm = () => {
             <div className="sm:col-span-4">
               <label
                 htmlFor="lastName"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-500"
               >
                 Last Name
               </label>
@@ -147,7 +145,7 @@ const ProfileUpdateForm = () => {
                 <Field
                   type="text"
                   name="lastName"
-                  className="block w-full border-gray-300 rounded-lg p-1"
+                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   placeholder="Enter your last name"
                 />
                 <ErrorMessage
@@ -161,7 +159,7 @@ const ProfileUpdateForm = () => {
             <div className="sm:col-span-4">
               <label
                 htmlFor="gender"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-500"
               >
                 Gender
               </label>
@@ -169,9 +167,11 @@ const ProfileUpdateForm = () => {
                 <Field
                   as="select"
                   name="gender"
-                  className="block w-full border-gray-300 rounded-lg p-1"
+                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 >
-                  <option value="" disabled>Select Gender</option>
+                  <option value="" disabled>
+                    Select Gender
+                  </option>
                   {[
                     "Male",
                     "Female",
@@ -193,7 +193,7 @@ const ProfileUpdateForm = () => {
             <div className="sm:col-span-4">
               <label
                 htmlFor="dateOfBirth"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-500"
               >
                 Date of Birth
               </label>
@@ -201,7 +201,8 @@ const ProfileUpdateForm = () => {
                 <Field
                   type="date"
                   name="dateOfBirth"
-                  className="block w-full border-gray-300 rounded-lg p-1"
+                  value={values.dateOfBirth.split("T")[0]}
+                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 />
                 <ErrorMessage
                   name="dateOfBirth"
@@ -214,7 +215,7 @@ const ProfileUpdateForm = () => {
             <div className="sm:col-span-4">
               <label
                 htmlFor="mobileNumber"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-500"
               >
                 Mobile Number
               </label>
@@ -222,7 +223,7 @@ const ProfileUpdateForm = () => {
                 <Field
                   type="text"
                   name="mobileNumber"
-                  className="block w-full border-gray-300 rounded-lg p-1"
+                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   placeholder="Enter your mobile number"
                 />
                 <ErrorMessage
@@ -235,46 +236,8 @@ const ProfileUpdateForm = () => {
 
             <div className="sm:col-span-4">
               <label
-                htmlFor="maritalStatus"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Marital Status
-              </label>
-              <div className="mt-2">
-                <Field
-                  as="select"
-                  name="maritalStatus"
-                  className="block w-full border-gray-300 rounded-lg p-1"
-                >
-                  <option value="">Select Marital Status</option>
-                  <option value="Single">Single</option>
-                  <option value="Married">Married</option>
-                  <option value="Divorced">Divorced</option>
-                  <option value="Widowed">Widowed</option>
-                </Field>
-              </div>
-            </div>
-
-            <div className="sm:col-span-4">
-              <label
-                htmlFor="anniversaryDate"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Anniversary Date
-              </label>
-              <div className="mt-2">
-                <Field
-                  type="date"
-                  name="anniversaryDate"
-                  className="block w-full border-gray-300 rounded-lg p-1"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-4">
-              <label
                 htmlFor="bio"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-500"
               >
                 Bio
               </label>
@@ -282,7 +245,7 @@ const ProfileUpdateForm = () => {
                 <Field
                   as="textarea"
                   name="bio"
-                  className="block w-full border-gray-300 rounded-lg p-1"
+                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   placeholder="Tell us about yourself"
                   rows="3"
                 />
@@ -304,7 +267,7 @@ const ProfileUpdateForm = () => {
                   <div className="mt-4" key={field}>
                     <label
                       htmlFor={`address.${field}`}
-                      className="block text-sm font-medium leading-6 text-gray-900"
+                      className="block text-sm font-medium leading-6 text-gray-500"
                     >
                       {field.charAt(0).toUpperCase() + field.slice(1)}
                     </label>
@@ -312,7 +275,7 @@ const ProfileUpdateForm = () => {
                       <Field
                         type="text"
                         name={`address.${field}`}
-                        className="block w-full border-gray-300 rounded-lg p-1"
+                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                         placeholder={`Enter ${field}`}
                       />
                     </div>
@@ -330,7 +293,7 @@ const ProfileUpdateForm = () => {
                 <div className="mt-4" key={platform}>
                   <label
                     htmlFor={`socialLinks.${platform}`}
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block text-sm font-medium leading-6 text-gray-500"
                   >
                     {platform.charAt(0).toUpperCase() + platform.slice(1)} URL
                   </label>
@@ -338,7 +301,7 @@ const ProfileUpdateForm = () => {
                     <Field
                       type="url"
                       name={`socialLinks.${platform}`}
-                      className="block w-full border-gray-300 rounded-lg p-1"
+                      class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                       placeholder={`Enter ${platform} URL`}
                     />
                     <ErrorMessage
@@ -354,7 +317,7 @@ const ProfileUpdateForm = () => {
             <div className="sm:col-span-full">
               <button
                 type="submit"
-                className="mt-4 inline-flex justify-center rounded-md bg-indigo-600 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
+                className="px-4 py-2 bg-primary text-white rounded-md mx-auto"
                 disabled={loading}
               >
                 {loading ? "Submitting..." : "Update Profile"}

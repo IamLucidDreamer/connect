@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { toast } from "react-toastify";
 import server from "../../../helpers/apiCall";
 import { useSelector } from "react-redux";
+import formatDateToMonthYear from "../../../helpers";
 
 const EducationForm = () => {
   const userId = useSelector((state) => state?.user?._id);
@@ -34,14 +35,14 @@ const EducationForm = () => {
       .required("Program Type is required"),
     university: Yup.string().required("University/Board is required"),
     institute: Yup.string().required("Institute/School/College is required"),
-    startDate: Yup.date()
+    startYear: Yup.date()
       .required("Start Date is required")
       .min(new Date(1900, 0, 1), "Invalid Start Date")
       .max(new Date(), "Start Date cannot be in the future"),
-    completionDate: Yup.date()
-      .required("Completion Date is required")
-      .min(Yup.ref("startDate"), "Completion Date cannot be before Start Date")
-      .max(new Date(), "Completion Date cannot be in the future"),
+    completionYear: Yup.date()
+      .min(Yup.ref("startYear"), "Completion Date cannot be before Start Date")
+      .max(new Date(), "Completion Date cannot be in the future")
+      .nullable(),
     percentageOrCGPA: Yup.number()
       .min(0, "Percentage/CGPA cannot be less than 0")
       .max(100, "Percentage cannot exceed 100"), // Assuming a max limit of 100 for percentage
@@ -126,7 +127,7 @@ const EducationForm = () => {
 
   return (
     <>
-      <h1 className="text-2xl py-4 font-semibold">Educational Details</h1>
+      <h1 className="text-2xl py-6">Educational Details</h1>
       <Formik
         initialValues={formInitialValues}
         validationSchema={validationSchema}
@@ -138,17 +139,24 @@ const EducationForm = () => {
             <div className="sm:col-span-4">
               <label
                 htmlFor="qualification"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-500"
               >
                 Qualification
               </label>
               <div className="mt-2">
                 <Field
-                  type="text"
+                  as="select"
                   name="qualification"
-                  className="block w-full border-gray-300 rounded-lg p-1"
-                  placeholder="Enter your qualification"
-                />
+                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                >
+                  <option value="">Select Qualification</option>
+                  <option value="10th">10th</option>
+                  <option value="12th">12th</option>
+                  <option value="Diploma">Diploma</option>
+                  <option value="Bachelors">Bachelors</option>
+                  <option value="Masters">Masters</option>
+                  <option value="PhD">PhD</option>
+                </Field>
                 <ErrorMessage
                   name="qualification"
                   component="div"
@@ -160,7 +168,7 @@ const EducationForm = () => {
             <div className="sm:col-span-4">
               <label
                 htmlFor="program"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-500"
               >
                 Program
               </label>
@@ -168,7 +176,7 @@ const EducationForm = () => {
                 <Field
                   type="text"
                   name="program"
-                  className="block w-full border-gray-300 rounded-lg p-1"
+                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   placeholder="Enter your program"
                 />
                 <ErrorMessage
@@ -182,7 +190,7 @@ const EducationForm = () => {
             <div className="sm:col-span-4">
               <label
                 htmlFor="specialization"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-500"
               >
                 Specialization
               </label>
@@ -190,7 +198,7 @@ const EducationForm = () => {
                 <Field
                   type="text"
                   name="specialization"
-                  className="block w-full border-gray-300 rounded-lg p-1"
+                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   placeholder="Enter your specialization"
                 />
                 <ErrorMessage
@@ -204,7 +212,7 @@ const EducationForm = () => {
             <div className="sm:col-span-4">
               <label
                 htmlFor="programType"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-500"
               >
                 Program Type
               </label>
@@ -212,7 +220,7 @@ const EducationForm = () => {
                 <Field
                   as="select"
                   name="programType"
-                  className="block w-full border-gray-300 rounded-lg p-1"
+                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 >
                   <option value="">Select Program Type</option>
                   <option value="regular">Regular</option>
@@ -229,7 +237,7 @@ const EducationForm = () => {
             <div className="sm:col-span-4">
               <label
                 htmlFor="university"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-500"
               >
                 University/Board
               </label>
@@ -237,7 +245,7 @@ const EducationForm = () => {
                 <Field
                   type="text"
                   name="university"
-                  className="block w-full border-gray-300 rounded-lg p-1"
+                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   placeholder="Enter your university/board"
                 />
                 <ErrorMessage
@@ -251,7 +259,7 @@ const EducationForm = () => {
             <div className="sm:col-span-4">
               <label
                 htmlFor="institute"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-500"
               >
                 Institute/School/College
               </label>
@@ -259,7 +267,7 @@ const EducationForm = () => {
                 <Field
                   type="text"
                   name="institute"
-                  className="block w-full border-gray-300 rounded-lg p-1"
+                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   placeholder="Enter your institute/school/college"
                 />
                 <ErrorMessage
@@ -273,7 +281,7 @@ const EducationForm = () => {
             <div className="sm:col-span-4">
               <label
                 htmlFor="startYear"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-500"
               >
                 Start Year
               </label>
@@ -281,7 +289,7 @@ const EducationForm = () => {
                 <Field
                   type="month"
                   name="startYear"
-                  className="block w-full border-gray-300 rounded-lg p-1"
+                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   placeholder="Enter start year"
                 />
                 <ErrorMessage
@@ -295,7 +303,7 @@ const EducationForm = () => {
             <div className="sm:col-span-4">
               <label
                 htmlFor="completionYear"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-500"
               >
                 Completion Year
               </label>
@@ -303,7 +311,7 @@ const EducationForm = () => {
                 <Field
                   type="month"
                   name="completionYear"
-                  className="block w-full border-gray-300 rounded-lg p-1"
+                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   placeholder="Enter completion year"
                 />
                 <ErrorMessage
@@ -317,7 +325,7 @@ const EducationForm = () => {
             <div className="sm:col-span-4">
               <label
                 htmlFor="percentageOrCGPA"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-500"
               >
                 Percentage/CGPA
               </label>
@@ -325,7 +333,7 @@ const EducationForm = () => {
                 <Field
                   type="number"
                   name="percentageOrCGPA"
-                  className="block w-full border-gray-300 rounded-lg p-1"
+                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   placeholder="Enter percentage or CGPA"
                 />
                 <ErrorMessage
@@ -339,7 +347,7 @@ const EducationForm = () => {
             <div className="sm:col-span-full">
               <button
                 type="submit"
-                className="mt-4 inline-flex justify-center rounded-md bg-indigo-600 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
+                className="px-4 py-2 bg-primary text-white rounded-md mx-auto"
                 disabled={loading}
               >
                 {loading ? "Submitting..." : isEditMode ? "Update" : "Submit"}
@@ -351,7 +359,7 @@ const EducationForm = () => {
 
       <hr className="my-6 border-t border-gray-300" />
 
-      <h3 className="text-lg font-medium leading-6 text-gray-900">
+      <h3 className="text-2xl font-semibold leading-6 text-gray-900 py-2">
         Education History
       </h3>
       {educationList.length === 0 ? (
@@ -364,22 +372,25 @@ const EducationForm = () => {
                 <strong>{edu.qualification}</strong> - {edu.program} in{" "}
                 {edu.specialization}
                 <br />
-                {edu.startYear} to {edu.completionYear || "Present"}
+                {formatDateToMonthYear(edu.startYear)} to{" "}
+                {formatDateToMonthYear(edu.completionYear) || "Present"}
                 <br />
-                University/Board: {edu.university}, Institute: {edu.institute}
+                University/Board: {edu.university}
+                <br />
+                Institute: {edu.institute}
                 <br />
                 Percentage/CGPA: {edu.percentageOrCGPA}
               </p>
-              <div className="mt-2 flex space-x-2">
+              <div className="my-2 flex space-x-4">
                 <button
                   onClick={() => handleEdit(edu)}
-                  className="text-indigo-600 hover:text-indigo-900"
+                  className="text-primary border px-3 py-1 rounded-md border-primary text-sm"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => handleDelete(edu._id)}
-                  className="text-red-600 hover:text-red-900"
+                  className="px-3 py-1 rounded-md text-sm bg-red-500 text-white"
                 >
                   Delete
                 </button>
