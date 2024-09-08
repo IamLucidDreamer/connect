@@ -55,29 +55,26 @@ const updateUser = async (req, res) => {
   const { userId } = req.params;
   const { user } = req.body;
 
-  const { password, otp, otpExpires, refreshTokens, email, isEmailVerified, isPhoneVerified , ...safeData }  = user;
-
   try {
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { $set: safeData },
-      { new: true, runValidators: true }
-    );
-
-    if (!updatedUser) {
-      return res.status(STATUS_NOT_FOUND).json({ message: "User not found" });
+    let userToUpdate = await User.findById(userId);
+    if (!userToUpdate) {
+      return res.status(STATUS_BAD_REQUEST).json({ message: "User not found" });
     }
+    // Update user fields
+    Object.assign(userToUpdate, user);
+    await userToUpdate.save();
 
-    const { password, otp, otpExpires, refreshTokens, ...updatedSafeData } = updatedUser.toObject();
-
-    res.status(STATUS_SUCCESS).json({ message: "User updated successfully", data: updatedSafeData });
+    // Return all user data
+    const userData = userToUpdate.toObject();
+    res.status(STATUS_SUCCESS).json({ message: "User updated successfully", data: userData });
   } catch (error) {
-    logger.error(`Error updating user ${userId}: ${error.message}`);
+    logger.error(error.message);
     res.status(STATUS_SERVER_ERROR).json({ message: error.message });
   } finally {
-    logger.info(`User Update API Called for userId: ${userId}`);
+    logger.info("User Update API Called");
   }
 };
+
 
 
 // Education CRUD operations

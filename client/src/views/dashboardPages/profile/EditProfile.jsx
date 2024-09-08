@@ -54,7 +54,7 @@ const ProfileUpdateForm = () => {
           response?.data?.message || "Profile Updated Successfully"
         );
         dispatch(setUser(response.data.data));
-        setIsEditing(false); // Switch back to preview mode after successful update
+        setIsEditing(false);
       }
     } catch (err) {
       console.error("Error: ", err);
@@ -207,7 +207,7 @@ const ProfileUpdateForm = () => {
                   <ErrorMessage
                     name="firstName"
                     component="div"
-                    className="error-text"
+                    className="text-red-600 text-sm mt-1"
                   />
                 </div>
                 <div className="form-group">
@@ -221,7 +221,7 @@ const ProfileUpdateForm = () => {
                   <ErrorMessage
                     name="middleName"
                     component="div"
-                    className="error-text"
+                    className="text-red-600 text-sm mt-1"
                   />
                 </div>
                 <div className="form-group">
@@ -235,7 +235,7 @@ const ProfileUpdateForm = () => {
                   <ErrorMessage
                     name="lastName"
                     component="div"
-                    className="error-text"
+                    className="text-red-600 text-sm mt-1"
                   />
                 </div>
                 <div className="form-group">
@@ -249,7 +249,7 @@ const ProfileUpdateForm = () => {
                   <ErrorMessage
                     name="gender"
                     component="div"
-                    className="error-text"
+                    className="text-red-600 text-sm mt-1"
                   />
                 </div>
                 <div className="form-group">
@@ -263,7 +263,7 @@ const ProfileUpdateForm = () => {
                   <ErrorMessage
                     name="dateOfBirth"
                     component="div"
-                    className="error-text"
+                    className="text-red-600 text-sm mt-1"
                   />
                 </div>
                 <div className="form-group">
@@ -277,7 +277,7 @@ const ProfileUpdateForm = () => {
                   <ErrorMessage
                     name="mobileNumber"
                     component="div"
-                    className="error-text"
+                    className="text-red-600 text-sm mt-1"
                   />
                 </div>
                 <div className="form-group">
@@ -292,7 +292,7 @@ const ProfileUpdateForm = () => {
                   <ErrorMessage
                     name="bio"
                     component="div"
-                    className="error-text"
+                    className="text-red-600 text-sm mt-1"
                   />
                 </div>
                 <div className="form-group">
@@ -351,7 +351,7 @@ const ProfileUpdateForm = () => {
                   <ErrorMessage
                     name="socialLinks.linkedin"
                     component="div"
-                    className="error-text"
+                    className="text-red-600 text-sm mt-1"
                   />
                 </div>
                 <div className="form-group">
@@ -365,7 +365,7 @@ const ProfileUpdateForm = () => {
                   <ErrorMessage
                     name="socialLinks.twitter"
                     component="div"
-                    className="error-text"
+                    className="text-red-600 text-sm mt-1"
                   />
                 </div>
                 <div className="form-group">
@@ -379,7 +379,7 @@ const ProfileUpdateForm = () => {
                   <ErrorMessage
                     name="socialLinks.github"
                     component="div"
-                    className="error-text"
+                    className="text-red-600 text-sm mt-1"
                   />
                 </div>
               </div>
