@@ -46,8 +46,12 @@ const ProfileUpdateForm = () => {
   const handleUpdateProfile = async (values, setErrors) => {
     setLoading(true);
     try {
+      if (values.mobileNumber === "") {
+        delete values.mobileNumber;
+      }
+      console.log(values);
       const response = await server.put(`/user/update/${user?._id}`, {
-        user: { values },
+        user: { ...values },
       });
       if (response.status >= 200 && response.status < 300) {
         toast.success(
@@ -98,7 +102,14 @@ const ProfileUpdateForm = () => {
               D.O.B: {user?.dateOfBirth.split("T")[0]}
             </p>
           )}
-          <h3 className="font-semibold text-center mt-3 -mb-2">Find me on</h3>
+          {user?.socialLinks?.linkedin ||
+            user?.socialLinks?.twitter ||
+            user?.socialLinks?.github ? 
+              <h3 className="font-semibold text-center mt-3 -mb-2">
+                Find me on
+              </h3>
+              : null
+            }
           <div className="flex justify-center items-center gap-6 my-6">
             {user?.socialLinks?.linkedin && (
               <a
@@ -240,11 +251,16 @@ const ProfileUpdateForm = () => {
                 </div>
                 <div className="form-group">
                   <label htmlFor="gender">Gender</label>
-                  <Field as="select" id="gender" name="gender" className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                  <Field
+                    as="select"
+                    id="gender"
+                    name="gender"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                  >
                     <option value="">Select Gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
                   </Field>
                   <ErrorMessage
                     name="gender"
@@ -403,7 +419,7 @@ const ProfileUpdateForm = () => {
           )}
         </Formik>
       )}
-    </ >
+    </>
   );
 };
 
