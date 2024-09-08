@@ -4,7 +4,6 @@ import * as Yup from "yup";
 import { toast } from "react-toastify";
 import server from "../../../helpers/apiCall";
 import { useSelector } from "react-redux";
-import formatDateToMonthYear from "../../../helpers";
 
 const EducationForm = () => {
   const userId = useSelector((state) => state?.user?._id);
@@ -12,8 +11,8 @@ const EducationForm = () => {
   const [loading, setLoading] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editEducationId, setEditEducationId] = useState(null);
+  const [formVisible, setFormVisible] = useState(false);
 
-  // State for form initial values
   const [formInitialValues, setFormInitialValues] = useState({
     qualification: "",
     program: "",
@@ -80,6 +79,7 @@ const EducationForm = () => {
       resetForm();
       setIsEditMode(false);
       setEditEducationId(null);
+      setFormVisible(false);
       fetchEducation();
     } catch (error) {
       toast.error(
@@ -104,6 +104,7 @@ const EducationForm = () => {
       completionYear: education.completionYear,
       percentageOrCGPA: education.percentageOrCGPA || "",
     });
+    setFormVisible(true);
   };
 
   const handleDelete = async (educationId) => {
@@ -127,277 +128,327 @@ const EducationForm = () => {
 
   return (
     <>
-      <h1 className="text-2xl py-6">Educational Details</h1>
-      <Formik
-        initialValues={formInitialValues}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
-        enableReinitialize={true}
-      >
-        {() => (
-          <Form className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div className="sm:col-span-4">
-              <label
-                htmlFor="qualification"
-                className="block text-sm font-medium leading-6 text-gray-500"
-              >
-                Qualification
-              </label>
-              <div className="mt-2">
-                <Field
-                  as="select"
-                  name="qualification"
-                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                >
-                  <option value="">Select Qualification</option>
-                  <option value="10th">10th</option>
-                  <option value="12th">12th</option>
-                  <option value="Diploma">Diploma</option>
-                  <option value="Bachelors">Bachelors</option>
-                  <option value="Masters">Masters</option>
-                  <option value="PhD">PhD</option>
-                </Field>
-                <ErrorMessage
-                  name="qualification"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
+      {/* Education Records */}
+      {educationList.length > 0 && (
+        <div className="mb-6">
+          {educationList.map((education) => (
+            <div
+              key={education._id}
+              className="mb-4 border p-4 rounded-md shadow-md flex items-start justify-between"
+            >
+              <div >
+                <h2 className="text-lg font-semibold">{education.program}</h2>
+                <p>
+                  <strong>Qualification:</strong> {education.qualification}
+                </p>
+                <p>
+                  <strong>Program:</strong> {education.program}
+                </p>
+                <p>
+                  <strong>Specialization:</strong> {education.specialization}
+                </p>
+                <p>
+                  <strong>Program Type:</strong> {education.programType}
+                </p>
+                <p>
+                  <strong>University/Board:</strong> {education.university}
+                </p>
+                <p>
+                  <strong>Institute/School/College:</strong>{" "}
+                  {education.institute}
+                </p>
+                <p>
+                  <strong>Start Year:</strong> {education.startYear}
+                </p>
+                {education.completionYear && (
+                  <p>
+                    <strong>Completion Year:</strong> {education.completionYear}
+                  </p>
+                )}
+                {education.percentageOrCGPA && (
+                  <p>
+                    <strong>Percentage/CGPA:</strong>{" "}
+                    {education.percentageOrCGPA}
+                  </p>
+                )}
               </div>
-            </div>
-
-            <div className="sm:col-span-4">
-              <label
-                htmlFor="program"
-                className="block text-sm font-medium leading-6 text-gray-500"
-              >
-                Program
-              </label>
-              <div className="mt-2">
-                <Field
-                  type="text"
-                  name="program"
-                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                  placeholder="Enter your program"
-                />
-                <ErrorMessage
-                  name="program"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-4">
-              <label
-                htmlFor="specialization"
-                className="block text-sm font-medium leading-6 text-gray-500"
-              >
-                Specialization
-              </label>
-              <div className="mt-2">
-                <Field
-                  type="text"
-                  name="specialization"
-                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                  placeholder="Enter your specialization"
-                />
-                <ErrorMessage
-                  name="specialization"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-4">
-              <label
-                htmlFor="programType"
-                className="block text-sm font-medium leading-6 text-gray-500"
-              >
-                Program Type
-              </label>
-              <div className="mt-2">
-                <Field
-                  as="select"
-                  name="programType"
-                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                >
-                  <option value="">Select Program Type</option>
-                  <option value="regular">Regular</option>
-                  <option value="parttime">Part-time</option>
-                </Field>
-                <ErrorMessage
-                  name="programType"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-4">
-              <label
-                htmlFor="university"
-                className="block text-sm font-medium leading-6 text-gray-500"
-              >
-                University/Board
-              </label>
-              <div className="mt-2">
-                <Field
-                  type="text"
-                  name="university"
-                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                  placeholder="Enter your university/board"
-                />
-                <ErrorMessage
-                  name="university"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-4">
-              <label
-                htmlFor="institute"
-                className="block text-sm font-medium leading-6 text-gray-500"
-              >
-                Institute/School/College
-              </label>
-              <div className="mt-2">
-                <Field
-                  type="text"
-                  name="institute"
-                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                  placeholder="Enter your institute/school/college"
-                />
-                <ErrorMessage
-                  name="institute"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-4">
-              <label
-                htmlFor="startYear"
-                className="block text-sm font-medium leading-6 text-gray-500"
-              >
-                Start Year
-              </label>
-              <div className="mt-2">
-                <Field
-                  type="month"
-                  name="startYear"
-                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                  placeholder="Enter start year"
-                />
-                <ErrorMessage
-                  name="startYear"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-4">
-              <label
-                htmlFor="completionYear"
-                className="block text-sm font-medium leading-6 text-gray-500"
-              >
-                Completion Year
-              </label>
-              <div className="mt-2">
-                <Field
-                  type="month"
-                  name="completionYear"
-                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                  placeholder="Enter completion year"
-                />
-                <ErrorMessage
-                  name="completionYear"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-4">
-              <label
-                htmlFor="percentageOrCGPA"
-                className="block text-sm font-medium leading-6 text-gray-500"
-              >
-                Percentage/CGPA
-              </label>
-              <div className="mt-2">
-                <Field
-                  type="number"
-                  name="percentageOrCGPA"
-                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                  placeholder="Enter percentage or CGPA"
-                />
-                <ErrorMessage
-                  name="percentageOrCGPA"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-full">
-              <button
-                type="submit"
-                className="px-4 py-2 bg-primary text-white rounded-md mx-auto"
-                disabled={loading}
-              >
-                {loading ? "Submitting..." : isEditMode ? "Update" : "Submit"}
-              </button>
-            </div>
-          </Form>
-        )}
-      </Formik>
-
-      <hr className="my-6 border-t border-gray-300" />
-
-      <h3 className="text-2xl font-semibold leading-6 text-gray-900 py-2">
-        Education History
-      </h3>
-      {educationList.length === 0 ? (
-        <p className="text-gray-700">No Education history found</p>
-      ) : (
-        <ul className="mt-4">
-          {educationList.map((edu) => (
-            <li key={edu._id} className="mb-4">
-              <p className="text-gray-700">
-                <strong>{edu.qualification}</strong> - {edu.program} in{" "}
-                {edu.specialization}
-                <br />
-                {formatDateToMonthYear(edu.startYear)} to{" "}
-                {formatDateToMonthYear(edu.completionYear) || "Present"}
-                <br />
-                University/Board: {edu.university}
-                <br />
-                Institute: {edu.institute}
-                <br />
-                Percentage/CGPA: {edu.percentageOrCGPA}
-              </p>
-              <div className="my-2 flex space-x-4">
+              <div className="mt-4 flex gap-2">
                 <button
-                  onClick={() => handleEdit(edu)}
-                  className="text-primary border px-3 py-1 rounded-md border-primary text-sm"
+                  onClick={() => handleEdit(education)}
+                  className="text-blue-500 hover:underline"
                 >
                   Edit
                 </button>
                 <button
-                  onClick={() => handleDelete(edu._id)}
-                  className="px-3 py-1 rounded-md text-sm bg-red-500 text-white"
+                  onClick={() => handleDelete(education._id)}
+                  className="text-red-500 hover:underline"
                 >
                   Delete
                 </button>
               </div>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
+      )}
+
+      {/* Add/Edit Form */}
+      <button
+        onClick={() => {
+          setIsEditMode(false);
+          setFormInitialValues({
+            qualification: "",
+            program: "",
+            specialization: "",
+            programType: "",
+            university: "",
+            institute: "",
+            startYear: "",
+            completionYear: "",
+            percentageOrCGPA: "",
+          });
+          setFormVisible(true);
+        }}
+        className="mb-4 inline-flex items-center px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-md shadow-sm hover:bg-blue-600"
+      >
+        Add Education Details
+      </button>
+
+      {formVisible && (
+        <Formik
+          initialValues={formInitialValues}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+          enableReinitialize={true}
+        >
+          {({ resetForm }) => (
+            <Form className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+              <div className="sm:col-span-4">
+                <label
+                  htmlFor="qualification"
+                  className="block text-sm font-medium leading-6 text-gray-500"
+                >
+                  Qualification
+                </label>
+                <div className="mt-2">
+                  <Field
+                    as="select"
+                    name="qualification"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                  >
+                    <option value="">Select Qualification</option>
+                    <option value="10th">10th</option>
+                    <option value="12th">12th</option>
+                    <option value="Diploma">Diploma</option>
+                    <option value="Bachelors">Bachelors</option>
+                    <option value="Masters">Masters</option>
+                    <option value="PhD">PhD</option>
+                  </Field>
+                  <ErrorMessage
+                    name="qualification"
+                    component="div"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-4">
+                <label
+                  htmlFor="program"
+                  className="block text-sm font-medium leading-6 text-gray-500"
+                >
+                  Program
+                </label>
+                <div className="mt-2">
+                  <Field
+                    type="text"
+                    name="program"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    placeholder="Enter your program"
+                  />
+                  <ErrorMessage
+                    name="program"
+                    component="div"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-4">
+                <label
+                  htmlFor="specialization"
+                  className="block text-sm font-medium leading-6 text-gray-500"
+                >
+                  Specialization
+                </label>
+                <div className="mt-2">
+                  <Field
+                    type="text"
+                    name="specialization"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    placeholder="Enter your specialization"
+                  />
+                  <ErrorMessage
+                    name="specialization"
+                    component="div"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-4">
+                <label
+                  htmlFor="programType"
+                  className="block text-sm font-medium leading-6 text-gray-500"
+                >
+                  Program Type
+                </label>
+                <div className="mt-2">
+                  <Field
+                    as="select"
+                    name="programType"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                  >
+                    <option value="">Select Program Type</option>
+                    <option value="regular">Regular</option>
+                    <option value="parttime">Part-time</option>
+                  </Field>
+                  <ErrorMessage
+                    name="programType"
+                    component="div"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-4">
+                <label
+                  htmlFor="university"
+                  className="block text-sm font-medium leading-6 text-gray-500"
+                >
+                  University/Board
+                </label>
+                <div className="mt-2">
+                  <Field
+                    type="text"
+                    name="university"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    placeholder="Enter your university/board"
+                  />
+                  <ErrorMessage
+                    name="university"
+                    component="div"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-4">
+                <label
+                  htmlFor="institute"
+                  className="block text-sm font-medium leading-6 text-gray-500"
+                >
+                  Institute/School/College
+                </label>
+                <div className="mt-2">
+                  <Field
+                    type="text"
+                    name="institute"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    placeholder="Enter your institute/school/college"
+                  />
+                  <ErrorMessage
+                    name="institute"
+                    component="div"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-4">
+                <label
+                  htmlFor="startYear"
+                  className="block text-sm font-medium leading-6 text-gray-500"
+                >
+                  Start Year
+                </label>
+                <div className="mt-2">
+                  <Field
+                    type="month"
+                    name="startYear"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    placeholder="Enter start year"
+                  />
+                  <ErrorMessage
+                    name="startYear"
+                    component="div"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-4">
+                <label
+                  htmlFor="completionYear"
+                  className="block text-sm font-medium leading-6 text-gray-500"
+                >
+                  Completion Year
+                </label>
+                <div className="mt-2">
+                  <Field
+                    type="month"
+                    name="completionYear"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    placeholder="Enter completion year"
+                  />
+                  <ErrorMessage
+                    name="completionYear"
+                    component="div"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-4">
+                <label
+                  htmlFor="percentageOrCGPA"
+                  className="block text-sm font-medium leading-6 text-gray-500"
+                >
+                  Percentage/CGPA
+                </label>
+                <div className="mt-2">
+                  <Field
+                    type="number"
+                    name="percentageOrCGPA"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    placeholder="Enter percentage or CGPA"
+                  />
+                  <ErrorMessage
+                    name="percentageOrCGPA"
+                    component="div"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-full">
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-primary text-white rounded-md mx-auto"
+                  disabled={loading}
+                >
+                  {loading ? "Submitting..." : isEditMode ? "Update" : "Submit"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormVisible(false)}
+                  className="px-4 py-2 bg-gray-300 text-black rounded-md mx-auto ml-4"
+                >
+                  Cancel
+                </button>
+              </div>
+            </Form>
+          )}
+        </Formik>
       )}
     </>
   );

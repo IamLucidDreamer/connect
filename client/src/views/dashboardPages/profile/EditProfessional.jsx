@@ -6,12 +6,13 @@ import server from "../../../helpers/apiCall";
 import { useSelector } from "react-redux";
 import formatDateToMonthYear from "../../../helpers";
 
-const ProfessionalForm = () => {
+const ProfessionalDetailsAndForm = () => {
   const userId = useSelector((state) => state?.user?._id);
   const [professionalList, setProfessionalList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editProfessionalId, setEditProfessionalId] = useState(null);
+  const [formVisible, setFormVisible] = useState(false);
 
   // State for form initial values
   const [formInitialValues, setFormInitialValues] = useState({
@@ -79,6 +80,7 @@ const ProfessionalForm = () => {
       resetForm();
       setIsEditMode(false);
       setEditProfessionalId(null);
+      setFormVisible(false);
       fetchProfessionalDetails();
     } catch (error) {
       toast.error(
@@ -102,6 +104,7 @@ const ProfessionalForm = () => {
       completionYear: professional.completionYear || "",
       salaryBand: professional.salaryBand || "",
     });
+    setFormVisible(true);
   };
 
   const handleDelete = async (professionalId) => {
@@ -127,268 +130,303 @@ const ProfessionalForm = () => {
 
   return (
     <>
-      <h1 className="text-2xl py-6">Professional Details</h1>
-      <Formik
-        initialValues={formInitialValues}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
-        enableReinitialize={true}
-      >
-        {({ values, handleChange, handleSubmit, resetForm }) => (
-          <Form className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div className="sm:col-span-4">
-              <label
-                htmlFor="currentEmployment"
-                className="block text-sm font-medium leading-6 text-gray-500"
-              >
-                Current Employment
-              </label>
-              <div className="mt-2">
-                <Field
-                  type="text"
-                  name="currentEmployment"
-                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                  placeholder="Enter your current employment"
-                />
-                <ErrorMessage
-                  name="currentEmployment"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
+      {/* Professional Records */}
+      {professionalList.length > 0 && (
+        <div className="mb-6">
+          {professionalList.map((professional) => (
+            <div
+              key={professional._id}
+              className="mb-4 border p-4 rounded-md shadow-md flex items-start justify-between"
+            >
+              <div>
+                <h2 className="text-lg font-semibold">
+                  {professional.companyName}
+                </h2>
+                <p>
+                  <strong>Current Employment:</strong>{" "}
+                  {professional.currentEmployment}
+                </p>
+                <p>
+                  <strong>Employment Type:</strong>{" "}
+                  {professional.employmentType}
+                </p>
+                <p>
+                  <strong>Designation:</strong> {professional.designation}
+                </p>
+                <p>
+                  <strong>Location:</strong> {professional.location}
+                </p>
+                <p>
+                  <strong>Start Year:</strong>{" "}
+                  {formatDateToMonthYear(professional.startYear)}
+                </p>
+                {professional.completionYear && (
+                  <p>
+                    <strong>Completion Year:</strong>{" "}
+                    {formatDateToMonthYear(professional.completionYear)}
+                  </p>
+                )}
+                {professional.salaryBand && (
+                  <p>
+                    <strong>Salary Band:</strong> {professional.salaryBand}
+                  </p>
+                )}
               </div>
-            </div>
-
-            <div className="sm:col-span-4">
-              <label
-                htmlFor="employmentType"
-                className="block text-sm font-medium leading-6 text-gray-500"
-              >
-                Employment Type
-              </label>
-              <div className="mt-2">
-                <Field
-                  as="select"
-                  name="employmentType"
-                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                >
-                  <option value="">Select Employment Type</option>
-                  <option value="Regular">Regular</option>
-                  <option value="Freelancer">Freelancer</option>
-                  <option value="Contract">Contract</option>
-                  <option value="Parttime">Part-time</option>
-                </Field>
-                <ErrorMessage
-                  name="employmentType"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-4">
-              <label
-                htmlFor="companyName"
-                className="block text-sm font-medium leading-6 text-gray-500"
-              >
-                Company Name
-              </label>
-              <div className="mt-2">
-                <Field
-                  type="text"
-                  name="companyName"
-                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                  placeholder="Enter your company name"
-                />
-                <ErrorMessage
-                  name="companyName"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-4">
-              <label
-                htmlFor="designation"
-                className="block text-sm font-medium leading-6 text-gray-500"
-              >
-                Designation
-              </label>
-              <div className="mt-2">
-                <Field
-                  type="text"
-                  name="designation"
-                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                  placeholder="Enter your designation"
-                />
-                <ErrorMessage
-                  name="designation"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-4">
-              <label
-                htmlFor="location"
-                className="block text-sm font-medium leading-6 text-gray-500"
-              >
-                Location
-              </label>
-              <div className="mt-2">
-                <Field
-                  type="text"
-                  name="location"
-                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                  placeholder="Enter your location"
-                />
-                <ErrorMessage
-                  name="location"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-4">
-              <label
-                htmlFor="startYear"
-                className="block text-sm font-medium leading-6 text-gray-500"
-              >
-                Start Year
-              </label>
-              <div className="mt-2">
-                <Field
-                  type="month"
-                  name="startYear"
-                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                  placeholder="Enter start year"
-                />
-                <ErrorMessage
-                  name="startYear"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-4">
-              <label
-                htmlFor="completionYear"
-                className="block text-sm font-medium leading-6 text-gray-500"
-              >
-                Completion Year
-              </label>
-              <div className="mt-2">
-                <Field
-                  type="month"
-                  name="completionYear"
-                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                  placeholder="Enter completion year"
-                />
-                <ErrorMessage
-                  name="completionYear"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-4">
-              <label
-                htmlFor="salaryBand"
-                className="block text-sm font-medium leading-6 text-gray-500"
-              >
-                Salary Band
-              </label>
-              <div className="mt-2">
-                <Field
-                  as="select"
-                  name="salaryBand"
-                  class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                >
-                  <option value="" disabled>
-                    Select Salary Band (Optional) Your data is secured and not
-                    shared with anyone
-                  </option>
-                  <option value="0-5 LPA">0-5 LPA</option>
-                  <option value="5-10 LPA">5-10 LPA</option>
-                  <option value="10-15 LPA">10-15 LPA</option>
-                  <option value="15-20 LPA">15-20 LPA</option>
-                  <option value="20-25 LPA">20-25 LPA</option>
-                  <option value="25-30 LPA">25-30 LPA</option>
-                  <option value="30-35 LPA">30-35 LPA</option>
-                  <option value="35-40 LPA">35-40 LPA</option>
-                  <option value="40-45 LPA">40-45 LPA</option>
-                  <option value="45-50 LPA">45-50 LPA</option>
-                  <option value="50+ LPA">50+ LPA</option>
-                </Field>
-                <ErrorMessage
-                  name="salaryBand"
-                  component="div"
-                  className="text-red-600 text-sm mt-1"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-full">
-              <button
-                type="submit"
-                className="px-4 py-2 bg-primary text-white rounded-md mx-auto"
-                disabled={loading}
-              >
-                {loading ? "Submitting..." : isEditMode ? "Update" : "Submit"}
-              </button>
-            </div>
-          </Form>
-        )}
-      </Formik>
-
-      <hr className="my-6 border-t border-gray-300" />
-
-      <h3 className="text-2xl font-semibold leading-6 text-gray-900 py-2">
-        Professional History
-      </h3>
-      {professionalList.length === 0 ? (
-        <p className="text-gray-700">No professional history found</p>
-      ) : (
-        <ul className="mt-4">
-          {professionalList.map((prof) => (
-            <li key={prof._id} className="mb-4">
-              <p className="text-gray-700">
-                <strong>{prof.currentEmployment}</strong> - {prof.designation}{" "}
-                at {prof.companyName}
-                <br />
-                {formatDateToMonthYear(prof.startYear)} to{" "}
-                {formatDateToMonthYear(prof.completionYear) || "Present"}
-                <br />
-                Employment Type: {prof.employmentType}
-                <br />
-                Location: {prof.location}
-                <br />
-                Salary Band: {prof.salaryBand || "N/A"}
-              </p>
-              <div className="mt-2 flex space-x-4">
+              <div className="mt-4 flex gap-2">
                 <button
-                  onClick={() => handleEdit(prof)}
-                  className="text-primary border px-3 py-1 rounded-md border-primary text-sm"
+                  onClick={() => handleEdit(professional)}
+                  className="text-blue-500 hover:underline"
                 >
                   Edit
                 </button>
                 <button
-                  onClick={() => handleDelete(prof._id)}
-                  className="px-3 py-1 rounded-md text-sm bg-red-500 text-white"
+                  onClick={() => handleDelete(professional._id)}
+                  className="text-red-500 hover:underline"
                 >
                   Delete
                 </button>
               </div>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
+      )}
+
+      {/* Add/Edit Form */}
+      <button
+        onClick={() => {
+          setIsEditMode(false);
+          setFormInitialValues({
+            currentEmployment: "",
+            employmentType: "",
+            companyName: "",
+            designation: "",
+            location: "",
+            startYear: "",
+            completionYear: "",
+            salaryBand: "",
+          });
+          setFormVisible(true);
+        }}
+        className="mb-4 inline-flex items-center px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-md shadow-sm hover:bg-blue-600"
+      >
+        Add Professional Details
+      </button>
+
+      {formVisible && (
+        <Formik
+          initialValues={formInitialValues}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+          enableReinitialize={true}
+        >
+          {({ values, handleChange, handleSubmit, resetForm }) => (
+            <Form className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+              <div className="sm:col-span-4">
+                <label
+                  htmlFor="currentEmployment"
+                  className="block text-sm font-medium leading-6 text-gray-500"
+                >
+                  Current Employment
+                </label>
+                <div className="mt-2">
+                  <Field
+                    type="text"
+                    name="currentEmployment"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    placeholder="Enter your current employment"
+                  />
+                  <ErrorMessage
+                    name="currentEmployment"
+                    component="div"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-4">
+                <label
+                  htmlFor="employmentType"
+                  className="block text-sm font-medium leading-6 text-gray-500"
+                >
+                  Employment Type
+                </label>
+                <div className="mt-2">
+                  <Field
+                    as="select"
+                    name="employmentType"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                  >
+                    <option value="">Select Employment Type</option>
+                    <option value="Regular">Regular</option>
+                    <option value="Freelancer">Freelancer</option>
+                    <option value="Contract">Contract</option>
+                    <option value="Parttime">Part-time</option>
+                  </Field>
+                  <ErrorMessage
+                    name="employmentType"
+                    component="div"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-4">
+                <label
+                  htmlFor="companyName"
+                  className="block text-sm font-medium leading-6 text-gray-500"
+                >
+                  Company Name
+                </label>
+                <div className="mt-2">
+                  <Field
+                    type="text"
+                    name="companyName"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    placeholder="Enter your company name"
+                  />
+                  <ErrorMessage
+                    name="companyName"
+                    component="div"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-4">
+                <label
+                  htmlFor="designation"
+                  className="block text-sm font-medium leading-6 text-gray-500"
+                >
+                  Designation
+                </label>
+                <div className="mt-2">
+                  <Field
+                    type="text"
+                    name="designation"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    placeholder="Enter your designation"
+                  />
+                  <ErrorMessage
+                    name="designation"
+                    component="div"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-4">
+                <label
+                  htmlFor="location"
+                  className="block text-sm font-medium leading-6 text-gray-500"
+                >
+                  Location
+                </label>
+                <div className="mt-2">
+                  <Field
+                    type="text"
+                    name="location"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    placeholder="Enter your location"
+                  />
+                  <ErrorMessage
+                    name="location"
+                    component="div"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-4">
+                <label
+                  htmlFor="startYear"
+                  className="block text-sm font-medium leading-6 text-gray-500"
+                >
+                  Start Year
+                </label>
+                <div className="mt-2">
+                  <Field
+                    type="month"
+                    name="startYear"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                  />
+                  <ErrorMessage
+                    name="startYear"
+                    component="div"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-4">
+                <label
+                  htmlFor="completionYear"
+                  className="block text-sm font-medium leading-6 text-gray-500"
+                >
+                  Completion Year (Optional)
+                </label>
+                <div className="mt-2">
+                  <Field
+                    type="month"
+                    name="completionYear"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                  />
+                  <ErrorMessage
+                    name="completionYear"
+                    component="div"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-4">
+                <label
+                  htmlFor="salaryBand"
+                  className="block text-sm font-medium leading-6 text-gray-500"
+                >
+                  Salary Band (Optional)
+                </label>
+                <div className="mt-2">
+                  <Field
+                    type="text"
+                    name="salaryBand"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    placeholder="Enter your salary band"
+                  />
+                  <ErrorMessage
+                    name="salaryBand"
+                    component="div"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-6 mt-4 flex gap-4">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="inline-flex items-center px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-md shadow-sm hover:bg-blue-600"
+                >
+                  {isEditMode ? "Update" : "Submit"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFormVisible(false);
+                    resetForm();
+                    setIsEditMode(false);
+                    setEditProfessionalId(null);
+                  }}
+                  className="inline-flex items-center px-4 py-2 bg-gray-300 text-black text-sm font-medium rounded-md shadow-sm hover:bg-gray-400"
+                >
+                  Cancel
+                </button>
+              </div>
+            </Form>
+          )}
+        </Formik>
       )}
     </>
   );
 };
 
-export default ProfessionalForm;
+export default ProfessionalDetailsAndForm;

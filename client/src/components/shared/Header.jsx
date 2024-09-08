@@ -38,7 +38,22 @@ const Header = () => {
           <nav className="hidden lg:flex gap-10 text-secondary font-semibold items-center uppercase">
             <Link to={"/dashboard/link"}>
               <button className="uppercase border-b-2 border-white hover:border-primary duration-300">
-                Some Link
+                Jobs
+              </button>
+            </Link>
+            <Link to={"/dashboard/link"}>
+              <button className="uppercase border-b-2 border-white hover:border-primary duration-300">
+                Events
+              </button>
+            </Link>
+            <Link to={"/dashboard/link"}>
+              <button className="uppercase border-b-2 border-white hover:border-primary duration-300">
+                My Organization
+              </button>
+            </Link>
+            <Link to={"/dashboard/link"}>
+              <button className="uppercase border-b-2 border-white hover:border-primary duration-300">
+                Connections
               </button>
             </Link>
             {user?.firstName ? (
