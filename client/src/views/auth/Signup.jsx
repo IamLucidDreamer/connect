@@ -160,7 +160,6 @@ const SignUp = () => {
                 organizationDescription: "",
                 organizationDescriptionname: "",
                 firstName: "",
-                middleName: "",
                 lastName: "",
                 email: "",
                 password: "",
@@ -192,25 +191,6 @@ const SignUp = () => {
                             touched.firstName && errors.firstName ? true : false
                           }
                           error={errors.firstName}
-                        />
-                        <div className="gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg shadow-lg">
-                          <ChevronRightIcon className="w-5 h-5" />
-                          <input
-                            id="middleName"
-                            placeholder="Middle Name"
-                            className="p-2.5 text-lg rounded-lg gray-50 w-full focus:outline-none"
-                            type="text"
-                            value={values.middleName}
-                            onChange={handleChange}
-                          />
-                        </div>
-                        <CustomValidationErrorMessage
-                          show={
-                            touched.middleName && errors.middleName
-                              ? true
-                              : false
-                          }
-                          error={errors.middleName}
                         />
                       </div>
                       <div className="gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg my-5 shadow-lg">

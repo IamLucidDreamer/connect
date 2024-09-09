@@ -82,18 +82,9 @@ const ProfileUpdateForm = () => {
               Edit
             </button>
           </div>
-          {user?.bio ? (
-            <p className="text-gray-700">{user?.bio}</p>
-          ) : (
-            <button
-              className="px-4 py-2 bg-primary text-white rounded-md mx-auto"
-              onClick={() => setIsEditing(true)}
-            >
-              Add Bio
-            </button>
-          )}
+          {user?.bio && <p className="text-gray-700">{user?.bio}</p>}
           <hr className="my-6 border-t border-gray-300" />
-          <h2 className="text-xl font-semibold mt-6 mb-4">Personal Info</h2>
+          <h2 className="text-xl font-semibold mt-6 mb-4">Personal Details</h2>
           {user?.gender && (
             <p className="text-gray-700">Gender: {user?.gender}</p>
           )}
@@ -103,13 +94,10 @@ const ProfileUpdateForm = () => {
             </p>
           )}
           {user?.socialLinks?.linkedin ||
-            user?.socialLinks?.twitter ||
-            user?.socialLinks?.github ? 
-              <h3 className="font-semibold text-center mt-3 -mb-2">
-                Find me on
-              </h3>
-              : null
-            }
+          user?.socialLinks?.twitter ||
+          user?.socialLinks?.github ? (
+            <h3 className="font-semibold text-center mt-3 -mb-2">Find me on</h3>
+          ) : null}
           <div className="flex justify-center items-center gap-6 my-6">
             {user?.socialLinks?.linkedin && (
               <a
@@ -180,7 +168,6 @@ const ProfileUpdateForm = () => {
         <Formik
           initialValues={{
             firstName: user?.firstName || "",
-            middleName: user?.middleName || "",
             lastName: user?.lastName || "",
             gender: user?.gender || "",
             dateOfBirth: user?.dateOfBirth?.split("T")[0] || "",
@@ -217,20 +204,6 @@ const ProfileUpdateForm = () => {
                   />
                   <ErrorMessage
                     name="firstName"
-                    component="div"
-                    className="text-red-600 text-sm mt-1"
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="middleName">Middle Name</label>
-                  <Field
-                    type="text"
-                    id="middleName"
-                    name="middleName"
-                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                  />
-                  <ErrorMessage
-                    name="middleName"
                     component="div"
                     className="text-red-600 text-sm mt-1"
                   />

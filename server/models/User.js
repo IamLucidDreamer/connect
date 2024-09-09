@@ -31,7 +31,6 @@ const professionalSchema = new mongoose.Schema({
 
 const userSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
-  middleName: { type: String },
   lastName: { type: String },
   introLine: { type: String },
   email: {
