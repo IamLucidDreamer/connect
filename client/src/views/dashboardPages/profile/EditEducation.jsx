@@ -134,45 +134,94 @@ const EducationForm = () => {
           {educationList.map((education) => (
             <div
               key={education._id}
-              className="mb-4 border p-4 rounded-md shadow-md flex items-start justify-between"
+              className="mb-4 border p-4 rounded-md shadow-md grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6"
             >
-              <div >
-                <h2 className="text-lg font-semibold">{education.program}</h2>
-                <p>
-                  <strong>Qualification:</strong> {education.qualification}
+              <div className="sm:col-span-3">
+                <label className="block text-sm font-medium leading-6 text-gray-500">
+                  Qualification
+                </label>
+                <p className="mt-2 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5">
+                  {education.qualification}
                 </p>
-                <p>
-                  <strong>Program:</strong> {education.program}
+              </div>
+
+              <div className="sm:col-span-3">
+                <label className="block text-sm font-medium leading-6 text-gray-500">
+                  Program
+                </label>
+                <p className="mt-2 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5">
+                  {education.program}
                 </p>
-                <p>
-                  <strong>Specialization:</strong> {education.specialization}
+              </div>
+
+              <div className="sm:col-span-3">
+                <label className="block text-sm font-medium leading-6 text-gray-500">
+                  Specialization
+                </label>
+                <p className="mt-2 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5">
+                  {education.specialization}
                 </p>
-                <p>
-                  <strong>Program Type:</strong> {education.programType}
+              </div>
+
+              <div className="sm:col-span-3">
+                <label className="block text-sm font-medium leading-6 text-gray-500">
+                  Program Type
+                </label>
+                <p className="mt-2 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5">
+                  {education.programType}
                 </p>
-                <p>
-                  <strong>University/Board:</strong> {education.university}
+              </div>
+
+              <div className="sm:col-span-3">
+                <label className="block text-sm font-medium leading-6 text-gray-500">
+                  University/Board
+                </label>
+                <p className="mt-2 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5">
+                  {education.university}
                 </p>
-                <p>
-                  <strong>Institute/School/College:</strong>{" "}
+              </div>
+
+              <div className="sm:col-span-3">
+                <label className="block text-sm font-medium leading-6 text-gray-500">
+                  Institute/School/College
+                </label>
+                <p className="mt-2 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5">
                   {education.institute}
                 </p>
-                <p>
-                  <strong>Start Year:</strong> {education.startYear}
+              </div>
+
+              <div className="sm:col-span-3">
+                <label className="block text-sm font-medium leading-6 text-gray-500">
+                  Start Year
+                </label>
+                <p className="mt-2 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5">
+                  {education.startYear}
                 </p>
-                {education.completionYear && (
-                  <p>
-                    <strong>Completion Year:</strong> {education.completionYear}
+              </div>
+
+              {education.completionYear && (
+                <div className="sm:col-span-3">
+                  <label className="block text-sm font-medium leading-6 text-gray-500">
+                    Completion Year
+                  </label>
+                  <p className="mt-2 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5">
+                    {education.completionYear}
                   </p>
-                )}
-                {education.percentageOrCGPA && (
-                  <p>
-                    <strong>Percentage/CGPA:</strong>{" "}
+                </div>
+              )}
+
+              {education.percentageOrCGPA && (
+                <div className="sm:col-span-3">
+                  <label className="block text-sm font-medium leading-6 text-gray-500">
+                    Percentage/CGPA
+                  </label>
+                  <p className="mt-2 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5">
                     {education.percentageOrCGPA}
                   </p>
-                )}
-              </div>
-              <div className="mt-4 flex gap-2">
+                </div>
+              )}
+
+              <div className="sm:col-span-6 mt-4 flex gap-2">
                 <button
                   onClick={() => handleEdit(education)}
                   className="text-blue-500 hover:underline"
@@ -222,7 +271,7 @@ const EducationForm = () => {
         >
           {({ resetForm }) => (
             <Form className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              <div className="sm:col-span-4">
+              <div className="sm:col-span-3">
                 <label
                   htmlFor="qualification"
                   className="block text-sm font-medium leading-6 text-gray-500"
@@ -251,7 +300,7 @@ const EducationForm = () => {
                 </div>
               </div>
 
-              <div className="sm:col-span-4">
+              <div className="sm:col-span-3">
                 <label
                   htmlFor="program"
                   className="block text-sm font-medium leading-6 text-gray-500"
@@ -273,7 +322,7 @@ const EducationForm = () => {
                 </div>
               </div>
 
-              <div className="sm:col-span-4">
+              <div className="sm:col-span-3">
                 <label
                   htmlFor="specialization"
                   className="block text-sm font-medium leading-6 text-gray-500"
@@ -295,7 +344,7 @@ const EducationForm = () => {
                 </div>
               </div>
 
-              <div className="sm:col-span-4">
+              <div className="sm:col-span-3">
                 <label
                   htmlFor="programType"
                   className="block text-sm font-medium leading-6 text-gray-500"
@@ -320,7 +369,7 @@ const EducationForm = () => {
                 </div>
               </div>
 
-              <div className="sm:col-span-4">
+              <div className="sm:col-span-3">
                 <label
                   htmlFor="university"
                   className="block text-sm font-medium leading-6 text-gray-500"
@@ -342,7 +391,7 @@ const EducationForm = () => {
                 </div>
               </div>
 
-              <div className="sm:col-span-4">
+              <div className="sm:col-span-3">
                 <label
                   htmlFor="institute"
                   className="block text-sm font-medium leading-6 text-gray-500"
@@ -364,7 +413,7 @@ const EducationForm = () => {
                 </div>
               </div>
 
-              <div className="sm:col-span-4">
+              <div className="sm:col-span-3">
                 <label
                   htmlFor="startYear"
                   className="block text-sm font-medium leading-6 text-gray-500"
@@ -386,7 +435,7 @@ const EducationForm = () => {
                 </div>
               </div>
 
-              <div className="sm:col-span-4">
+              <div className="sm:col-span-3">
                 <label
                   htmlFor="completionYear"
                   className="block text-sm font-medium leading-6 text-gray-500"
@@ -408,7 +457,7 @@ const EducationForm = () => {
                 </div>
               </div>
 
-              <div className="sm:col-span-4">
+              <div className="sm:col-span-3">
                 <label
                   htmlFor="percentageOrCGPA"
                   className="block text-sm font-medium leading-6 text-gray-500"

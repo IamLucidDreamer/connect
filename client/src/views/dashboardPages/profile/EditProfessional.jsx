@@ -132,64 +132,107 @@ const ProfessionalDetailsAndForm = () => {
     <>
       {/* Professional Records */}
       {professionalList.length > 0 && (
-        <div className="mb-6">
-          {professionalList.map((professional) => (
-            <div
-              key={professional._id}
-              className="mb-4 border p-4 rounded-md shadow-md flex items-start justify-between"
-            >
-              <div>
-                <h2 className="text-lg font-semibold">
-                  {professional.companyName}
-                </h2>
-                <p>
-                  <strong>Current Employment:</strong>{" "}
-                  {professional.currentEmployment}
-                </p>
-                <p>
-                  <strong>Employment Type:</strong>{" "}
-                  {professional.employmentType}
-                </p>
-                <p>
-                  <strong>Designation:</strong> {professional.designation}
-                </p>
-                <p>
-                  <strong>Location:</strong> {professional.location}
-                </p>
-                <p>
-                  <strong>Start Year:</strong>{" "}
-                  {formatDateToMonthYear(professional.startYear)}
-                </p>
-                {professional.completionYear && (
-                  <p>
-                    <strong>Completion Year:</strong>{" "}
-                    {formatDateToMonthYear(professional.completionYear)}
-                  </p>
-                )}
-                {professional.salaryBand && (
-                  <p>
-                    <strong>Salary Band:</strong> {professional.salaryBand}
-                  </p>
-                )}
-              </div>
-              <div className="mt-4 flex gap-2">
-                <button
-                  onClick={() => handleEdit(professional)}
-                  className="text-blue-500 hover:underline"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(professional._id)}
-                  className="text-red-500 hover:underline"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
+  <div className="mb-6">
+    {professionalList.map((professional) => (
+      <div
+        key={professional._id}
+        className="mb-4 border p-4 rounded-md shadow-md grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6"
+      >
+        <div className="sm:col-span-3">
+          <label className="block text-sm font-medium leading-6 text-gray-500">
+            Company Name
+          </label>
+          <p className="mt-2 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5">
+            {professional.companyName}
+          </p>
         </div>
-      )}
+
+        <div className="sm:col-span-3">
+          <label className="block text-sm font-medium leading-6 text-gray-500">
+            Current Employment
+          </label>
+          <p className="mt-2 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5">
+            {professional.currentEmployment}
+          </p>
+        </div>
+
+        <div className="sm:col-span-3">
+          <label className="block text-sm font-medium leading-6 text-gray-500">
+            Employment Type
+          </label>
+          <p className="mt-2 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5">
+            {professional.employmentType}
+          </p>
+        </div>
+
+        <div className="sm:col-span-3">
+          <label className="block text-sm font-medium leading-6 text-gray-500">
+            Designation
+          </label>
+          <p className="mt-2 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5">
+            {professional.designation}
+          </p>
+        </div>
+
+        <div className="sm:col-span-3">
+          <label className="block text-sm font-medium leading-6 text-gray-500">
+            Location
+          </label>
+          <p className="mt-2 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5">
+            {professional.location}
+          </p>
+        </div>
+
+        <div className="sm:col-span-3">
+          <label className="block text-sm font-medium leading-6 text-gray-500">
+            Start Year
+          </label>
+          <p className="mt-2 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5">
+            {formatDateToMonthYear(professional.startYear)}
+          </p>
+        </div>
+
+        {professional.completionYear && (
+          <div className="sm:col-span-3">
+            <label className="block text-sm font-medium leading-6 text-gray-500">
+              Completion Year
+            </label>
+            <p className="mt-2 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5">
+              {formatDateToMonthYear(professional.completionYear)}
+            </p>
+          </div>
+        )}
+
+        {professional.salaryBand && (
+          <div className="sm:col-span-3">
+            <label className="block text-sm font-medium leading-6 text-gray-500">
+              Salary Band
+            </label>
+            <p className="mt-2 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5">
+              {professional.salaryBand}
+            </p>
+          </div>
+        )}
+
+        <div className="sm:col-span-6 mt-4 flex gap-2">
+          <button
+            onClick={() => handleEdit(professional)}
+            className="text-blue-500 hover:underline"
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => handleDelete(professional._id)}
+            className="text-red-500 hover:underline"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    ))}
+  </div>
+)}
+
 
       {/* Add/Edit Form */}
       <button
@@ -221,7 +264,7 @@ const ProfessionalDetailsAndForm = () => {
         >
           {({ values, handleChange, handleSubmit, resetForm }) => (
             <Form className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              <div className="sm:col-span-4">
+              <div className="sm:col-span-3">
                 <label
                   htmlFor="currentEmployment"
                   className="block text-sm font-medium leading-6 text-gray-500"
@@ -243,7 +286,7 @@ const ProfessionalDetailsAndForm = () => {
                 </div>
               </div>
 
-              <div className="sm:col-span-4">
+              <div className="sm:col-span-3">
                 <label
                   htmlFor="employmentType"
                   className="block text-sm font-medium leading-6 text-gray-500"
@@ -270,7 +313,7 @@ const ProfessionalDetailsAndForm = () => {
                 </div>
               </div>
 
-              <div className="sm:col-span-4">
+              <div className="sm:col-span-3">
                 <label
                   htmlFor="companyName"
                   className="block text-sm font-medium leading-6 text-gray-500"
@@ -292,7 +335,7 @@ const ProfessionalDetailsAndForm = () => {
                 </div>
               </div>
 
-              <div className="sm:col-span-4">
+              <div className="sm:col-span-3">
                 <label
                   htmlFor="designation"
                   className="block text-sm font-medium leading-6 text-gray-500"
@@ -314,7 +357,7 @@ const ProfessionalDetailsAndForm = () => {
                 </div>
               </div>
 
-              <div className="sm:col-span-4">
+              <div className="sm:col-span-3">
                 <label
                   htmlFor="location"
                   className="block text-sm font-medium leading-6 text-gray-500"
@@ -336,7 +379,7 @@ const ProfessionalDetailsAndForm = () => {
                 </div>
               </div>
 
-              <div className="sm:col-span-4">
+              <div className="sm:col-span-3">
                 <label
                   htmlFor="startYear"
                   className="block text-sm font-medium leading-6 text-gray-500"
@@ -357,7 +400,7 @@ const ProfessionalDetailsAndForm = () => {
                 </div>
               </div>
 
-              <div className="sm:col-span-4">
+              <div className="sm:col-span-3">
                 <label
                   htmlFor="completionYear"
                   className="block text-sm font-medium leading-6 text-gray-500"
@@ -378,7 +421,7 @@ const ProfessionalDetailsAndForm = () => {
                 </div>
               </div>
 
-              <div className="sm:col-span-4">
+              <div className="sm:col-span-3">
                 <label
                   htmlFor="salaryBand"
                   className="block text-sm font-medium leading-6 text-gray-500"

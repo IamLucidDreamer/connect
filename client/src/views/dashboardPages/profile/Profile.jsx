@@ -85,19 +85,25 @@ const Profile = () => {
               <div className="flex items-center justify-between mb-5 gap-4">
                 <button
                   onClick={() => setShowTab(1)}
-                  className="bg-primary text-xs md:text-base px-3 py-1 md:px-4 md:py-2 rounded-lg text-white"
+                  className={`text-xs md:text-base px-3 py-1 md:px-4 md:py-2 ${
+                    showTab === 1 ?   "bg-primary text-white rounded-lg" : "border-b border-primary bg-transparent text-primary"
+                  }`}
                 >
                   Personal Details
                 </button>
                 <button
                   onClick={() => setShowTab(2)}
-                  className="bg-primary text-xs md:text-base px-3 py-1 md:px-4 md:py-2 rounded-lg text-white"
+                  className={`text-xs md:text-base px-3 py-1 md:px-4 md:py-2 ${
+                    showTab === 2 ?   "bg-primary text-white rounded-lg" : "border-b border-primary bg-transparent text-primary"
+                  }`}
                 >
                   Professional Details
                 </button>
                 <button
                   onClick={() => setShowTab(3)}
-                  className="bg-primary text-xs md:text-base px-3 py-1 md:px-4 md:py-2 rounded-lg text-white"
+                  className={`text-xs md:text-base px-3 py-1 md:px-4 md:py-2 ${
+                    showTab === 3 ?   "bg-primary text-white rounded-lg" : "border-b border-primary bg-transparent text-primary"
+                  }`}
                 >
                   Education Details
                 </button>

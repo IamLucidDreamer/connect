@@ -174,25 +174,23 @@ const SignUp = () => {
                 return (
                   <>
                     <div className="w-11/12">
-                      <div className="flex items-center justify-between gap-8 mt-6">
-                        <div className="gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg shadow-lg">
-                          <ChevronRightIcon className="w-5 h-5" />
-                          <input
-                            id="firstName"
-                            placeholder="First Name"
-                            className="p-2.5 text-lg rounded-lg gray-50 w-full focus:outline-none"
-                            type="text"
-                            value={values.firstName}
-                            onChange={handleChange}
-                          />
-                        </div>
-                        <CustomValidationErrorMessage
-                          show={
-                            touched.firstName && errors.firstName ? true : false
-                          }
-                          error={errors.firstName}
+                      <div className="gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg shadow-lg mt-4">
+                        <ChevronRightIcon className="w-5 h-5" />
+                        <input
+                          id="firstName"
+                          placeholder="First Name"
+                          className="p-2.5 text-lg rounded-lg gray-50 w-full focus:outline-none"
+                          type="text"
+                          value={values.firstName}
+                          onChange={handleChange}
                         />
                       </div>
+                      <CustomValidationErrorMessage
+                        show={
+                          touched.firstName && errors.firstName ? true : false
+                        }
+                        error={errors.firstName}
+                      />
                       <div className="gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg my-5 shadow-lg">
                         <ChevronRightIcon className="w-5 h-5" />
                         <input
