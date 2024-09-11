@@ -181,9 +181,11 @@ const Navbar = () => {
                 } `}
               >
                 <ul className="block lg:flex">
+                  <ListItem NavLink="/#">My Connections</ListItem>
                   <ListItem NavLink="/#">My Events</ListItem>
                   <ListItem NavLink="/#">Organisations</ListItem>
                   <ListItem NavLink="/#">Jobs</ListItem>
+                  <ListItem NavLink="/#">About Us</ListItem>
                   <ListItem NavLink="/#">Contact Us</ListItem>
                 </ul>
               </nav>
@@ -224,5 +226,3 @@ const ListItem = ({ children, NavLink }) => {
     </>
   );
 };
-
-

@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { toast } from "react-toastify";
 import server from "../../../helpers/apiCall";
 import { useSelector } from "react-redux";
+import formatDateToMonthYear from "../../../helpers";
 
 const EducationForm = () => {
   const userId = useSelector((state) => state?.user?._id);
@@ -195,7 +196,7 @@ const EducationForm = () => {
                   Start Year
                 </label>
                 <p className="mt-2 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5">
-                  {education.startYear}
+                  {formatDateToMonthYear(education.startYear)}
                 </p>
               </div>
 
@@ -205,7 +206,7 @@ const EducationForm = () => {
                     Completion Year
                   </label>
                   <p className="mt-2 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5">
-                    {education.completionYear}
+                    {formatDateToMonthYear(education.completionYear)}
                   </p>
                 </div>
               )}

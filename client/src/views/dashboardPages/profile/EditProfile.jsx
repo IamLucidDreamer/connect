@@ -12,10 +12,10 @@ const profileValidationSchema = Yup.object({
   firstName: Yup.string()
     .required("First Name is required")
     .min(2, "First Name must be at least 2 characters"),
-  middleName: Yup.string(),
   lastName: Yup.string()
     .required("Last Name is required")
     .min(2, "Last Name must be at least 2 characters"),
+  introLine: Yup.string(),
   gender: Yup.string().required("Gender is required"),
   dateOfBirth: Yup.date().required("Date of Birth is required"),
   mobileNumber: Yup.string()
@@ -72,9 +72,8 @@ const ProfileUpdateForm = () => {
     <>
       {!isEditing ? (
         <>
-          <h1 className="text-2xl py-6">Profile</h1>
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold mt-6 mb-4">About</h2>
+            <h1 className="text-2xl py-6">Profile</h1>
             <button
               onClick={() => setIsEditing(true)}
               className="bg-transparent px-2 py-1 text-sm border border-primary rounded-lg text-primary"
@@ -82,7 +81,6 @@ const ProfileUpdateForm = () => {
               Edit
             </button>
           </div>
-          {user?.bio && <p className="text-gray-700">{user?.bio}</p>}
           <hr className="my-6 border-t border-gray-300" />
           <h2 className="text-xl font-semibold mt-6 mb-4">Personal Details</h2>
           {user?.gender && (
@@ -163,6 +161,15 @@ const ProfileUpdateForm = () => {
               </a>
             )}
           </div>
+
+          {user?.bio && (
+            <div>
+              <h1 className="text-xl">About</h1>
+              <p className="text-gray-700 bg-white rounded-lg p-4">
+                {user?.bio}
+              </p>
+            </div>
+          )}
         </>
       ) : (
         <Formik
@@ -218,6 +225,21 @@ const ProfileUpdateForm = () => {
                   />
                   <ErrorMessage
                     name="lastName"
+                    component="div"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="introLine">Intro Line</label>
+                  <Field
+                    type="text"
+                    as="input"
+                    id="introLine"
+                    name="introLine"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                  />
+                  <ErrorMessage
+                    name="introLine"
                     component="div"
                     className="text-red-600 text-sm mt-1"
                   />
