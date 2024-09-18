@@ -19,5 +19,5 @@ router.post("/send-otp", sendOtpForAdminAssignment);
 router.post("/verify-otp", verifyOtpAndAssignAdmin);
 router.put("/update/:organizationId", protect, updateOrganization);
 router.post("/join/:organizationId", protect, joinOrganization);
- 
+
 module.exports = router;
