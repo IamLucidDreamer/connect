@@ -13,6 +13,6 @@ router.post('/refresh-token', validate(refreshTokenValidation), refreshTokens);
 router.post('/forgot-password', validate(forgotPasswordValidation), forgotPassword);
 router.post('/reset-password', validate(passwordResetValidation), resetPassword);
 router.get('/check-email-verification/:userId', checkEmailVerification);
-
+ 
 
 module.exports = router;

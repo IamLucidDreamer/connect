@@ -32,45 +32,13 @@ const signUpalidation = Yup.object({
   password: Yup.string()
     .required("Password field is required")
     .min(8, "The Password length should be atleast 8 characters"),
-});
 
-const organizationList = [
-  {
-    id: 1,
-    name: "IIT Madras",
-    email: "iitmadras.ac.in",
-  },
-  {
-    id: 2,
-    name: "IIT Bombay",
-    email: "iitb.ac.in",
-  },
-  {
-    id: 3,
-    name: "IIT Delhi",
-    email: "iitd.ac.in",
-  },
-  {
-    id: 4,
-    name: "IIT Kanpur",
-    email: "iitk.ac.in",
-  },
-  {
-    id: 5,
-    name: "IIT Kharagpur",
-    email: "iitkgp.ac.in",
-  },
-  {
-    id: 6,
-    name: "IIT Roorkee",
-    email: "iitr.ac.in",
-  },
-  {
-    id: 7,
-    name: "NIT Allahabad",
-    email: "mnnit.ac.in",
-  },
-];
+  organizationName: Yup.string().when("organization", {
+    is: false,
+    then: Yup.string().required("Organization Name is required"),
+    otherwise: Yup.string().notRequired(),
+  }),
+});
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -95,7 +63,7 @@ const SignUp = () => {
 
   useEffect(() => {
     getOrganizationList();
-  })
+  }, []);
 
   const handleSignUp = async (values, setErrors) => {
     if (!values.consent) {
@@ -116,6 +84,7 @@ const SignUp = () => {
     try {
       const response = await signup(values);
       if (response.status >= 200 && response.status < 300) {
+        console.log(response)
         toast.success(response?.data?.message || "Sign Up Successful");
         dispatch(
           setUser({ email: values.email, userId: response?.data?.data?.userId })
@@ -176,8 +145,6 @@ const SignUp = () => {
             <Formik
               initialValues={{
                 organizationName: "",
-                organizationDescription: "",
-                organizationDescriptionname: "",
                 firstName: "",
                 lastName: "",
                 email: "",
@@ -193,40 +160,50 @@ const SignUp = () => {
                 return (
                   <>
                     <div className="w-11/12">
-                      <div className="gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg shadow-lg mt-4">
-                        <ChevronRightIcon className="w-5 h-5" />
-                        <input
-                          id="firstName"
-                          placeholder="First Name"
-                          className="p-2.5 text-lg rounded-lg gray-50 w-full focus:outline-none"
-                          type="text"
-                          value={values.firstName}
-                          onChange={handleChange}
-                        />
-                      </div>
-                      <CustomValidationErrorMessage
-                        show={
-                          touched.firstName && errors.firstName ? true : false
-                        }
-                        error={errors.firstName}
-                      />
-                      <div className="gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg my-5 shadow-lg">
-                        <ChevronRightIcon className="w-5 h-5" />
-                        <input
-                          id="lastName"
-                          placeholder="Last Name"
-                          className="p-2.5 text-lg rounded-lg gray-50 w-full focus:outline-none"
-                          type="text"
-                          value={values.lastName}
-                          onChange={handleChange}
-                        />
-                      </div>
-                      <CustomValidationErrorMessage
-                        show={
-                          touched.lastName && errors.lastName ? true : false
-                        }
-                        error={errors.lastName}
-                      />
+                      {organization && (
+                        <>
+                          <div className="gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg shadow-lg mt-4">
+                            <ChevronRightIcon className="w-5 h-5" />
+                            <input
+                              id="firstName"
+                              placeholder="First Name"
+                              className="p-2.5 text-lg rounded-lg gray-50 w-full focus:outline-none"
+                              type="text"
+                              value={values.firstName}
+                              onChange={handleChange}
+                            />
+                          </div>
+                          <CustomValidationErrorMessage
+                            show={
+                              touched.firstName && errors.firstName
+                                ? true
+                                : false
+                            }
+                            error={errors.firstName}
+                          />
+                        </>
+                      )}
+                      {organization && (
+                        <>
+                          <div className="gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg my-5 shadow-lg">
+                            <ChevronRightIcon className="w-5 h-5" />
+                            <input
+                              id="lastName"
+                              placeholder="Last Name"
+                              className="p-2.5 text-lg rounded-lg gray-50 w-full focus:outline-none"
+                              type="text"
+                              value={values.lastName}
+                              onChange={handleChange}
+                            />
+                          </div>
+                          <CustomValidationErrorMessage
+                            show={
+                              touched.lastName && errors.lastName ? true : false
+                            }
+                            error={errors.lastName}
+                          />
+                        </>
+                      )}
                       {!organization && (
                         <>
                           <div className="gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg my-5 shadow-lg">
@@ -242,7 +219,7 @@ const SignUp = () => {
                                 Select Your Organization
                               </option>
                               {organizationList.map((org) => (
-                                <option key={org.id} value={org.id}>
+                                <option key={org._id} value={org._id}>
                                   {org.name}
                                 </option>
                               ))}
@@ -256,30 +233,6 @@ const SignUp = () => {
                                 : false
                             }
                             error={errors.organizationName}
-                          />
-                        </>
-                      )}
-                      {!organization && (
-                        <>
-                          <div className="gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg my-5 shadow-lg">
-                            <PencilIcon className="w-5 h-5" />
-                            <textarea
-                              id="organizationDescription"
-                              name="organizationDescription"
-                              placeholder="Organization Description"
-                              className="p-2.5 text-lg rounded-lg gray-50 w-full focus:outline-none h-12"
-                              value={values.organizationDescription}
-                              onChange={handleChange}
-                            />
-                          </div>
-                          <CustomValidationErrorMessage
-                            show={
-                              touched.organizationDescription &&
-                              errors.organizationDescription
-                                ? true
-                                : false
-                            }
-                            error={errors.name}
                           />
                         </>
                       )}
