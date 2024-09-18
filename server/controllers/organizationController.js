@@ -151,11 +151,12 @@ const sendOtpForAdminAssignment = async (req, res) => {
     await user.save();
 
     // Send OTP to user's email
-    await sendEmail({
-      to: user.email,
-      subject: "OTP for Admin Assignment",
-      text: `Your OTP for becoming an admin of ${organization.name} is ${otp}. It is valid for 10 minutes.`,
-    });
+    await sendEmail(
+      user.email,
+      "Email Verification OTP to claim your Organization",
+      "../templates/otpEmail.html",
+      { OTP: otp }
+    );
 
     res.status(STATUS_SUCCESS).json({
       message: "OTP sent successfully to the user's email.",

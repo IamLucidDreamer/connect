@@ -14,25 +14,23 @@ export const reSendOtp = async (userId) =>
       .catch(reject);
   });
 
-export const signup = async (values , organization) =>
+export const signup = async (values, organization) =>
   await new Promise((resolve, reject) => {
-    if(!organization)
-    {
-    axios
-      .post(`${BASE_URL}/auth/register`, values)
-      .then((response) => {
-        resolve(response);
-      })
-      .catch(reject);
-    }
-    else
-    {
+    if (!organization) {
       axios
-      .post(`${BASE_URL}/organization/send-otp`, values)
-      .then((response) => {
-        resolve(response);
-      })
-      .catch(reject);
+        .post(`${BASE_URL}/auth/register`, values)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch(reject);
+    } else {
+      values.organizationId = values.organizationName;
+      axios
+        .post(`${BASE_URL}/organization/send-otp`, values)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch(reject);
     }
   });
 
