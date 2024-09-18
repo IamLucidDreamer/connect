@@ -15,8 +15,8 @@ const router = express.Router();
 router.get("/:organizationId", protect, getOrganization);
 router.get("/get-all/names", getAllOrganizationsNames);
 router.post("/bulk-create", createOrganizationsInBulk);
-router.post("/send-otp", protect, sendOtpForAdminAssignment);
-router.post("/verify-otp", protect, verifyOtpAndAssignAdmin);
+router.post("/send-otp", sendOtpForAdminAssignment);
+router.post("/verify-otp", verifyOtpAndAssignAdmin);
 router.put("/update/:organizationId", protect, updateOrganization);
 router.post("/join/:organizationId", protect, joinOrganization);
 

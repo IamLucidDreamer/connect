@@ -66,6 +66,7 @@ const SignUp = () => {
   }, []);
 
   const handleSignUp = async (values, setErrors) => {
+    console.log(values);
     if (!values.consent) {
       setErrors({ consent: "Please accept the terms of service." });
       return;
@@ -82,9 +83,9 @@ const SignUp = () => {
     }
     setLoading(true);
     try {
-      const response = await signup(values);
+      const response = await signup(values, !organization);
       if (response.status >= 200 && response.status < 300) {
-        console.log(response)
+        console.log(response);
         toast.success(response?.data?.message || "Sign Up Successful");
         dispatch(
           setUser({ email: values.email, userId: response?.data?.data?.userId })
@@ -151,7 +152,7 @@ const SignUp = () => {
                 password: "",
                 consent: false,
               }}
-              validationSchema={signUpalidation}
+              // validationSchema={signUpalidation}
               onSubmit={(values, { setErrors }) => {
                 handleSignUp(values, setErrors);
               }}
