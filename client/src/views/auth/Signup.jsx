@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import CustomValidationErrorMessage from "../../components/errors/CustomValidationErrorMessage";
@@ -20,6 +20,7 @@ import {
 import { signup } from "../../services/authService";
 import { setUser } from "../../store/actions/userActions";
 import { parseErrorMessage } from "../../helpers/apiCallHerlper";
+import server from "../../helpers/apiCall";
 
 const signUpalidation = Yup.object({
   firstName: Yup.string()
@@ -75,8 +76,26 @@ const SignUp = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const [selected, setSelected] = useState(true);
+  const [organization, setOrganization] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [organizationList, setOrganizationList] = useState([]);
+
+  const getOrganizationList = () => {
+    server
+      .get("/organization/get-all/names")
+      .then((res) => {
+        if (res.status === 200) {
+          setOrganizationList(res.data.data);
+        }
+      })
+      .catch((err) => {
+        console.error("Error : ", err);
+      });
+  };
+
+  useEffect(() => {
+    getOrganizationList();
+  })
 
   const handleSignUp = async (values, setErrors) => {
     if (!values.consent) {
@@ -84,7 +103,7 @@ const SignUp = () => {
       return;
     }
     if (
-      !selected &&
+      !organization &&
       !values.organizationName.length === 0 &&
       !values.organizationDescription.length === 0
     ) {
@@ -130,13 +149,13 @@ const SignUp = () => {
               <div className="relative w-full mt-4 rounded-lg border h-10 p-1 bg-gray-50 text-lg">
                 <div className="relative w-full h-full flex items-center">
                   <div
-                    onClick={() => setSelected(!selected)}
+                    onClick={() => setOrganization(!organization)}
                     className="w-full flex justify-center text-secondary cursor-pointer"
                   >
                     <button>Individual</button>
                   </div>
                   <div
-                    onClick={() => setSelected(!selected)}
+                    onClick={() => setOrganization(!organization)}
                     className="w-full flex justify-center text-secondary cursor-pointer"
                   >
                     <button>Organisation</button>
@@ -145,12 +164,12 @@ const SignUp = () => {
 
                 <span
                   className={`bg-white shadow flex items-center justify-center w-1/2 rounded h-[1.88rem] transition-all duration-150 ease-linear top-[4px] absolute ${
-                    selected
+                    organization
                       ? "left-1 text-primary font-semibold"
                       : "left-1/2 -ml-1 text-primary font-semibold"
                   }`}
                 >
-                  {selected ? "Individual" : "Organisation"}
+                  {organization ? "Individual" : "Organisation"}
                 </span>
               </div>
             </div>
@@ -208,7 +227,7 @@ const SignUp = () => {
                         }
                         error={errors.lastName}
                       />
-                      {!selected && (
+                      {!organization && (
                         <>
                           <div className="gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg my-5 shadow-lg">
                             <LibraryIcon className="w-5 h-5" />
@@ -219,7 +238,7 @@ const SignUp = () => {
                               value={values.organizationName}
                               onChange={handleChange}
                             >
-                              <option value="" disabled selected>
+                              <option value="" disabled organization>
                                 Select Your Organization
                               </option>
                               {organizationList.map((org) => (
@@ -240,7 +259,7 @@ const SignUp = () => {
                           />
                         </>
                       )}
-                      {!selected && (
+                      {!organization && (
                         <>
                           <div className="gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg my-5 shadow-lg">
                             <PencilIcon className="w-5 h-5" />

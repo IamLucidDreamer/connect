@@ -75,8 +75,6 @@ const updateUser = async (req, res) => {
   }
 };
 
-
-
 // Education CRUD operations
 const addEducation = async (req, res) => {
   const { education } = req.body;

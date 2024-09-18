@@ -6,7 +6,7 @@ const educationSchema = new mongoose.Schema({
   qualification: { type: String, required: true },
   program: { type: String, required: true },
   specialization: { type: String, required: true },
-  programType: { type: String, required: true, enum: ["regular", "parttime"] },
+  programType: { type: String, required: true, enum: ["Regular", "Parttime"] },
   university: { type: String, required: true },
   institute: { type: String, required: true },
   startYear: { type: Date, required: true },

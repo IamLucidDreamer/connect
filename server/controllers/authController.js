@@ -13,7 +13,6 @@ const {
   ACCESS_TOKEN_EXPIRATION,
 } = require("../config/constants");
 const sendEmail = require("../utils/sendEmails");
-const Organization = require("../models/Organization");
 
 const generateAccessToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -35,21 +34,10 @@ const generateRefreshToken = (user) => {
 };
 
 const registerUser = async (req, res) => {
-  const {
-    firstName,
-    middleName,
-    lastName,
-    organizationName,
-    organizationDescription,
-    email,
-    password,
-  } = req.body;
+  const { firstName, lastName, email, password } = req.body;
 
   try {
     const userExists = await User.findOne({ email });
-    const organizationExists = await Organization.findOne({
-      name: organizationName,
-    });
 
     if (userExists) {
       logger.warn(ERRORS.USER.USER_EXISTS);
@@ -58,16 +46,8 @@ const registerUser = async (req, res) => {
         .json({ message: ERRORS.USER.USER_EXISTS });
     }
 
-    if (organizationExists) {
-      logger.warn(ERRORS.ORGANIZATION.ORGANIZATION_EXISTS);
-      return res
-        .status(STATUS_BAD_REQUEST)
-        .json({ message: ERRORS.ORGANIZATION.ORGANIZATION_EXISTS });
-    }
-
     const user = await User.create({
       firstName,
-      middleName,
       lastName,
       email,
       password,
@@ -75,20 +55,6 @@ const registerUser = async (req, res) => {
 
     const otp = user.generateOTP();
     await user.save();
-
-    if (organizationName) {
-      const organization = new Organization({
-        name: organizationName,
-        description: "Default Organization" || organizationDescription,
-        admin: user._id,
-        members: [user._id],
-      });
-
-      await organization.save();
-      await User.findByIdAndUpdate(user._id, {
-        organization: organization._id,
-      });
-    }
 
     // Send OTP to user's email
     await sendEmail(
@@ -108,6 +74,8 @@ const registerUser = async (req, res) => {
     res
       .status(STATUS_SERVER_ERROR)
       .json({ message: error.message || ERRORS.SERVER.INTERNAL_ERROR });
+  } finally {
+    logger.info("User registration API called");
   }
 };
 
@@ -153,6 +121,8 @@ const verifyOTP = async (req, res) => {
     res
       .status(STATUS_SERVER_ERROR)
       .json({ message: error.message || ERRORS.SERVER.INTERNAL_ERROR });
+  } finally {
+    logger.info("OTP verification API called");
   }
 };
 
@@ -184,6 +154,8 @@ const resendOTP = async (req, res) => {
     res
       .status(STATUS_SERVER_ERROR)
       .json({ message: error.message || ERRORS.SERVER.INTERNAL_ERROR });
+  } finally {
+    logger.info("Resend OTP API called");
   }
 };
 
@@ -221,6 +193,8 @@ const authUser = async (req, res) => {
     res
       .status(STATUS_SERVER_ERROR)
       .json({ message: error.message || ERRORS.SERVER.INTERNAL_ERROR });
+  } finally {
+    logger.info("User authentication API called");
   }
 };
 
@@ -266,6 +240,8 @@ const refreshTokens = async (req, res) => {
     res
       .status(STATUS_UNAUTHORIZED)
       .json({ message: ERRORS.AUTH.TOKEN_MISSING });
+  } finally {
+    logger.info("Token refresh API called");
   }
 };
 
@@ -299,6 +275,8 @@ const forgotPassword = async (req, res) => {
     res
       .status(STATUS_SERVER_ERROR)
       .json({ message: error.message || ERRORS.SERVER.INTERNAL_ERROR });
+  } finally {
+    logger.info("Forgot password API called");
   }
 };
 
@@ -351,6 +329,8 @@ const checkEmailVerification = async (req, res) => {
     res
       .status(STATUS_SERVER_ERROR)
       .json({ message: error.message || ERRORS.SERVER.INTERNAL_ERROR });
+  } finally {
+    logger.info("Check email verification API called");
   }
 };
 

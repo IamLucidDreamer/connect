@@ -1,30 +1,63 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-const organizationSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    description: {
-      type: String,
-    },
-    admin: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    members: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
+const organizationSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
   },
-  { timestamps: true }
-);
+  type: {
+    type: String,
+    required: true,
+    enum: ['Academic', 'Research', 'Corporate'],
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    match: [/^\S+@\S+\.\S+$/, 'Please use a valid email address.'],
+  },
+  website: {
+    type: String,
+    match: [/^(https?|chrome):\/\/[^\s$.?#].[^\s]*$/, 'Please use a valid URL.'],
+  },
+  location: {
+    country: {
+      type: String,
+      required: true,
+    },
+    city: {
+      type: String,
+    },
+    address: {
+      type: String,
+    },
+  },
+  contactNumber: {
+    type: String,
+  },
+  establishmentYear: {
+    type: Number,
+  },
+  registeredGovtId: {
+    type: String,
+  },
+  industry: {
+    type: String,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
-const Organization = mongoose.model("Organization", organizationSchema);
+organizationSchema.pre('save', function (next) {
+  this.updatedAt = Date.now();
+  next();
+});
 
-module.exports = Organization;
+module.exports = mongoose.model('Organization', organizationSchema);
