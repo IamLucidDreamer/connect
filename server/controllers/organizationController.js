@@ -9,6 +9,7 @@ const {
   ERRORS,
 } = require("../config/constants");
 const logger = require("../utils/logger");
+const sendEmail = require("../utils/sendEmails");
 
 const getOrganization = async (req, res) => {
   const { organizationId } = req.params;
@@ -116,6 +117,13 @@ const sendOtpForAdminAssignment = async (req, res) => {
     if (!organization) {
       return res.status(STATUS_NOT_FOUND).json({
         message: "Organization not found.",
+      });
+    }
+
+    if (organization.email !== email) {
+      return res.status(STATUS_BAD_REQUEST).json({
+        message:
+          "Email does not match with the organization email. Contact Support if you are the organization Admin.",
       });
     }
 
