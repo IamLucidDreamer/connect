@@ -14,6 +14,8 @@ import { useSelector } from "react-redux";
 import { logout } from "../../store/actions/userActions";
 import { useDispatch } from "react-redux";
 import AppIcon from "../images/AppIcon";
+import { search } from "../../services/searchService";
+import { toast } from "react-toastify";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -202,17 +204,33 @@ const DrawerMenu = ({ openModal, closeModal, navigate }) => {
 };
 
 const Search = () => {
-  const [search, setSearch] = useState("");
+  const [searchKeyword, setSearchKeyword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [users, setUsers] = useState([]);
+
+  const searchFn = async (query) => {
+    try {
+      setLoading(true);
+      const response = await search(query);
+      if (response.status === 200) {
+        setUsers(response.data);
+      } else {
+        console.log("Error in search");
+      }
+    } catch (err) {
+      toast.error("Error in search");
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
     const timout = setTimeout(() => {
-      console.log(search);
-      setLoading(false);
+      if (searchKeyword.length > 1) searchFn(searchKeyword);
     }, 1500);
     return () => {
       clearTimeout(timout);
     };
-  }, [search]);
+  }, [searchKeyword]);
 
   return (
     <div className="relative">
@@ -222,14 +240,23 @@ const Search = () => {
           placeholder="Search"
           className="p-1 text-lg rounded-lg gray-50 w-full focus:outline-none"
           type="text"
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => setSearchKeyword(e.target.value)}
         />
         <SearchIcon className="w-6 h-6 text-primary" />
       </div>
-      {search?.length > 1 && (
-        <div className="bg-white shadow-lg flex items-center justify-center absolute top-12 w-full">
-          {loading ? (
-            <div className="bg-white absolute p-2"></div>
+      {searchKeyword?.length > 1 && (
+        <div className="bg-white shadow-lg flex items-center justify-center absolute top-12 w-full border p-2 rounded">
+          {!loading ? (
+            users?.length > 0 ? (
+              users.map((user) => (
+                <div className="flex gap-2 items-center w-full">
+                  <UserCircleIcon className="w-8 h-8 text-primary" />
+                  <h1>{user?.firstName + " " + user?.lastName}</h1>
+                </div>
+              ))
+            ) : (
+              <h1>No user found</h1>
+            )
           ) : (
             <div className="border-2 rounded-full border-primary border-b-0 animate-spin w-5 h-5 p-4" />
           )}
