@@ -3,18 +3,16 @@ import { Transition, Dialog } from "@headlessui/react";
 import {
   UserCircleIcon,
   XIcon,
-  AcademicCapIcon,
+  BellIcon,
+  SearchIcon,
   ArrowCircleRightIcon,
+  ChevronDownIcon,
 } from "@heroicons/react/outline";
 import { clearAuth } from "../../helpers/auth";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { logout } from "../../store/actions/userActions";
 import { useDispatch } from "react-redux";
-import { LibraryIcon } from "@heroicons/react/outline";
-import { BellIcon } from "@heroicons/react/outline";
-import { DocumentTextIcon } from "@heroicons/react/outline";
-import { InformationCircleIcon } from "@heroicons/react/outline";
 import AppIcon from "../images/AppIcon";
 
 const Header = () => {
@@ -27,42 +25,49 @@ const Header = () => {
 
   return (
     <div
-      className={"bg-white sticky top-0 z-50 duration-500 shadow-lg"}
+      className={"bg-white sticky top-0 z-50 duration-500 shadow-md"}
       style={{ zIndex: 999 }}
     >
       <div className="container mx-auto px-2 lg:px-10 py-3">
         <div className="flex items-center justify-between">
-          <Link to={"/"}>
-            <AppIcon logotType={1} width={"175px"} />
+          <Link to={"/"} className="block lg:hidden mr-4">
+            <AppIcon logotType={1} width={"100px"} />
           </Link>
-          <nav className="hidden lg:flex gap-10 text-secondary font-semibold items-center uppercase">
+          <nav className="hidden lg:flex gap-10 text-secondary font-medium items-center uppercase">
+            <Link to={"/"}>
+              <AppIcon logotType={1} width={"175px"} />
+            </Link>
             <Link to={"/dashboard/link"}>
-              <button className="uppercase border-b-2 border-white hover:border-primary duration-300">
+              <button className="uppercase border-b border-white hover:border-primary duration-300">
                 Jobs
               </button>
             </Link>
             <Link to={"/dashboard/link"}>
-              <button className="uppercase border-b-2 border-white hover:border-primary duration-300">
+              <button className="uppercase border-b border-white hover:border-primary duration-300">
                 Events
               </button>
             </Link>
             <Link to={"/dashboard/link"}>
-              <button className="uppercase border-b-2 border-white hover:border-primary duration-300">
-                My Organization
+              <button className="uppercase border-b border-white hover:border-primary duration-300">
+                Organization
               </button>
             </Link>
             <Link to={"/dashboard/link"}>
-              <button className="uppercase border-b-2 border-white hover:border-primary duration-300">
+              <button className="uppercase border-b border-white hover:border-primary duration-300">
                 Connections
               </button>
             </Link>
+          </nav>
+          <div className="flex items-center justify-end gap-4 lg:gap-8 w-full mx-4">
+            <Search />
+            <BellIcon className="w-7 h-7 text-secondary" />
             {user?.firstName ? (
-              <div className="relative group">
-                <div className="w-45 flex gap-2 items-center capitalize rounded-full border-2 border-secondary border-opacity-50 cursor-pointer">
-                  <h1 className="pl-2 truncate w-24 duration-500">
+              <div className="relative group hidden lg:block">
+                <div className="w-40 flex gap-2 items-center capitalize rounded-full cursor-pointer">
+                  <h1 className="pl-2 truncate w-16 duration-500">
                     {user?.firstName}
                   </h1>
-                  <UserCircleIcon className="w-8 h-8 text-primary" />
+                  <ChevronDownIcon className="w-5 h-5 text-primary" />
                 </div>
                 <div className="w-full bg-white px-2 absolute -bottom-16 rounded shadow-md hidden duration-300 group-hover:block">
                   <button
@@ -91,7 +96,7 @@ const Header = () => {
                 <UserCircleIcon className="w-8 h-8 text-primary" />
               </button>
             )}
-          </nav>
+          </div>
           <button
             className="lg:hidden h-7 flex flex-col justify-between items-stretch"
             onClick={() => setOpen(true)}
@@ -187,5 +192,43 @@ const DrawerMenu = ({ openModal, closeModal, navigate }) => {
         </div>
       </Dialog>
     </Transition>
+  );
+};
+
+const Search = () => {
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    const timout = setTimeout(() => {
+      console.log(search);
+      setLoading(false);
+    }, 1500);
+    return () => {
+      clearTimeout(timout);
+    };
+  }, [search]);
+
+  return (
+    <div className="relative">
+      <div className="gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg border">
+        <input
+          id="search"
+          placeholder="Search"
+          className="p-1 text-lg rounded-lg gray-50 w-full focus:outline-none"
+          type="text"
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <SearchIcon className="w-6 h-6 text-primary" />
+      </div>
+      {search?.length > 1 && (
+        <div className="bg-white shadow-lg flex items-center justify-center absolute top-12 w-full">
+          {loading ? (
+            <div className="bg-white absolute p-2"></div>
+          ) : (
+            <div className="border-2 rounded-full border-primary border-b-0 animate-spin w-5 h-5 p-4" />
+          )}
+        </div>
+      )}
+    </div>
   );
 };

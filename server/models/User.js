@@ -10,7 +10,7 @@ const educationSchema = new mongoose.Schema({
   university: { type: String, required: true },
   institute: { type: String, required: true },
   startYear: { type: Date, required: true },
-  completionYear: { type: Date},
+  completionYear: { type: Date },
   percentageOrCGPA: { type: Number },
 });
 
@@ -78,8 +78,6 @@ const userSchema = new mongoose.Schema({
   },
   education: [educationSchema], // Educational Info
   professional: [professionalSchema], // Professional Info
-  followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-  following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   organizations: [
     { type: mongoose.Schema.Types.ObjectId, ref: "Organization" },
   ],
