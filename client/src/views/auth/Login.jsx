@@ -13,7 +13,11 @@ import image from "../../assets/images/login.jpg";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../store/actions/userActions";
-import { getAuthToken, setAuthToken, setRefreshToken } from "../../helpers/auth";
+import {
+  getAuthToken,
+  setAuthToken,
+  setRefreshToken,
+} from "../../helpers/auth";
 import { useSelector } from "react-redux";
 import { parseErrorMessage } from "../../helpers/apiCallHerlper";
 
@@ -27,13 +31,13 @@ const loginValidation = Yup.object({
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [showPassword , setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const authToken = getAuthToken();
-    if ( authToken?.length && authToken !== "undefined") {
+    if (authToken?.length && authToken !== "undefined") {
       navigate("/dashboard");
     }
   }, []);
@@ -43,7 +47,7 @@ const Login = () => {
     try {
       const response = await login(values);
       if (response?.data) {
-        toast.success(response?.data?.message ||  "Login Was Success");
+        toast.success(response?.data?.message || "Login Was Success");
         dispatch(setUser(response?.data?.data));
         setAuthToken(response?.data?.data?.accessToken);
         setRefreshToken(response?.data?.data?.refreshToken);
@@ -84,7 +88,7 @@ const Login = () => {
             >
               {({ values, touched, errors, handleChange, handleSubmit }) => {
                 return (
-                  <>
+                  <form className="w-full">
                     <div className="w-11/12 ">
                       <div className="bg-gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg my-5 shadow-lg">
                         <UserIcon className="w-5 h-5" />
@@ -98,9 +102,7 @@ const Login = () => {
                         />
                       </div>
                       <CustomValidationErrorMessage
-                        show={
-                          touched.email && errors.email ? true : false
-                        }
+                        show={touched.email && errors.email ? true : false}
                         error={errors.email}
                       />
                       <div className="bg-gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg my-5 shadow-lg">
@@ -113,7 +115,10 @@ const Login = () => {
                           value={values.password}
                           onChange={handleChange}
                         />
-                        <EyeIcon onClick={() => setShowPassword(!showPassword)} className="w-5 h-5 cursor-pointer" />
+                        <EyeIcon
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="w-5 h-5 cursor-pointer"
+                        />
                       </div>
                       <CustomValidationErrorMessage
                         show={
@@ -160,7 +165,7 @@ const Login = () => {
                         </Link>
                       </div>
                     </div>
-                  </>
+                  </form>
                 );
               }}
             </Formik>

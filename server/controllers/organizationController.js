@@ -172,7 +172,7 @@ const sendOtpForAdminAssignment = async (req, res) => {
 };
 
 const verifyOtpAndAssignAdmin = async (req, res) => {
-  const { email, organizationId, otp } = req.body;
+  const { email, organizationId, otp, otpVerificationId } = req.body;
 
   if (!email || !organizationId || !otp) {
     return res.status(STATUS_BAD_REQUEST).json({
@@ -188,7 +188,11 @@ const verifyOtpAndAssignAdmin = async (req, res) => {
       });
     }
 
-    if (user.otp !== otp || user.otpExpires < Date.now()) {
+    if (
+      user.otp !== otp ||
+      user.otpExpires < Date.now() ||
+      user.otpVerificationId !== otpVerificationId
+    ) {
       return res.status(STATUS_BAD_REQUEST).json({
         message: "Invalid or expired OTP.",
       });
@@ -220,11 +224,19 @@ const verifyOtpAndAssignAdmin = async (req, res) => {
 
     user.otp = undefined;
     user.otpExpires = undefined;
+    user.otpVerificationId = undefined;
     await user.save();
+
+    const responseUser = user.toJSON();
+    const responseOrganization = organization;
 
     res.status(STATUS_SUCCESS).json({
       message:
         "User has been successfully assigned as the admin of the organization.",
+      data: {
+        user: responseUser,
+        organization: { ...responseOrganization, isAdmin: true },
+      },
     });
   } catch (error) {
     logger.error("Error verifying OTP and assigning admin:", error);

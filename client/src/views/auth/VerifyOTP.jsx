@@ -99,7 +99,7 @@ const VerifyOTP = () => {
             >
               {({ values, touched, errors, setFieldValue, handleSubmit }) => {
                 return (
-                  <>
+                  <form>
                     <div className="w-11/12">
                       <h1 className="text-lg text-secondary">
                         {`Enter the OTP sent to : ${user?.email} `}
@@ -152,7 +152,7 @@ const VerifyOTP = () => {
                         }}
                       />
                     </div>
-                  </>
+                  </form>
                 );
               }}
             </Formik>

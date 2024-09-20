@@ -158,11 +158,16 @@ const SignUp = () => {
             >
               {({ values, touched, errors, handleChange, handleSubmit }) => {
                 return (
-                  <>
+                  <form className="w-full">
                     <div className="w-11/12">
                       {organization && (
                         <>
-                        <label for="firstName" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your First Name</label>
+                          <label
+                            for="firstName"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                          >
+                            Your First Name
+                          </label>
                           <div className="gray-50 text-secondary flex gap-3 items-center px-3 rounded-lg shadow-lg mt-4">
                             <ChevronRightIcon className="w-5 h-5" />
                             <input
@@ -343,7 +348,7 @@ const SignUp = () => {
                         </Link>
                       </div>
                     </div>
-                  </>
+                  </form>
                 );
               }}
             </Formik>

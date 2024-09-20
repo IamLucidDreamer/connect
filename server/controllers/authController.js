@@ -80,38 +80,38 @@ const registerUser = async (req, res) => {
 };
 
 const verifyOTP = async (req, res) => {
-  const { userId, otp } = req.body;
+  const { userId, otp, otpVerificationId } = req.body;
 
   try {
     const user = await User.findById(userId);
 
-    if (!user || user.otp !== otp || user.otpExpires < Date.now()) {
+    if (
+      !user ||
+      user.otp !== otp ||
+      user.otpExpires < Date.now() ||
+      user.otpVerificationId !== otpVerificationId
+    ) {
       return res
         .status(STATUS_BAD_REQUEST)
-        .json({ message: "Invalid or expired OTP" });
+        .json({ message: "Either the OTP is Invalid or Expired." });
     }
 
     // OTP is valid
     user.otp = undefined;
     user.otpExpires = undefined;
+    user.otpVerificationId = undefined;
     user.isEmailVerified = true;
     await user.save();
 
     const accessToken = generateAccessToken(user._id);
     const refreshToken = generateRefreshToken(user);
-
-    const {
-      password,
-      otp: otpField,
-      otpExpires,
-      ...safeUser
-    } = user.toObject();
+    const responseUser = user.toJSON();
 
     logger.info(REGISTRATION_SUCCESS);
     res.status(STATUS_SUCCESS).json({
       message: REGISTRATION_SUCCESS,
       data: {
-        ...safeUser,
+        ...responseUser,
         accessToken,
         refreshToken,
       },
@@ -170,14 +170,13 @@ const authUser = async (req, res) => {
       const refreshToken = generateRefreshToken(user);
       await user.save();
 
-      const { password, otp, otpExpires, refreshTokens, ...safeUser } =
-        user.toObject();
+      const responseUser = user.toJSON();
 
       logger.info(LOGIN_SUCCESS);
       res.status(STATUS_SUCCESS).json({
         message: LOGIN_SUCCESS,
         data: {
-          ...safeUser,
+          ...responseUser,
           accessToken,
           refreshToken,
         },
@@ -281,12 +280,17 @@ const forgotPassword = async (req, res) => {
 };
 
 const resetPassword = async (req, res) => {
-  const { userId, otp, newPassword } = req.body;
+  const { userId, otp, newPassword, otpVerificationId } = req.body;
 
   try {
     const user = await User.findById(userId);
 
-    if (!user || user.otp !== otp || user.otpExpires < Date.now()) {
+    if (
+      !user ||
+      user.otp !== otp ||
+      user.otpExpires < Date.now() ||
+      user.otpVerificationId !== otpVerificationId
+    ) {
       return res
         .status(STATUS_BAD_REQUEST)
         .json({ message: "Invalid or expired OTP" });
@@ -296,6 +300,7 @@ const resetPassword = async (req, res) => {
     user.password = newPassword;
     user.otp = undefined;
     user.otpExpires = undefined;
+    user.otpVerificationId = undefined;
     await user.save();
 
     logger.info("Password reset successfully");

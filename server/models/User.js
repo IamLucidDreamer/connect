@@ -69,6 +69,7 @@ const userSchema = new mongoose.Schema({
   ],
   otp: { type: String },
   otpExpires: { type: Date },
+  otpVerificationId: { type: String },
   isEmailVerified: { type: Boolean, default: false },
   isPhoneVerified: { type: Boolean, default: false },
   role: {
@@ -115,7 +116,20 @@ userSchema.methods.generateOTP = function () {
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   this.otp = otp;
   this.otpExpires = Date.now() + 10 * 60 * 1000;
+  this.otpVerificationId = Math.floor(
+    100000 + Math.random() * 900000
+  ).toString();
   return otp;
+};
+
+userSchema.methods.toJSON = function () {
+  const user = this.toObject();
+  delete user.password;
+  delete user.refreshTokens;
+  delete user.otp;
+  delete user.otpExpires;
+  delete user.otpVerificationId;
+  return user;
 };
 
 const User = mongoose.model("User", userSchema);

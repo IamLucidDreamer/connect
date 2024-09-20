@@ -36,7 +36,7 @@ const NewPassword = () => {
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
   const [showOTP, setShowOTP] = useState(false);
-  const [showPassword , setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (!state) {
@@ -116,7 +116,7 @@ const NewPassword = () => {
                 handleSubmit,
               }) => {
                 return (
-                  <>
+                  <form>
                     <div className="w-11/12">
                       <h1 className="text-lg text-secondary">
                         {`Enter the OTP sent to your registered Email Address ${
@@ -164,7 +164,10 @@ const NewPassword = () => {
                           value={values.newPassword}
                           onChange={handleChange}
                         />
-                        <EyeIcon onClick={() => setShowPassword(!showPassword)} className="w-5 h-5 cursor-pointer" />
+                        <EyeIcon
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="w-5 h-5 cursor-pointer"
+                        />
                       </div>
                       <CustomValidationErrorMessage
                         show={
@@ -184,7 +187,10 @@ const NewPassword = () => {
                           value={values.confirmPassword}
                           onChange={handleChange}
                         />
-                        <EyeIcon onClick={() => setShowPassword(!showPassword)} className="w-5 h-5 cursor-pointer" />
+                        <EyeIcon
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="w-5 h-5 cursor-pointer"
+                        />
                       </div>
                       <CustomValidationErrorMessage
                         show={
@@ -211,7 +217,7 @@ const NewPassword = () => {
                         }}
                       />
                     </div>
-                  </>
+                  </form>
                 );
               }}
             </Formik>

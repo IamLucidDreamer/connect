@@ -23,7 +23,7 @@ const ForgotPassword = () => {
 
   useEffect(() => {
     const authToken = getAuthToken();
-    if ( authToken?.length && authToken !== "undefined") {
+    if (authToken?.length && authToken !== "undefined") {
       navigate("/dashboard");
     }
   }, []);
@@ -31,12 +31,10 @@ const ForgotPassword = () => {
   const handleSendOTP = async (values) => {
     setLoading(true);
     try {
-      const response = await forgotPassword({email :values.email});
+      const response = await forgotPassword({ email: values.email });
       const { status } = response;
       if (status >= 200 && status < 300) {
-        toast.success(
-          `OTP Sent Succesfully to ${values.email}`
-        );
+        toast.success(`OTP Sent Succesfully to ${values.email}`);
         sessionStorage.setItem("email", values.email);
         sessionStorage.setItem("userId", response?.data?.data?.userId);
         navigate("/new-password", { state: { values } });
@@ -74,7 +72,7 @@ const ForgotPassword = () => {
             >
               {({ values, touched, errors, handleChange, handleSubmit }) => {
                 return (
-                  <>
+                  <form>
                     <div className="w-11/12">
                       <div className="bg-gray-100 text-secondary flex gap-3 items-center px-3 rounded-lg my-5 shadow-lg">
                         <MailIcon className="w-6 h-6" />
@@ -88,11 +86,7 @@ const ForgotPassword = () => {
                         />
                       </div>
                       <CustomValidationErrorMessage
-                        show={
-                          touched.email && errors.email
-                            ? true
-                            : false
-                        }
+                        show={touched.email && errors.email ? true : false}
                         error={errors.email}
                       />
                       <button
@@ -130,7 +124,7 @@ const ForgotPassword = () => {
                         </Link>
                       </div>
                     </div>
-                  </>
+                  </form>
                 );
               }}
             </Formik>
