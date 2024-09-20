@@ -67,7 +67,7 @@ const registerUser = async (req, res) => {
     logger.info(`OTP sent to ${user.email}`);
     res.status(STATUS_CREATED).json({
       message: "OTP sent to email",
-      data: { userId: user._id },
+      data: { userId: user._id, otpVerificationId: user.otpVerificationId },
     });
   } catch (error) {
     logger.error(error.message || ERRORS.SERVER.INTERNAL_ERROR);

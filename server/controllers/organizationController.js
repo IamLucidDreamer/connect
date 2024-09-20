@@ -7,6 +7,7 @@ const {
   STATUS_BAD_REQUEST,
   STATUS_SERVER_ERROR,
   ERRORS,
+  STATUS_NOT_FOUND,
 } = require("../config/constants");
 const logger = require("../utils/logger");
 const sendEmail = require("../utils/sendEmails");
@@ -160,6 +161,11 @@ const sendOtpForAdminAssignment = async (req, res) => {
 
     res.status(STATUS_SUCCESS).json({
       message: "OTP sent successfully to the user's email.",
+      data: {
+        userId: user._id,
+        otpVerificationId: user.otpVerificationId,
+        organizationId: organization._id,
+      },
     });
   } catch (error) {
     logger.error("Error sending OTP for admin assignment:", error);
@@ -194,7 +200,7 @@ const verifyOtpAndAssignAdmin = async (req, res) => {
       user.otpVerificationId !== otpVerificationId
     ) {
       return res.status(STATUS_BAD_REQUEST).json({
-        message: "Invalid or expired OTP.",
+        message: "OTP is invalid or expired.",
       });
     }
 
@@ -228,7 +234,7 @@ const verifyOtpAndAssignAdmin = async (req, res) => {
     await user.save();
 
     const responseUser = user.toJSON();
-    const responseOrganization = organization;
+    const responseOrganization = organization.toObject();
 
     res.status(STATUS_SUCCESS).json({
       message:

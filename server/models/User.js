@@ -77,11 +77,8 @@ const userSchema = new mongoose.Schema({
     enum: ["user", "organisation-admin", "admin"],
     default: "user",
   },
-  education: [educationSchema], // Educational Info
-  professional: [professionalSchema], // Professional Info
-  organizations: [
-    { type: mongoose.Schema.Types.ObjectId, ref: "Organization" },
-  ],
+  education: [educationSchema],
+  professional: [professionalSchema],
   batch: { type: String },
   socialLinks: {
     linkedin: String,

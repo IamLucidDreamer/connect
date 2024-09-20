@@ -9,7 +9,7 @@ const logger = require("../utils/logger");
 
 const getUser = async (req, res) => {
   const { userId } = req.params;
-  const authenticatedUserId = req.user._id; // Assuming req.user contains the authenticated user data
+  const authenticatedUserId = req.user._id;
 
   try {
     const user = await User.findById(userId).select("-password");
