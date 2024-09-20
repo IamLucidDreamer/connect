@@ -148,7 +148,12 @@ const resendOTP = async (req, res) => {
     );
 
     logger.info(`Resend OTP sent to ${user.email}`);
-    res.status(STATUS_SUCCESS).json({ message: "OTP resent to email" });
+    res
+      .status(STATUS_SUCCESS)
+      .json({
+        message: "OTP resent to email",
+        data: { userId: user._id, otpVerificationId: user.otpVerificationId },
+      });
   } catch (error) {
     logger.error(error.message || ERRORS.SERVER.INTERNAL_ERROR);
     res

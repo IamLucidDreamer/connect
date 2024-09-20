@@ -87,7 +87,7 @@ const SignUp = () => {
         console.log(response);
         toast.success(response?.data?.message || "Sign Up Successful");
         dispatch(
-          setUser({ email: values.email, userId: response?.data?.data?.userId })
+          setUser({ email: values.email, userId: response?.data?.data?.userId, otpVerificationId: response?.data?.data?.otpVerificationId })
         );
         navigate("/verify-otp");
       }

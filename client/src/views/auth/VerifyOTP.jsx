@@ -57,7 +57,9 @@ const VerifyOTP = () => {
       const data = {
         otp: values.otp,
         userId: user?.userId,
+        otpVerificationId: user?.otpVerificationId,
       };
+      console.log("data", user);
       const response = await verifyOtp(data);
       if (response?.data) {
         toast.success(response?.data?.message || "OTP Verified Successfully");
@@ -99,7 +101,7 @@ const VerifyOTP = () => {
             >
               {({ values, touched, errors, setFieldValue, handleSubmit }) => {
                 return (
-                  <form>
+                  <form className="w-full">
                     <div className="w-11/12">
                       <h1 className="text-lg text-secondary">
                         {`Enter the OTP sent to : ${user?.email} `}

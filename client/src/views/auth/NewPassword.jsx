@@ -116,7 +116,7 @@ const NewPassword = () => {
                 handleSubmit,
               }) => {
                 return (
-                  <form>
+                  <form className="w-full">
                     <div className="w-11/12">
                       <h1 className="text-lg text-secondary">
                         {`Enter the OTP sent to your registered Email Address ${

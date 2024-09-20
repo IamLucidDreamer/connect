@@ -10,15 +10,26 @@ const SignUp = lazy(() => import("../views/auth/Signup"));
 const Login = lazy(() => import("../views/auth/Login"));
 const VerifyOTP = lazy(() => import("../views/auth/VerifyOTP"));
 const ForgotPassword = lazy(() => import("../views/auth/ForgotPassword"));
-const NewPassword = lazy(() => import("../views/auth/NewPassword"))
+const NewPassword = lazy(() => import("../views/auth/NewPassword"));
 // const CompleteProfile = lazy(() => import("../views/auth/CompleteProfile"))
 
 const MainPage = lazy(() => import("../views/website/Home"));
-const DashboardProfile = lazy(() => import("../views/dashboardPages/profile/Profile"))
-const UserEditProfile = lazy(() => import("../views/dashboardPages/profile/EditProfile"))
-const UserEditEducation = lazy(() => import("../views/dashboardPages/profile/EditEducation"))
-const UserEditProfessional = lazy(() => import("../views/dashboardPages/profile/EditProfessional"))
-const Feed = lazy(() => import("../views/dashboardPages/Feed"))
+const DashboardProfile = lazy(() =>
+  import("../views/dashboardPages/profile/Profile")
+);
+const UserEditProfile = lazy(() =>
+  import("../views/dashboardPages/profile/EditProfile")
+);
+const UserEditEducation = lazy(() =>
+  import("../views/dashboardPages/profile/EditEducation")
+);
+const UserEditProfessional = lazy(() =>
+  import("../views/dashboardPages/profile/EditProfessional")
+);
+const OrganizationProfile = lazy(() =>
+  import("../views/dashboardPages/organization/profile")
+);
+const Feed = lazy(() => import("../views/dashboardPages/Feed"));
 
 const router = createBrowserRouter([
   {
@@ -42,8 +53,8 @@ const router = createBrowserRouter([
     element: <ForgotPassword />,
   },
   {
-      path: "/new-password",
-      element: <NewPassword />,
+    path: "/new-password",
+    element: <NewPassword />,
   },
   // {
   //     path: "/complete-profile",
@@ -55,23 +66,27 @@ const router = createBrowserRouter([
     children: [
       {
         path: "",
-        element: <Feed/>,
+        element: <Feed />,
       },
       {
         path: "profile",
-        element: <DashboardProfile/>,
+        element: <DashboardProfile />,
       },
       {
         path: "profile/edit",
-        element: <UserEditProfile/>,
+        element: <UserEditProfile />,
       },
       {
         path: "profile/professional/edit",
-        element: <UserEditProfessional/>,
+        element: <UserEditProfessional />,
       },
       {
         path: "profile/education/edit",
-        element: <UserEditEducation/>,
+        element: <UserEditEducation />,
+      },
+      {
+        path: "organization/profile",
+        element: <OrganizationProfile />,
       },
     ],
   },

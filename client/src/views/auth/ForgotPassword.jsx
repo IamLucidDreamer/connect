@@ -72,7 +72,7 @@ const ForgotPassword = () => {
             >
               {({ values, touched, errors, handleChange, handleSubmit }) => {
                 return (
-                  <form>
+                  <form className="w-full">
                     <div className="w-11/12">
                       <div className="bg-gray-100 text-secondary flex gap-3 items-center px-3 rounded-lg my-5 shadow-lg">
                         <MailIcon className="w-6 h-6" />
