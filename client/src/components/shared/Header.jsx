@@ -71,7 +71,7 @@ const Header = () => {
                   </h1>
                   <ChevronDownIcon className="w-5 h-5 text-primary" />
                 </div>
-                <div className="w-full bg-white px-2 absolute -bottom-36 border rounded shadow-md hidden duration-300 group-hover:block">
+                <div className="w-full bg-white px-2 absolute -bottom-28 border rounded shadow-md hidden duration-300 group-hover:block">
                   <button
                     className="hover:opacity-60 w-full text-left py-1 border-b"
                     onClick={() => navigate("/dashboard/profile")}

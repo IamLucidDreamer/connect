@@ -16,7 +16,7 @@ const protect = async (req, res, next) => {
       next();
     } catch (error) {
       logger.error(error.message);
-      res
+      return res
         .status(STATUS_UNAUTHORIZED)
         .json({ message: ERRORS.AUTH.NOT_AUTHORIZED });
     }
@@ -24,7 +24,7 @@ const protect = async (req, res, next) => {
 
   if (!token) {
     logger.error(ERRORS.AUTH.NO_TOKEN);
-    res
+    return res
       .status(STATUS_UNAUTHORIZED)
       .json({ message: ERRORS.AUTH.NOT_AUTHORIZED });
   }

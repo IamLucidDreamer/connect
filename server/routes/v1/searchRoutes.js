@@ -3,6 +3,6 @@ const { protect } = require("../../middleware/authMiddleware");
 const { searchUsers } = require("../../controllers/searchController");
 const router = express.Router();
 
-router.post("/", searchUsers);
+router.post("/", protect, searchUsers);
 
 module.exports = router;
