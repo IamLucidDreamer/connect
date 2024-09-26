@@ -81,16 +81,26 @@ const ProfileUpdateForm = () => {
               Edit
             </button>
           </div>
-          <hr className="my-6 border-t border-gray-300" />
-          <h2 className="text-xl font-semibold mt-6 mb-4">Personal Details</h2>
-          {user?.gender && (
-            <p className="text-gray-700">Gender: {user?.gender}</p>
-          )}
-          {user?.dateOfBirth && (
-            <p className="text-gray-700">
-              D.O.B: {user?.dateOfBirth.split("T")[0]}
-            </p>
-          )}
+          <hr className="mb-6 border-t border-gray-300" />
+          <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            {user?.gender && (
+              <div className="sm:col-span-3">
+                <p className="text-gray-700 pb-1">Gender</p>
+                <p className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
+                  {user?.gender}
+                </p>
+              </div>
+            )}
+            {user?.dateOfBirth && (
+              <div className="sm:col-span-3">
+                <p className="text-gray-700 pb-1">DOB</p>
+                <p className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
+                  {user?.dateOfBirth.split("T")[0]}
+                </p>
+              </div>
+            )}
+          </div>
+
           {user?.socialLinks?.linkedin ||
           user?.socialLinks?.twitter ||
           user?.socialLinks?.github ? (
