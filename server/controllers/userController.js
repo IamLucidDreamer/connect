@@ -22,23 +22,22 @@ const getUser = async (req, res) => {
 
     const { password, otp, otpExpires, ...safeData } = user.toObject();
 
+    let connection = null;
+    let actionRequired = null;
+
     if (!isSelf) {
-      const connection = Connection.findOne({
+      connection = await Connection.findOne({
         $or: [
-          { sender: userId, receiver: authenticatedUserId },
-          { sender: authenticatedUserId, receiver: userId },
+          { receiver: safeData?._id, sender: authenticatedUserId },
+          { sender: safeData?._id, receiver: authenticatedUserId },
         ],
       });
 
-      let actionRequired = null;
-
-      if (connection) {
-        if (connection.status === "pending") {
-          if (connection.receiver.toString() === req.user._id.toString()) {
-            actionRequired = "accept";
-          } else if (connection.sender.toString() === req.user._id.toString()) {
-            actionRequired = "waiting";
-          }
+      if (connection && connection.status === "pending") {
+        if (connection.receiver.toString() === req.user._id.toString()) {
+          actionRequired = "accept";
+        } else if (connection.sender.toString() === req.user._id.toString()) {
+          actionRequired = "waiting";
         }
       }
     }
