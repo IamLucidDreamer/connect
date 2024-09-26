@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const Connection = require("../models/Connection");
 const {
   STATUS_SUCCESS,
   STATUS_BAD_REQUEST,
@@ -6,7 +7,6 @@ const {
   ERRORS,
 } = require("../config/constants");
 const logger = require("../utils/logger");
-const { Connection, connect } = require("mongoose");
 
 const getUser = async (req, res) => {
   const { userId } = req.params;

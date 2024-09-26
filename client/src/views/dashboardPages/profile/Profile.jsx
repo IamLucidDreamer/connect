@@ -14,12 +14,11 @@ const Profile = () => {
   const { userId: userIdFromParams } = useParams();
   const [showTab, setShowTab] = useState(1);
 
-  console.log("userIdFromParams", userIdFromParams);
 
   // Fetch user details from the server
   const getUserDetails = () => {
     server
-      .get(`/user/${user?._id}`)
+      .get(`/user/${ userIdFromParams ? userIdFromParams : user?._id}`)
       .then((res) => {
         dispatch(setUser(res.data?.data?.user));
       })

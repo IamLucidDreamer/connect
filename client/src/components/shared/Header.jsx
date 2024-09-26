@@ -242,7 +242,8 @@ const Search = () => {
   }, [searchKeyword]);
 
   const handleRedirect = (id) => {
-    navigate(`/profile/${id}`);
+    dispatch(setSearchKeyword(""));
+    navigate(`profile/${id}`);
   };
 
   return (
