@@ -16,6 +16,7 @@ import { useDispatch } from "react-redux";
 import AppIcon from "../images/AppIcon";
 import { search } from "../../services/searchService";
 import { toast } from "react-toastify";
+import server from "../../helpers/apiCall";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -54,7 +55,7 @@ const Header = () => {
                 Organization
               </button>
             </Link>
-            <Link to={"/dashboard/link"}>
+            <Link to={"/dashboard/connections"}>
               <button className="uppercase border-b border-white hover:border-primary duration-300">
                 Connections
               </button>
@@ -71,7 +72,7 @@ const Header = () => {
                   </h1>
                   <ChevronDownIcon className="w-5 h-5 text-primary" />
                 </div>
-                <div className="w-full bg-white px-2 absolute -bottom-28 border rounded shadow-md hidden duration-300 group-hover:block">
+                <div className="w-full bg-white px-2 absolute -bottom-28 -mb-3 border rounded shadow-md hidden duration-300 group-hover:block">
                   <button
                     className="hover:opacity-60 w-full text-left py-1 border-b"
                     onClick={() => navigate("/dashboard/profile")}
@@ -203,10 +204,12 @@ const DrawerMenu = ({ openModal, closeModal, navigate }) => {
   );
 };
 
+
 const Search = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
+  const navigate = useNavigate();
 
   const searchFn = async (query) => {
     try {
@@ -223,14 +226,33 @@ const Search = () => {
       setLoading(false);
     }
   };
+
+  // Function to send a connection request
+  const sendConnectionRequest = async (userId) => {
+    try {
+      const response = await server.post(`/connections/send`, { receiverId: userId });
+      if (response.status === 200) {
+        toast.success("Connection request sent successfully!");
+      } else {
+        toast.error("Error sending connection request");
+      }
+    } catch (err) {
+      toast.error("Error sending connection request");
+    }
+  };
+
   useEffect(() => {
-    const timout = setTimeout(() => {
+    const timeout = setTimeout(() => {
       if (searchKeyword.length > 1) searchFn(searchKeyword);
     }, 1500);
     return () => {
-      clearTimeout(timout);
+      clearTimeout(timeout);
     };
   }, [searchKeyword]);
+
+  const handleRedirect = (id) => {
+    navigate(`/profile/${id}`);
+  };
 
   return (
     <div className="relative">
@@ -245,13 +267,27 @@ const Search = () => {
         <SearchIcon className="w-6 h-6 text-primary" />
       </div>
       {searchKeyword?.length > 1 && (
-        <div className="bg-white shadow-lg flex items-center justify-center absolute top-12 w-full border p-2 rounded">
+        <div className="bg-white shadow-lg flex items-center justify-center absolute top-12 w-96 border p-2 rounded flex-col gap-3">
           {!loading ? (
             users?.length > 0 ? (
               users.map((user) => (
-                <div className="flex gap-2 items-center w-full">
-                  <UserCircleIcon className="w-8 h-8 text-primary" />
-                  <h1>{user?.firstName + " " + user?.lastName}</h1>
+                <div key={user?._id} className="flex justify-between items-center w-full gap-2">
+                  <button
+                    onClick={() => handleRedirect(user?._id)}
+                    className="flex gap-2 items-center w-full"
+                  >
+                    <UserCircleIcon className="w-8 h-8 text-primary" />
+                    <h1 className="text-left truncate">
+                      {user?.firstName + " " + user?.lastName}
+                    </h1>
+                  </button>
+                  {/* Button to send connection request */}
+                  <button
+                    onClick={() => sendConnectionRequest(user?._id)}
+                    className="bg-primary text-white px-2 py-1 rounded-lg text-xs"
+                  >
+                    Send Request
+                  </button>
                 </div>
               ))
             ) : (
@@ -265,3 +301,4 @@ const Search = () => {
     </div>
   );
 };
+
