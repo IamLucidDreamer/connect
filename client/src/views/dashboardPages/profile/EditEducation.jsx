@@ -258,7 +258,7 @@ const EducationForm = () => {
           });
           setFormVisible(true);
         }}
-        className="mb-4 inline-flex items-center px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-md shadow-sm hover:bg-blue-600"
+        className="mb-4 inline-flex items-center px-4 py-2 bg-primary text-white text-sm font-medium rounded-md shadow-sm hover:bg-blue-600"
       >
         Add Education Details
       </button>

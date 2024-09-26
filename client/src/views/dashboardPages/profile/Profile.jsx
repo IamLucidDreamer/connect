@@ -6,11 +6,15 @@ import { setUser } from "../../../store/actions/userActions";
 import EditEducation from "./EditEducation";
 import EditProfession from "./EditProfessional";
 import EditProfile from "./EditProfile";
+import { useParams } from "react-router-dom";
 
 const Profile = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state?.user);
+  const { userId: userIdFromParams } = useParams();
   const [showTab, setShowTab] = useState(1);
+
+  console.log("userIdFromParams", userIdFromParams);
 
   // Fetch user details from the server
   const getUserDetails = () => {

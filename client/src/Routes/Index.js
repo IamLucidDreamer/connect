@@ -17,15 +17,6 @@ const MainPage = lazy(() => import("../views/website/Home"));
 const DashboardProfile = lazy(() =>
   import("../views/dashboardPages/profile/Profile")
 );
-const UserEditProfile = lazy(() =>
-  import("../views/dashboardPages/profile/EditProfile")
-);
-const UserEditEducation = lazy(() =>
-  import("../views/dashboardPages/profile/EditEducation")
-);
-const UserEditProfessional = lazy(() =>
-  import("../views/dashboardPages/profile/EditProfessional")
-);
 const OrganizationProfile = lazy(() =>
   import("../views/dashboardPages/organization/profile")
 );
@@ -73,7 +64,7 @@ const router = createBrowserRouter([
         element: <Feed />,
       },
       {
-        path: "profile",
+        path: "profile/:userId",
         element: <DashboardProfile />,
       },
       {
@@ -84,18 +75,6 @@ const router = createBrowserRouter([
       {
         path: "search",
         element: <Search />,
-      },
-      {
-        path: "profile/edit",
-        element: <UserEditProfile />,
-      },
-      {
-        path: "profile/professional/edit",
-        element: <UserEditProfessional />,
-      },
-      {
-        path: "profile/education/edit",
-        element: <UserEditEducation />,
       },
       {
         path: "organization/profile",
