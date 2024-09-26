@@ -90,7 +90,6 @@ const searchUsersWithFilters = async (req, res) => {
 
     const count = await User.countDocuments(query);
 
-    // Use Promise.all to resolve all the connection status checks
     const usersWithConnections = await Promise.all(
       users.map(async (user) => {
         const connection = await Connection.findOne({
@@ -99,11 +98,24 @@ const searchUsersWithFilters = async (req, res) => {
             { sender: req.user._id, receiver: user._id },
           ],
         });
-
+    
+        let actionRequired = null; 
+    
+        if (connection) {
+          if (connection.status === "pending") {
+            if (connection.receiver.toString() === req.user._id.toString()) {
+              actionRequired = "accept";
+            } else if (connection.sender.toString() === req.user._id.toString()) {
+              actionRequired = "waiting"; 
+            }
+          }
+        }
+    
         return {
           ...user,
           connectionStatus: connection ? connection.status : "none",
           connectionId: connection ? connection._id : null,
+          actionRequired, // Add this field to indicate what action is needed
         };
       })
     );
