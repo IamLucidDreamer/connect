@@ -6,6 +6,7 @@ const {
   ERRORS,
 } = require("../config/constants");
 const logger = require("../utils/logger");
+const { Connection, connect } = require("mongoose");
 
 const getUser = async (req, res) => {
   const { userId } = req.params;
@@ -20,14 +21,32 @@ const getUser = async (req, res) => {
     const isSelf = authenticatedUserId.toString() === userId;
 
     const { password, otp, otpExpires, ...safeData } = user.toObject();
+
+    const connection = Connection.findOne({
+      $or: [
+        { sender: userId, receiver: authenticatedUserId },
+        { sender: authenticatedUserId, receiver: userId },
+      ],
+    });
+
+    let actionRequired = null;
+
+    if (connection) {
+      if (connection.status === "pending") {
+        if (connection.receiver.toString() === req.user._id.toString()) {
+          actionRequired = "accept";
+        } else if (connection.sender.toString() === req.user._id.toString()) {
+          actionRequired = "waiting";
+        }
+      }
+    }
+
     const userData = isSelf
       ? { ...safeData }
       : {
           _id: user._id,
           firstName: user.firstName,
-          middleName: user.middleName || null,
           lastName: user.lastName || null,
-          email: user.email,
           emailVerified: user.isEmailVerified,
           bio: user.bio || null,
           gender: user.gender || null,
@@ -35,6 +54,9 @@ const getUser = async (req, res) => {
           education: user.education || null,
           professional: user.professional || null,
           socialLinks: user.socialLinks || null,
+          connectionStatus: connection ? connection.status : "none",
+          actionRequired,
+          connectionId: connection ? connection._id : null,
         };
 
     res.status(STATUS_SUCCESS).json({
@@ -66,7 +88,9 @@ const updateUser = async (req, res) => {
 
     // Return all user data
     const userData = userToUpdate.toObject();
-    res.status(STATUS_SUCCESS).json({ message: "User updated successfully", data: userData });
+    res
+      .status(STATUS_SUCCESS)
+      .json({ message: "User updated successfully", data: userData });
   } catch (error) {
     logger.error(error.message);
     res.status(STATUS_SERVER_ERROR).json({ message: error.message });

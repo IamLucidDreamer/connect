@@ -98,24 +98,26 @@ const searchUsersWithFilters = async (req, res) => {
             { sender: req.user._id, receiver: user._id },
           ],
         });
-    
-        let actionRequired = null; 
-    
+
+        let actionRequired = null;
+
         if (connection) {
           if (connection.status === "pending") {
             if (connection.receiver.toString() === req.user._id.toString()) {
               actionRequired = "accept";
-            } else if (connection.sender.toString() === req.user._id.toString()) {
-              actionRequired = "waiting"; 
+            } else if (
+              connection.sender.toString() === req.user._id.toString()
+            ) {
+              actionRequired = "waiting";
             }
           }
         }
-    
+
         return {
           ...user,
           connectionStatus: connection ? connection.status : "none",
           connectionId: connection ? connection._id : null,
-          actionRequired, // Add this field to indicate what action is needed
+          actionRequired,
         };
       })
     );
@@ -133,6 +135,5 @@ const searchUsersWithFilters = async (req, res) => {
     logger.info("Search Users with Filters API called");
   }
 };
-
 
 module.exports = { searchUsers, getFilterValues, searchUsersWithFilters };

@@ -3,7 +3,7 @@ import server from "../helpers/apiCall";
 export const sendConnectionRequest = async (data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await server.post("/connections", data);
+      const response = await server.post("/connections/send", data);
       resolve(response);
     } catch (error) {
       reject(error);
@@ -14,7 +14,7 @@ export const sendConnectionRequest = async (data) => {
 export const acceptConnectionRequest = async (data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await server.put("/connections/approve", data);
+      const response = await server.post("/connections/approve", data);
       resolve(response);
     } catch (error) {
       reject(error);
@@ -25,7 +25,7 @@ export const acceptConnectionRequest = async (data) => {
 export const rejectConnectionRequest = async (data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await server.put("/connections/reject-remove", data);
+      const response = await server.post("/connections/reject-remove", data);
       resolve(response);
     } catch (error) {
       reject(error);

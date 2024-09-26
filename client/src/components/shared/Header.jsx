@@ -214,6 +214,9 @@ const Search = () => {
   const navigate = useNavigate();
 
   const searchFn = async (query) => {
+    if (currentPath === "/dashboard/search") {
+      return;
+    }
     try {
       setLoading(true);
       const response = await search(query);
@@ -226,22 +229,6 @@ const Search = () => {
       toast.error("Error in search");
     } finally {
       setLoading(false);
-    }
-  };
-
-  // Function to send a connection request
-  const sendConnectionRequest = async (userId) => {
-    try {
-      const response = await server.post(`/connections/send`, {
-        receiverId: userId,
-      });
-      if (response.status === 200) {
-        toast.success("Connection request sent successfully!");
-      } else {
-        toast.error("Error sending connection request");
-      }
-    } catch (err) {
-      toast.error("Error sending connection request");
     }
   };
 
