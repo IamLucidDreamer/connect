@@ -90,20 +90,26 @@ const searchUsersWithFilters = async (req, res) => {
 
     const count = await User.countDocuments(query);
 
-    users.forEach(async (user) => {
-      const connection = await Connection.findOne({
-        $or: [
-          { receiver: req.user._id, sender: user._id },
-          { sender: user._id, receiver: req.user._id },
-        ],
-      });
+    // Use Promise.all to resolve all the connection status checks
+    const usersWithConnections = await Promise.all(
+      users.map(async (user) => {
+        const connection = await Connection.findOne({
+          $or: [
+            { receiver: req.user._id, sender: user._id },
+            { sender: req.user._id, receiver: user._id },
+          ],
+        });
 
-      user.connectionStatus = connection ? connection.status : "none";
-    });
+        return {
+          ...user,
+          connectionStatus: connection ? connection.status : "none",
+        };
+      })
+    );
 
     res.status(STATUS_SUCCESS).json({
       message: "Search Results Fetched Successfully",
-      data: { users: users, count },
+      data: { users: usersWithConnections, count },
     });
   } catch (err) {
     logger.error(err.message);
@@ -114,5 +120,6 @@ const searchUsersWithFilters = async (req, res) => {
     logger.info("Search Users with Filters API called");
   }
 };
+
 
 module.exports = { searchUsers, getFilterValues, searchUsersWithFilters };
