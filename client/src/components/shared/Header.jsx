@@ -17,6 +17,7 @@ import AppIcon from "../images/AppIcon";
 import { search } from "../../services/searchService";
 import { toast } from "react-toastify";
 import server from "../../helpers/apiCall";
+import { setSearchKeyword } from "../../store/actions/searchActions";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -204,9 +205,10 @@ const DrawerMenu = ({ openModal, closeModal, navigate }) => {
   );
 };
 
-
 const Search = () => {
-  const [searchKeyword, setSearchKeyword] = useState("");
+  const dispatch = useDispatch();
+  const searchKeyword = useSelector((state) => state?.search?.searchKeyword);
+  const currentPath = window.location.pathname;
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
@@ -216,7 +218,7 @@ const Search = () => {
       setLoading(true);
       const response = await search(query);
       if (response.status === 200) {
-        setUsers(response.data);
+        setUsers(response?.data?.data);
       } else {
         console.log("Error in search");
       }
@@ -230,7 +232,9 @@ const Search = () => {
   // Function to send a connection request
   const sendConnectionRequest = async (userId) => {
     try {
-      const response = await server.post(`/connections/send`, { receiverId: userId });
+      const response = await server.post(`/connections/send`, {
+        receiverId: userId,
+      });
       if (response.status === 200) {
         toast.success("Connection request sent successfully!");
       } else {
@@ -262,34 +266,35 @@ const Search = () => {
           placeholder="Search"
           className="p-1 text-lg rounded-lg gray-50 w-full focus:outline-none"
           type="text"
-          onChange={(e) => setSearchKeyword(e.target.value)}
+          onChange={(e) => dispatch(setSearchKeyword(e.target.value))}
         />
         <SearchIcon className="w-6 h-6 text-primary" />
       </div>
-      {searchKeyword?.length > 1 && (
+      {searchKeyword?.length > 1 && currentPath !== "/dashboard/search" && (
         <div className="bg-white shadow-lg flex items-center justify-center absolute top-12 w-96 border p-2 rounded flex-col gap-3">
           {!loading ? (
             users?.length > 0 ? (
-              users.map((user) => (
-                <div key={user?._id} className="flex justify-between items-center w-full gap-2">
-                  <button
-                    onClick={() => handleRedirect(user?._id)}
-                    className="flex gap-2 items-center w-full"
+              <>
+                {users.map((user) => (
+                  <div
+                    key={user?._id}
+                    className="flex justify-between items-center w-full gap-2"
                   >
-                    <UserCircleIcon className="w-8 h-8 text-primary" />
-                    <h1 className="text-left truncate">
-                      {user?.firstName + " " + user?.lastName}
-                    </h1>
-                  </button>
-                  {/* Button to send connection request */}
-                  <button
-                    onClick={() => sendConnectionRequest(user?._id)}
-                    className="bg-primary text-white px-2 py-1 rounded-lg text-xs"
-                  >
-                    Send Request
-                  </button>
-                </div>
-              ))
+                    <button
+                      onClick={() => handleRedirect(user?._id)}
+                      className="flex gap-2 items-center w-full"
+                    >
+                      <UserCircleIcon className="w-8 h-8 text-primary" />
+                      <h1 className="text-left truncate">
+                        {user?.firstName + " " + user?.lastName}
+                      </h1>
+                    </button>
+                  </div>
+                ))}
+                <Link to="/dashboard/search" className="text-primary underline">
+                  See More
+                </Link>{" "}
+              </>
             ) : (
               <h1>No user found</h1>
             )
@@ -301,4 +306,3 @@ const Search = () => {
     </div>
   );
 };
-

@@ -103,6 +103,7 @@ const searchUsersWithFilters = async (req, res) => {
         return {
           ...user,
           connectionStatus: connection ? connection.status : "none",
+          connectionId: connection ? connection._id : null,
         };
       })
     );

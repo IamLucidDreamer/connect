@@ -1,10 +1,12 @@
-import { combineReducers } from 'redux';
-import userReducers from "./userReducers"
-import appInAppReducers from "./appInAppReducers"
+import { combineReducers } from "redux";
+import userReducers from "./userReducers";
+import appInAppReducers from "./appInAppReducers";
+import searchReducers from "./searchReducers";
 
 const createReducer = combineReducers({
-    user: userReducers,
-    appInApp: appInAppReducers
+  search: searchReducers,
+  user: userReducers,
+  appInApp: appInAppReducers,
 });
 
 export default createReducer;
