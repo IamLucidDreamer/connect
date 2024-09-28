@@ -118,20 +118,20 @@ const Profile = () => {
                     </a>
                   ) : (
                     <div className="mt-4 space-x-2">
-                      {userData.connectionStatus === "none" && (
+                      {userData?.connectionStatus === "none" && (
                         <button
-                          onClick={() => handleSendRequest(userData._id)}
+                          onClick={() => handleSendRequest(userData?._id)}
                           className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                         >
                           Send Connection Request
                         </button>
                       )}
 
-                      {userData.connectionStatus === "pending" &&
-                        userData.actionRequired === "accept" && (
+                      {userData?.connectionStatus === "pending" &&
+                        userData?.actionRequired === "accept" && (
                           <button
                             onClick={() =>
-                              handleAcceptRequest(userData.connectionId)
+                              handleAcceptRequest(userData?.connectionId)
                             }
                             className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
                           >
@@ -139,11 +139,11 @@ const Profile = () => {
                           </button>
                         )}
 
-                      {userData.connectionStatus === "pending" &&
-                        userData.actionRequired === "waiting" && (
+                      {userData?.connectionStatus === "pending" &&
+                        userData?.actionRequired === "waiting" && (
                           <button
                             onClick={() =>
-                              handleCancelRequest(userData.connectionId)
+                              handleCancelRequest(userData?.connectionId)
                             }
                             className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
                           >
@@ -151,11 +151,11 @@ const Profile = () => {
                           </button>
                         )}
 
-                      {userData.connectionStatus === "pending" &&
-                        userData.actionRequired === "accept" && (
+                      {userData?.connectionStatus === "pending" &&
+                        userData?.actionRequired === "accept" && (
                           <button
                             onClick={() =>
-                              handleCancelRequest(userData.connectionId)
+                              handleCancelRequest(userData?.connectionId)
                             }
                             className="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
                           >
@@ -163,10 +163,10 @@ const Profile = () => {
                           </button>
                         )}
 
-                      {userData.connectionStatus === "accepted" && (
+                      {userData?.connectionStatus === "accepted" && (
                         <button
                           onClick={() =>
-                            handleCancelRequest(userData.connectionId)
+                            handleCancelRequest(userData?.connectionId)
                           }
                           className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
                         >
@@ -184,7 +184,7 @@ const Profile = () => {
                 </span>
                 <ul>
                   {userData?.skills?.length > 0 ? (
-                    userData.skills.map((skill, index) => (
+                    userData?.skills.map((skill, index) => (
                       <li key={index} className="mb-2">
                         {skill}
                       </li>
