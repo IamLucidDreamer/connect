@@ -7,30 +7,83 @@ import EditEducation from "./EditEducation";
 import EditProfession from "./EditProfessional";
 import EditProfile from "./EditProfile";
 import { useParams } from "react-router-dom";
+import {
+  acceptConnectionRequest,
+  rejectConnectionRequest,
+  sendConnectionRequest,
+} from "../../../services/connectionService";
 
 const Profile = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state?.user);
   const { userId: userIdFromParams } = useParams();
   const [showTab, setShowTab] = useState(1);
+  const [userData, setUserData] = useState(userIdFromParams ? null : user);
+  const [loading, setLoading] = useState(false);
 
+  const isLoggedInUser = userIdFromParams !== user?._id ? false : true;
 
   // Fetch user details from the server
   const getUserDetails = () => {
+    setLoading(true);
     server
-      .get(`/user/${ userIdFromParams ? userIdFromParams : user?._id}`)
+      .get(`/user/${userIdFromParams ? userIdFromParams : user?._id}`)
       .then((res) => {
-        dispatch(setUser(res.data?.data?.user));
+        setUserData(res.data?.data?.user);
+        if (!userIdFromParams) {
+          dispatch(setUser(res.data?.data?.user));
+        }
       })
       .catch((err) => {
         toast.error(err?.response?.data?.error || "Something went Wrong");
         console.log(err);
-      });
+      })
+      .finally(() => setLoading(false));
+  };
+
+  const handleSendRequest = async (receiverId) => {
+    try {
+      const response = await sendConnectionRequest({ receiverId });
+      if (response.status >= 200 && response.status < 300) {
+        toast.success("Connection request sent successfully");
+        getUserDetails();
+      }
+    } catch (error) {
+      console.error("Error sending connection request:", error);
+    }
+  };
+
+  const handleCancelRequest = async (connectionId) => {
+    try {
+      const response = await rejectConnectionRequest({ connectionId });
+      if (response.status >= 200 && response.status < 300) {
+        toast.success("Connection request cancelled successfully");
+        getUserDetails();
+      }
+    } catch (error) {
+      console.error("Error cancelling connection request:", error);
+    }
+  };
+
+  const handleAcceptRequest = async (connectionId) => {
+    try {
+      const response = await acceptConnectionRequest({ connectionId });
+      if (response.status >= 200 && response.status < 300) {
+        toast.success("Connection request accepted successfully");
+        getUserDetails();
+      }
+    } catch (error) {
+      console.error("Error accepting connection request:", error);
+    }
   };
 
   useEffect(() => {
     getUserDetails();
-  }, []);
+  }, [userIdFromParams]);
+
+  if (loading) {
+    return <div className="text-center">Loading...</div>;
+  }
 
   return (
     <div className="bg-gray-100">
@@ -41,27 +94,87 @@ const Profile = () => {
               <div className="flex flex-col items-center">
                 <img
                   src={
-                    user?.profileImage ||
+                    userData?.profileImage ||
                     "https://randomuser.me/api/portraits/men/94.jpg"
                   }
                   className="w-32 h-32 bg-gray-300 rounded-full mb-4 shrink-0"
                   alt="Profile"
                 />
                 <h1 className="text-xl font-bold">
-                  {`${user?.firstName || ""} ${user?.middleName || ""} ${
-                    user?.lastName || ""
-                  }`}
+                  {`${userData?.firstName || ""} ${
+                    userData?.middleName || ""
+                  } ${userData?.lastName || ""}`}
                 </h1>
                 <p className="text-gray-700">
-                  {user?.introLine || "Add Intro Line"}
+                  {userData?.introLine || "Add Intro Line"}
                 </p>
                 <div className="mt-6 flex flex-wrap gap-4 justify-center">
-                  <a
-                    href={`mailto:${user?.email}`}
-                    className="border-b border-primary px-2 text-primary"
-                  >
-                    Contact
-                  </a>
+                  {isLoggedInUser ? (
+                    <a
+                      href={`mailto:${userData?.email}`}
+                      className="border-b border-primary px-2 text-primary"
+                    >
+                      Contact
+                    </a>
+                  ) : (
+                    <div className="mt-4 space-x-2">
+                      {userData.connectionStatus === "none" && (
+                        <button
+                          onClick={() => handleSendRequest(userData._id)}
+                          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                        >
+                          Send Connection Request
+                        </button>
+                      )}
+
+                      {userData.connectionStatus === "pending" &&
+                        userData.actionRequired === "accept" && (
+                          <button
+                            onClick={() =>
+                              handleAcceptRequest(userData.connectionId)
+                            }
+                            className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+                          >
+                            Accept Request
+                          </button>
+                        )}
+
+                      {userData.connectionStatus === "pending" &&
+                        userData.actionRequired === "waiting" && (
+                          <button
+                            onClick={() =>
+                              handleCancelRequest(userData.connectionId)
+                            }
+                            className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+                          >
+                            Cancel Request
+                          </button>
+                        )}
+
+                      {userData.connectionStatus === "pending" &&
+                        userData.actionRequired === "accept" && (
+                          <button
+                            onClick={() =>
+                              handleCancelRequest(userData.connectionId)
+                            }
+                            className="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+                          >
+                            Deny Request
+                          </button>
+                        )}
+
+                      {userData.connectionStatus === "accepted" && (
+                        <button
+                          onClick={() =>
+                            handleCancelRequest(userData.connectionId)
+                          }
+                          className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+                        >
+                          Remove Connection
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
               <hr className="my-6 border-t border-gray-300" />
@@ -70,8 +183,8 @@ const Profile = () => {
                   Skills
                 </span>
                 <ul>
-                  {user?.skills?.length > 0 ? (
-                    user.skills.map((skill, index) => (
+                  {userData?.skills?.length > 0 ? (
+                    userData.skills.map((skill, index) => (
                       <li key={index} className="mb-2">
                         {skill}
                       </li>
@@ -118,8 +231,8 @@ const Profile = () => {
                 </button>
               </div>
               {showTab === 1 && <EditProfile />}
-              {showTab === 2 && <EditProfession user={user} />}
-              {showTab === 3 && <EditEducation user={user} />}
+              {showTab === 2 && <EditProfession user={userData} />}
+              {showTab === 3 && <EditEducation user={userData} />}
             </div>
           </div>
         </div>

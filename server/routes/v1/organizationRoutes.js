@@ -8,10 +8,12 @@ const {
   verifyOtpAndAssignAdmin,
   updateOrganization,
   joinOrganization,
+  getUsersOrganizations,
 } = require("../../controllers/organizationController");
 
 const router = express.Router();
 
+router.get("/for-user", protect, getUsersOrganizations );
 router.get("/:organizationId", protect, getOrganization);
 router.get("/get-all/names", getAllOrganizationsNames);
 router.post("/bulk-create", createOrganizationsInBulk);

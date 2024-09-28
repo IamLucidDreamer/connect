@@ -12,6 +12,41 @@ const {
 const logger = require("../utils/logger");
 const sendEmail = require("../utils/sendEmails");
 
+const getUsersOrganizations = async (req, res) => {
+  const userId  = req.user._id
+
+  if (!userId) {
+    return res.status(STATUS_BAD_REQUEST).json({
+      message: "User ID is required.",
+    });
+  }
+
+  try {
+    const userOrganizations = await UserOrganizationRelation.find({
+      userId,
+    }).populate("organizationId");
+
+    const userOrganizationsData = Organization.find({
+      _id: { $in: userOrganizations.map((org) => org.organizationId) },
+    })
+
+    console.log(userOrganizations)
+    console.log(userOrganizationsData )
+
+    res.status(STATUS_SUCCESS).json({
+      message: "User organizations fetched successfully.",
+      data: userOrganizations,
+    });
+  } catch (error) {
+    logger.error("Error fetching user organizations:", error);
+    res
+      .status(STATUS_SERVER_ERROR)
+      .json({ message: error.message || ERRORS.SERVER.INTERNAL_ERROR });
+  } finally {
+    logger.info("Get user organizations API called");
+  }
+}
+
 const getOrganization = async (req, res) => {
   const { organizationId } = req.params;
 
@@ -366,6 +401,7 @@ const joinOrganization = async (req, res) => {
 };
 
 module.exports = {
+  getUsersOrganizations,
   getOrganization,
   getAllOrganizationsNames,
   createOrganizationsInBulk,
