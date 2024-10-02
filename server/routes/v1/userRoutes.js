@@ -28,7 +28,7 @@ router.get("/:userId", protect, getUser);
 router.put("/update/:userId", protect, checkUserOrAdmin, updateUser);
 
 // Education routes
-router.post("/education", protect, addEducation);
+router.post("/education", protect,  addEducation);
 router.get("/education/:userId", protect, getEducation);
 router.put("/education", protect, updateEducation);
 router.delete("/education", protect, deleteEducation);

@@ -11,6 +11,7 @@ const {
   LOGIN_SUCCESS,
   ERRORS,
   ACCESS_TOKEN_EXPIRATION,
+  TOTAL_LOGIN_DEVICES_ALLOWED,
 } = require("../config/constants");
 const sendEmail = require("../utils/sendEmails");
 
@@ -20,13 +21,19 @@ const generateAccessToken = (id) => {
   });
 };
 
+const signRefreshToken = (id) => {
+  return jwt.sign({ id }, process.env.REFRESH_TOKEN_SECRET);
+};
+
 const generateRefreshToken = (user) => {
-  const token = jwt.sign({ id: user._id }, process.env.REFRESH_TOKEN_SECRET);
+  const token = signRefreshToken(user._id);
   if (!user.refreshTokens) {
     user.refreshTokens = [];
   }
-  if (user.refreshTokens.length >= 5) {
-    user.refreshTokens = user.refreshTokens.slice(-4);
+  if (user.refreshTokens.length >= TOTAL_LOGIN_DEVICES_ALLOWED) {
+    user.refreshTokens = user.refreshTokens.slice(
+      -(TOTAL_LOGIN_DEVICES_ALLOWED - 1)
+    );
   }
   user.refreshTokens.push({ token });
 
@@ -105,6 +112,7 @@ const verifyOTP = async (req, res) => {
 
     const accessToken = generateAccessToken(user._id);
     const refreshToken = generateRefreshToken(user);
+    await user.save();
     const responseUser = user.toJSON();
 
     logger.info(REGISTRATION_SUCCESS);
@@ -148,12 +156,10 @@ const resendOTP = async (req, res) => {
     );
 
     logger.info(`Resend OTP sent to ${user.email}`);
-    res
-      .status(STATUS_SUCCESS)
-      .json({
-        message: "OTP resent to email",
-        data: { userId: user._id, otpVerificationId: user.otpVerificationId },
-      });
+    res.status(STATUS_SUCCESS).json({
+      message: "OTP resent to email",
+      data: { userId: user._id, otpVerificationId: user.otpVerificationId },
+    });
   } catch (error) {
     logger.error(error.message || ERRORS.SERVER.INTERNAL_ERROR);
     res
@@ -222,7 +228,6 @@ const refreshTokens = async (req, res) => {
     }
 
     const tokenIndex = user.refreshTokens.findIndex((rt) => rt.token === token);
-
     if (tokenIndex === -1) {
       return res
         .status(STATUS_UNAUTHORIZED)
@@ -230,7 +235,7 @@ const refreshTokens = async (req, res) => {
     }
 
     const accessToken = generateAccessToken(user._id);
-    const newRefreshToken = generateRefreshToken(user);
+    const newRefreshToken = signRefreshToken(user._id);
     user.refreshTokens[tokenIndex] = { token: newRefreshToken };
     await user.save();
 
@@ -301,11 +306,11 @@ const resetPassword = async (req, res) => {
         .json({ message: "Invalid or expired OTP" });
     }
 
-    // OTP is valid
     user.password = newPassword;
     user.otp = undefined;
     user.otpExpires = undefined;
     user.otpVerificationId = undefined;
+    user.refreshTokens = [];
     await user.save();
 
     logger.info("Password reset successfully");

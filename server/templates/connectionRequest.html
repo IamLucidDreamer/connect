@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>You have received a new connection request</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      .container {
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        width: 400px;
+        margin: 0 auto;
+      }
+      .otp {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2></h2>
+      <p>Hi I want to connect with you.</p>
+      <p class="otp">{{userName}}</p>
+      <a href="{{linkToProfile}}">Connect</a>
+    </div>
+  </body>
+</html>
