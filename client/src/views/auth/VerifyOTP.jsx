@@ -68,7 +68,6 @@ const VerifyOTP = () => {
         setRefreshToken(response?.data?.data?.refreshToken);
         navigate("/dashboard/profile");
       }
-      console.log("response", response);
     } catch (err) {
       console.error("Error : ", err);
       toast.error(err?.response?.data?.error || "Something went Wrong");

@@ -3,7 +3,7 @@ import server from "../helpers/apiCall";
 export const getUserNotifications = async (limit, skip) => {
   return new Promise((resolve, reject) => {
     server
-      .get(`/notification?limit=${limit}&skip=${skip}`)
+      .get(`/notifications?limit=${limit}&skip=${skip}`)
       .then((response) => {
         resolve(response);
       })

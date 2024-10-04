@@ -18,112 +18,128 @@ import { search } from "../../services/searchService";
 import { toast } from "react-toastify";
 import server from "../../helpers/apiCall";
 import { setSearchKeyword } from "../../store/actions/searchActions";
+import {
+  getUserNotifications,
+  markNotificationAsRead,
+} from "../../services/notificationService";
 
 const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [open, setOpen] = useState(false);
+  const [noitifcaitonOpen, setNotificationOpen] = useState(false);
 
   const user = useSelector((state) => state?.user);
 
   return (
-    <div
-      className={"bg-white sticky top-0 z-50 duration-500 shadow-md"}
-      style={{ zIndex: 999 }}
-    >
-      <div className="container mx-auto px-2 lg:px-10 py-3">
-        <div className="flex items-center justify-between">
-          <Link to={"/"} className="block lg:hidden mr-4">
-            <AppIcon logotType={1} width={"100px"} />
-          </Link>
-          <nav className="hidden lg:flex gap-10 text-secondary font-medium items-center uppercase">
-            <Link to={"/"}>
-              <AppIcon logotType={1} width={"175px"} />
+    <>
+      <div
+        className={"bg-white sticky top-0 z-50 duration-500 shadow-md"}
+        style={{ zIndex: 999 }}
+      >
+        <div className="container mx-auto px-2 lg:px-10 py-3">
+          <div className="flex items-center justify-between">
+            <Link to={"/"} className="block lg:hidden mr-4">
+              <AppIcon logotType={1} width={"100px"} />
             </Link>
-            <Link to={"/dashboard/link"}>
-              <button className="uppercase border-b border-white hover:border-primary duration-300">
-                Jobs
-              </button>
-            </Link>
-            <Link to={"/dashboard/link"}>
-              <button className="uppercase border-b border-white hover:border-primary duration-300">
-                Events
-              </button>
-            </Link>
-            <Link to={"/dashboard/link"}>
-              <button className="uppercase border-b border-white hover:border-primary duration-300">
-                Organization
-              </button>
-            </Link>
-            <Link to={"/dashboard/connections"}>
-              <button className="uppercase border-b border-white hover:border-primary duration-300">
-                Connections
-              </button>
-            </Link>
-          </nav>
-          <div className="flex items-center justify-end gap-4 lg:gap-8 w-full mx-4">
-            <Search />
-            <BellIcon className="w-7 h-7 text-secondary" />
-            {user?.firstName ? (
-              <div className="relative group hidden lg:block">
-                <div className="w-40 flex gap-2 items-center capitalize rounded-full cursor-pointer">
-                  <h1 className="pl-2 truncate w-16 duration-500">
-                    {user?.firstName}
-                  </h1>
-                  <ChevronDownIcon className="w-5 h-5 text-primary" />
-                </div>
-                <div className="w-full bg-white px-2 absolute -bottom-28 -mb-3 border rounded shadow-md hidden duration-300 group-hover:block">
-                  <button
-                    className="hover:opacity-60 w-full text-left py-1 border-b"
-                    onClick={() => navigate("/dashboard/profile")}
-                  >
-                    Manage Organization
-                  </button>
-                  <button
-                    className="hover:opacity-60 w-full text-left py-1 border-b"
-                    onClick={() => navigate("/dashboard/profile")}
-                  >
-                    Profile
-                  </button>
-                  <button
-                    className="hover:opacity-60 w-full text-left py-1"
-                    onClick={() => {
-                      dispatch(logout());
-                      clearAuth();
-                      navigate("/login");
-                    }}
-                  >
-                    Logout
-                  </button>
-                </div>
-              </div>
-            ) : (
+            <nav className="hidden lg:flex gap-10 text-secondary font-medium items-center uppercase">
+              <Link to={"/"}>
+                <AppIcon logotType={1} width={"175px"} />
+              </Link>
+              <Link to={"/dashboard/link"}>
+                <button className="uppercase border-b border-white hover:border-primary duration-300">
+                  Jobs
+                </button>
+              </Link>
+              <Link to={"/dashboard/link"}>
+                <button className="uppercase border-b border-white hover:border-primary duration-300">
+                  Events
+                </button>
+              </Link>
+              <Link to={"/dashboard/link"}>
+                <button className="uppercase border-b border-white hover:border-primary duration-300">
+                  Organization
+                </button>
+              </Link>
+              <Link to={"/dashboard/connections"}>
+                <button className="uppercase border-b border-white hover:border-primary duration-300">
+                  Connections
+                </button>
+              </Link>
+            </nav>
+            <div className="flex items-center justify-end gap-4 lg:gap-8 w-full mx-4">
+              <Search />
               <button
-                onClick={() => navigate("/profile")}
-                className="flex gap-2 items-center capitalize rounded-full border-2 border-secondary border-opacity-50 cursor-pointer"
+                className="p-1 hover:bg-gray-100 rounded-full"
+                onClick={() => setNotificationOpen(true)}
               >
-                <UserCircleIcon className="w-8 h-8 text-primary" />
+                <BellIcon className="w-7 h-7 text-secondary" />
               </button>
-            )}
+              {user?.firstName ? (
+                <div className="relative group hidden lg:block">
+                  <div className="w-40 flex gap-2 items-center capitalize rounded-full cursor-pointer">
+                    <h1 className="pl-2 truncate w-16 duration-500">
+                      {user?.firstName}
+                    </h1>
+                    <ChevronDownIcon className="w-5 h-5 text-primary" />
+                  </div>
+                  <div className="w-full bg-white px-2 absolute -bottom-28 -mb-3 border rounded shadow-md hidden duration-300 group-hover:block">
+                    <button
+                      className="hover:opacity-60 w-full text-left py-1 border-b"
+                      onClick={() => navigate("/dashboard/profile")}
+                    >
+                      Manage Organization
+                    </button>
+                    <button
+                      className="hover:opacity-60 w-full text-left py-1 border-b"
+                      onClick={() => navigate("/dashboard/profile")}
+                    >
+                      Profile
+                    </button>
+                    <button
+                      className="hover:opacity-60 w-full text-left py-1"
+                      onClick={() => {
+                        dispatch(logout());
+                        clearAuth();
+                        navigate("/login");
+                      }}
+                    >
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={() => navigate("/profile")}
+                  className="flex gap-2 items-center capitalize rounded-full border-2 border-secondary border-opacity-50 cursor-pointer"
+                >
+                  <UserCircleIcon className="w-8 h-8 text-primary" />
+                </button>
+              )}
+            </div>
+            <button
+              className="lg:hidden h-7 flex flex-col justify-between items-stretch"
+              onClick={() => setOpen(true)}
+            >
+              <div className="w-8 h-1 bg-secondary" />
+              <div className="w-8 h-1 bg-secondary" />
+              <div className="w-8 h-1 bg-secondary" />
+            </button>
           </div>
-          <button
-            className="lg:hidden h-7 flex flex-col justify-between items-stretch"
-            onClick={() => setOpen(true)}
-          >
-            <div className="w-8 h-1 bg-secondary" />
-            <div className="w-8 h-1 bg-secondary" />
-            <div className="w-8 h-1 bg-secondary" />
-          </button>
         </div>
-      </div>
 
-      <DrawerMenu
-        openModal={open}
-        closeModal={() => setOpen(false)}
-        navigate={navigate}
+        <DrawerMenu
+          openModal={open}
+          closeModal={() => setOpen(false)}
+          navigate={navigate}
+        />
+      </div>
+      <NotifcaitonModal
+        openModal={noitifcaitonOpen}
+        closeModal={() => setNotificationOpen(false)}
       />
-    </div>
+    </>
   );
 };
 
@@ -292,5 +308,89 @@ const Search = () => {
         </div>
       )}
     </div>
+  );
+};
+
+const NotifcaitonModal = ({ openModal, closeModal }) => {
+  const [notificaitonList, setNotificationList] = useState([]);
+
+  const getNotificaitonList = async () => {
+    try {
+      const response = await getUserNotifications(10, 0);
+      if (response.status === 200) {
+        setNotificationList(response?.data?.data);
+      } else {
+        console.log("Error in fetching notifications");
+      }
+    } catch (err) {
+      console.log("Error in fetching notifications");
+    }
+  };
+
+  const markAsRead = async (notificationIds) => {
+    try {
+      const response = await markNotificationAsRead(notificationIds);
+      if (response.status === 200) {
+        getNotificaitonList();
+      } else {
+        console.log("Error in marking as read");
+      }
+    } catch (err) {
+      console.log("Error in marking as read");
+    }
+  };
+
+  useEffect(() => {
+    getNotificaitonList();
+  }, []);
+
+  return (
+    <Dialog
+      open={openModal}
+      as="div"
+      className="relative z-10 focus:outline-none"
+      onClose={closeModal}
+    >
+      <div className="fixed inset-0 z-10 min-w-screen  overflow-y-auto">
+        <div className="flex min-h-screen items-start justify-end p-4 mt-16 mr-10">
+          <Dialog.Panel
+            transition
+            className="w-full max-w-md rounded-xl shadow-lg bg-white/60 p-6 backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
+          >
+            <Dialog.Title
+              as="h3"
+              className="text-lg font-medium text-black"
+            >
+              Notifications
+            </Dialog.Title>
+            {notificaitonList?.length > 0 ? (
+              <div className="mt-4">
+                {notificaitonList.map((notification) => (
+                  <div
+                    key={notification?._id}
+                    className="flex gap-2 items-center my-2"
+                  >
+                    <BellIcon className="w-5 h-5 text-primary" />
+                    <h1 className="text-sm/6">{notification?.message}</h1>
+                  </div>
+                ))}
+                <div className="mt-4">
+                  <button
+                    className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[focus]:outline-1 data-[focus]:outline-white data-[open]:bg-gray-700"
+                    onClick={closeModal}
+                  >
+                    Got it, thanks!
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <h1 className="text-sm/6 text-gray-700 text-center mt-4">
+                No notifications found
+              </h1>
+            )}
+          </Dialog.Panel>
+        </div>
+      </div>
+    </Dialog>
   );
 };

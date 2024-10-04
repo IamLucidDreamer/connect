@@ -14,3 +14,7 @@ const addNotification = async (receiverId , notificationMessage) => {
         throw new Error(error.message);
     }
 }
+
+module.exports = {
+    addNotification
+};

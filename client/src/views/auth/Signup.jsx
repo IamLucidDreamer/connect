@@ -19,7 +19,7 @@ import {
 import { signup } from "../../services/authService";
 import { setUser } from "../../store/actions/userActions";
 import { parseErrorMessage } from "../../helpers/apiCallHerlper";
-import server from "../../helpers/apiCall";
+import { getAllOrganizationsNames } from "../../services/organizationService";
 
 const signUpalidation = Yup.object({
   firstName: Yup.string()
@@ -48,16 +48,14 @@ const SignUp = () => {
   const [organizationList, setOrganizationList] = useState([]);
 
   const getOrganizationList = () => {
-    server
-      .get("/organization/get-all/names")
-      .then((res) => {
-        if (res.status === 200) {
-          setOrganizationList(res.data.data);
-        }
-      })
-      .catch((err) => {
-        console.error("Error : ", err);
-      });
+    try {
+      const response = getAllOrganizationsNames();
+      if (response.status >= 200 && response.status < 300) {
+        setOrganizationList(response.data.data);
+      }
+    } catch (err) {
+      console.error("Error : ", err);
+    }
   };
 
   useEffect(() => {
@@ -87,7 +85,11 @@ const SignUp = () => {
         console.log(response);
         toast.success(response?.data?.message || "Sign Up Successful");
         dispatch(
-          setUser({ email: values.email, userId: response?.data?.data?.userId, otpVerificationId: response?.data?.data?.otpVerificationId })
+          setUser({
+            email: values.email,
+            userId: response?.data?.data?.userId,
+            otpVerificationId: response?.data?.data?.otpVerificationId,
+          })
         );
         navigate("/verify-otp");
       }
