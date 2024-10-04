@@ -8,6 +8,7 @@ const userOrganizationRelation = new Schema({
     ref: "Organization",
     required: true,
   },
+  isApproved: { type: Boolean, default: false },
   role: { type: String, enum: ["member", "admin"], required: true },
   joinedAt: { type: Date, default: Date.now },
 });

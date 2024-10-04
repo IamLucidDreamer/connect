@@ -13,7 +13,7 @@ const {
 
 const router = express.Router();
 
-router.get("/for-user", protect, getUsersOrganizations );
+router.get("/for-users", protect, getUsersOrganizations );
 router.get("/:organizationId", protect, getOrganization);
 router.get("/get-all/names", getAllOrganizationsNames);
 router.post("/bulk-create", createOrganizationsInBulk);

@@ -6,20 +6,17 @@ const {
   STATUS_SUCCESS,
 } = require("../config/constants");
 const logger = require("../utils/logger");
+const { addNotification } = require("../helpers/notifications");
 
 const getConnectionRequests = async (req, res) => {
   try {
     const userId = req.user._id;
+    const { status, blocked, sent, recieved } = req.query;
 
-    // Destructure query parameters
-    const { status, blocked } = req.query;
-
-    // Build the query object dynamically
     const query = {
       $or: [{ sender: userId }, { reciever: userId }],
     };
 
-    // Filter by status if provided (pending, accepted, rejected)
     if (status) {
       query.status = status;
     }
@@ -28,15 +25,23 @@ const getConnectionRequests = async (req, res) => {
       query.blocked = blocked === "true";
     }
 
+    if (sent !== undefined) {
+      query.sender = userId;
+    }
+
+    if (recieved !== undefined) {
+      query.reciever = userId;
+    }
+
     const connections = await Connection.find(query)
-      .populate("sender", "firstName lastName profilePicture")
-      .populate("receiver", "firstName lastName profilePicture")
+      .populate("sender", "firstName lastName profilePicture introLine")
+      .populate("receiver", "firstName lastName profilePicture introLine")
       .lean();
 
     if (connections.length === 0) {
       return res
         .status(STATUS_SUCCESS)
-        .json({ message: "No connection requests found" });
+        .json({ message: "No connection requests found", data: [] });
     }
 
     res.json(connections);
@@ -91,6 +96,11 @@ const sendConnectionRequest = async (req, res) => {
 
     await connection.save();
 
+    await addNotification(
+      receiverId,
+      `You have a new connection request from ${req.user.firstName} ${req.user.lastName}`
+    );
+
     res.status(STATUS_SUCCESS).json({ message: "Connection request sent" });
   } catch (error) {
     logger.error(error.message);
@@ -120,6 +130,11 @@ const approveConnectionRequest = async (req, res) => {
 
     connection.status = "accepted";
     await connection.save();
+
+    await addNotification(
+      connection.sender,
+      `${req.user.firstName} ${req.user.lastName} has accepted your connection request`
+    );
 
     res.status(STATUS_SUCCESS).json({ message: "Connection request approved" });
   } catch (error) {

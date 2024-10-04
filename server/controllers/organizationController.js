@@ -13,25 +13,24 @@ const logger = require("../utils/logger");
 const sendEmail = require("../utils/sendEmails");
 
 const getUsersOrganizations = async (req, res) => {
-  const userId  = req.user._id
-
-  if (!userId) {
-    return res.status(STATUS_BAD_REQUEST).json({
-      message: "User ID is required.",
-    });
-  }
-
   try {
+    const userId = req.user._id;
+    if (!userId) {
+      return res.status(STATUS_BAD_REQUEST).json({
+        message: "User ID is required.",
+      });
+    }
+
     const userOrganizations = await UserOrganizationRelation.find({
       userId,
     }).populate("organizationId");
 
-    const userOrganizationsData = Organization.find({
-      _id: { $in: userOrganizations.map((org) => org.organizationId) },
-    })
-
-    console.log(userOrganizations)
-    console.log(userOrganizationsData )
+    if (userOrganizations.length === 0) {
+      return res.status(STATUS_SUCCESS).json({
+        message: "User has not joined any organizations.",
+        data: [],
+      });
+    }
 
     res.status(STATUS_SUCCESS).json({
       message: "User organizations fetched successfully.",
@@ -45,7 +44,7 @@ const getUsersOrganizations = async (req, res) => {
   } finally {
     logger.info("Get user organizations API called");
   }
-}
+};
 
 const getOrganization = async (req, res) => {
   const { organizationId } = req.params;
