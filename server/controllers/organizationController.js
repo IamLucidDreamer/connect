@@ -258,6 +258,7 @@ const verifyOtpAndAssignAdmin = async (req, res) => {
         userId: user._id,
         organizationId,
         role: "admin",
+        isApproved: true,
       });
       await userOrganizationRelation.save();
     }
@@ -265,6 +266,7 @@ const verifyOtpAndAssignAdmin = async (req, res) => {
     user.otp = undefined;
     user.otpExpires = undefined;
     user.otpVerificationId = undefined;
+    user.isEmailVerified = true;
     await user.save();
 
     const responseUser = user.toJSON();
