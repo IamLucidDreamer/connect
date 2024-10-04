@@ -3,7 +3,7 @@ const { protect } = require("../../middleware/authMiddleware");
 const { getNotificationsOfUser, markNotificationsAsRead } = require("../../controllers/notificationController");
 const router = express.Router();
 
-router.post("/", protect, getNotificationsOfUser);
+router.get("/", protect, getNotificationsOfUser);
 router.post("/mark-read", protect, markNotificationsAsRead);
 
 
