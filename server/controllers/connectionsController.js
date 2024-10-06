@@ -29,7 +29,7 @@ const getConnectionRequests = async (req, res) => {
       } else if (status === "blocked") {
         query.blocked = true;
       } else {
-        status = "pending";
+        query.status = "pending";
       }
     }
 

@@ -312,7 +312,7 @@ const Search = () => {
               transition
               className="w-full max-w-md rounded-xl shadow-lg bg-white/60 p-2 backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
             >
-              <Dialog.Title as="h3" className="text-lg text-gray-600 mb-4 px-4">
+              <Dialog.Title as="h3" className="text-lg text-gray-600 mb-4 px-4 font-medium mt-2">
                 Search Results
               </Dialog.Title>
               {!loading ? (
@@ -350,7 +350,7 @@ const Search = () => {
                   </>
                 ) : (
                   <div className="w-full flex items-center justify-center">
-                    <h1>No user found</h1>
+                    <h1 className="text-gray-700 text-lg mb-4">No user found</h1>
                   </div>
                 )
               ) : (
