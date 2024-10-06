@@ -111,7 +111,7 @@ const Header = () => {
                     </h1>
                     <ChevronDownIcon className="w-5 h-5 text-primary" />
                   </div>
-                  <div className="w-full bg-white px-2 absolute -bottom-28 -mb-3 border rounded shadow-md hidden duration-300 group-hover:block">
+                  <div className={`w-full bg-white px-2 absolute -mb-3 border rounded shadow-md hidden duration-300 group-hover:block ${userOrganization?.organizationData?.length > 0 ?  "-bottom-28" : "-bottom-14"}`}>
                     {userOrganization?.organizationData?.length > 0 && (
                       <button
                         className="hover:opacity-60 w-full text-left py-1 border-b"

@@ -259,11 +259,6 @@ const likePost = async (req, res) => {
         .status(STATUS_BAD_REQUEST)
         .json({ message: "You have already liked this post" });
     }
-    if (like.userId.toString() !== userId.toString()) {
-      return res
-        .status(STATUS_BAD_REQUEST)
-        .json({ message: "You are not authorized to like this post" });
-    }
     const newLike = new Like({ postId, userId });
     await newLike.save();
     return res

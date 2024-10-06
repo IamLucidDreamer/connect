@@ -4,8 +4,8 @@ import { useSelector } from "react-redux";
 const ListOrganizations = () => {
   const organizations = useSelector((state) => state.organization);
   return (
-    <div>
-      <h1>List Organizations</h1>
+    <div className="py-5">
+      <h2 className="text-xl mb-4 font-regular">Organization</h2>
       <ul>
         {organizations?.organizationData?.map((org) => {
           console.log(org);

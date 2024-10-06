@@ -13,26 +13,33 @@ const getConnectionRequests = async (req, res) => {
     const userId = req.user._id;
     const { status } = req.query;
 
-    const query = {};
+    let query = {
+      $or: [{ sender: userId }, { receiver: userId }],
+    };
 
     if (status) {
-      if (status === "accepted") {
-        query.status = "accepted";
-        query.$or = [{ sender: userId }, { receiver: userId }];
-      } else if (status === "pending") {
-        query.status = "pending";
-        query.$or = [{ sender: userId }];
-      } else if (status === "recieved") {
-        query.$or = [{ receiverId: userId }];
-        query.status = "pending";
-      } else if (status === "sent") {
-        query.sender = userId;
-        query.status = "pending";
-      } else if (status === "blocked") {
-        query.blocked = true;
-      } else {
-        query.status = "pending";
-        query.$or = [{ sender: userId }];
+      switch (status) {
+        case "accepted":
+          query.status = "accepted";
+          break;
+        case "pending":
+          query.status = "pending";
+          query.sender = userId;
+          break;
+        case "received":
+          query.status = "pending";
+          query.receiver = userId;
+          break;
+        case "sent":
+          query.status = "pending";
+          query.sender = userId;
+          break;
+        case "blocked":
+          query.status = "blocked";
+          break;
+        default:
+          query.status = "pending";
+          break;
       }
     }
 
@@ -41,27 +48,41 @@ const getConnectionRequests = async (req, res) => {
       .populate("receiver", "firstName lastName profilePicture introLine")
       .lean();
 
-    connections.forEach((connection) => {
-      if (connection) {
+    const response = connections.map((connection) => {
+      let actionRequired = null;
+      let otherUser = null;
+
+      if (connection.sender._id.toString() === userId.toString()) {
+        otherUser = connection.receiver;
         if (connection.status === "pending") {
-          if (connection.receiver.toString() === req.user._id.toString()) {
-            actionRequired = "accept";
-          } else if (connection.sender.toString() === req.user._id.toString()) {
-            actionRequired = "waiting";
-          }
+          actionRequired = "waiting";
+        }
+      } else if (connection.receiver._id.toString() === userId.toString()) {
+        otherUser = connection.sender;
+        if (connection.status === "pending") {
+          actionRequired = "accept";
         }
       }
+
+      return {
+        otherUser,
+        status: connection.status,
+        actionRequired,
+        createdAt: connection.createdAt,
+      };
     });
 
-    if (connections.length === 0) {
+    // Return response
+    if (response.length === 0) {
       return res
         .status(STATUS_SUCCESS)
         .json({ message: "No connection requests found", data: [] });
     }
 
-    res
-      .status(STATUS_SUCCESS)
-      .json({ message: "Connection requests found", data: connections });
+    res.status(STATUS_SUCCESS).json({
+      message: "Connection requests found",
+      data: response,
+    });
   } catch (error) {
     res.status(STATUS_SERVER_ERROR).json({
       message: "Error fetching connection requests",
