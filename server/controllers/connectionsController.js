@@ -24,7 +24,7 @@ const getConnectionRequests = async (req, res) => {
         query.$or = [{ sender: userId }];
       } else if (status === "recieved") {
         query.reciever = userId;
-        query, (status = "pending");
+        query.status = "pending";
       } else if (status === "sent") {
         query.sender = userId;
         query.status = "pending";

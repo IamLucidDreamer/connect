@@ -37,8 +37,7 @@ export const getConnectionRequests = async (status) => {
   return new Promise(async (resolve, reject) => {
     try {
       const response = await server.get(
-        `/connections?${status ? `status=${status}` : ""}
-        }`
+        `/connections?${status ? `status=${status}` : ""}`
       );
       resolve(response);
     } catch (error) {
