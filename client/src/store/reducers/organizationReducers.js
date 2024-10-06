@@ -1,12 +1,14 @@
 
 import { SET_USER_ORGNIZATION_DATA } from "../actionTypes/index";
 
-const initialeValue = {}
+const initialeValue = {
+    organizationData: []
+}
 
-const reducer = (state = {}, action) => {
+const reducer = (state = initialeValue, action) => {
     switch (action.type) {
         case SET_USER_ORGNIZATION_DATA:
-            return { ...state, ...action.payload.organization };
+            return { ...state, organizationData : [...action.payload.organization] };
         default:
             return state;
     }

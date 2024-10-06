@@ -11,26 +11,26 @@ const { addNotification } = require("../helpers/notifications");
 const getConnectionRequests = async (req, res) => {
   try {
     const userId = req.user._id;
-    const { status, blocked, sent, recieved } = req.query;
+    const { status } = req.query;
 
     const query = {
       $or: [{ sender: userId }, { reciever: userId }],
     };
 
     if (status) {
-      query.status = status;
-    }
-
-    if (blocked !== undefined) {
-      query.blocked = blocked === "true";
-    }
-
-    if (sent !== undefined) {
-      query.sender = userId;
-    }
-
-    if (recieved !== undefined) {
-      query.reciever = userId;
+      if (status === "accepted") {
+        query.status = "accepted";
+      } else if (status === "pending") {
+        query.status = "pending";
+      } else if (status === "recieved") {
+        query.reciever = userId;
+      } else if (status === "sent") {
+        query.sender = userId;
+      } else if (status === "blocked") {
+        query.blocked = true;
+      } else {
+        status = "pending";
+      }
     }
 
     const connections = await Connection.find(query)

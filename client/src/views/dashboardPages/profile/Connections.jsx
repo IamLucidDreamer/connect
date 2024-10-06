@@ -12,7 +12,9 @@ const ConnectionsList = () => {
       try {
         setLoading(true);
         const response = await getConnectionRequests(status);
-        setConnections(response.data);
+        if (response?.status >= 200 && response?.status < 300) {
+          setConnections(response?.data?.data);
+        }
         setLoading(false);
       } catch (error) {
         setError("Failed to fetch connections");
@@ -23,35 +25,55 @@ const ConnectionsList = () => {
     fetchConnections();
   }, [status]);
 
+  console.log(connections);
+
   if (error) {
     return <div>{error}</div>;
   }
 
   return (
     <div className="py-5">
-      <h2 className="text-2xl mb-4 font-medium">Connections</h2>
-      <div className="gap-4 flex">
+      <h2 className="text-xl mb-4 font-regular">Connections</h2>
+      <div className="gap-6 flex">
         <button
           onClick={() => setStatus("accepted")}
-          className={`border-b pb-1 ${
-            status === "accepted" ? "border-primary" : "border-transparent"
+          className={`text-xs md:text-base px-3 py-1 md:px-4 md:py-2 ${
+            status === "accepted"
+              ? "bg-primary text-white rounded-lg"
+              : "border-b border-primary bg-transparent text-primary"
           }`}
         >
           Connections
         </button>
         <button
           onClick={() => setStatus("pending")}
-          className={`border-b pb-1 ${
-            status === "pending" ? "border-primary" : "border-transparent"
+          className={`text-xs md:text-base px-3 py-1 md:px-4 md:py-2 ${
+            status === "pending"
+              ? "bg-primary text-white rounded-lg"
+              : "border-b border-primary bg-transparent text-primary"
           }`}
         >
           Pending
         </button>
+        <button
+          onClick={() => setStatus("recieved")}
+          className={`text-xs md:text-base px-3 py-1 md:px-4 md:py-2 ${
+            status === "recieved"
+              ? "bg-primary text-white rounded-lg"
+              : "border-b border-primary bg-transparent text-primary"
+          }`}
+        >
+          Recieved
+        </button>
       </div>
       {loading ? (
-        <p>Loading...</p>
-      ) : connections.length === 0 ? (
-        <p>No connections found.</p>
+        <div className="flex items-center justify-center ">
+          <p className="text-xl text-gray-700 mt-40">Loading...</p>
+        </div>
+      ) : connections?.length === 0 ? (
+        <div className="flex items-center justify-center ">
+          <p className="text-xl text-gray-700 mt-40">No connections found...</p>
+        </div>
       ) : (
         <ul>
           {connections.map((connection) => (

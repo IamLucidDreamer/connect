@@ -37,36 +37,44 @@ const createPost = async (req, res) => {
 
 const getPosts = async (req, res) => {
   try {
-    const posts = await Post.find().populate("author", "name");
+    // Fetch posts and populate author
+    const posts = await Post.find()
+      .populate('author', 'firstName lastName') 
+      .lean();
 
+    const postIds = posts.map((post) => post._id);
+    
     const comments = await Comment.find({
-      postId: { $in: posts.map((post) => post._id) },
-    }).populate("author", "name");
+      postId: { $in: postIds },
+    }).populate('userId', 'name'); 
 
     const likes = await Like.find({
-      postId: { $in: posts.map((post) => post._id) },
+      postId: { $in: postIds },
     });
 
-    posts.forEach((post) => {
-      post.comments = comments.filter(
+    const postsWithDetails = posts.map((post) => ({
+      ...post, 
+      comments: comments.filter(
         (comment) => comment.postId.toString() === post._id.toString()
-      );
-      post.likes = likes.filter(
-        (like) => like.postId.toString() === post._id.toString()
-      );
-    });
+      ),
+      likes: likes.filter((like) => like.postId.toString() === post._id.toString()),
+      likeCount: likes.filter((like) => like.postId.toString() === post._id.toString()).length,
+    }));
+
     return res
       .status(STATUS_SUCCESS)
-      .json({ message: "Posts fetched successfully", data: posts });
+      .json({ message: 'Posts fetched successfully', data: postsWithDetails });
   } catch (error) {
-    logger.error("Error in fetching posts", error);
+    logger.error('Error in fetching posts', error);
     return res
       .status(STATUS_SERVER_ERROR)
-      .json({ message: "Internal server error" });
+      .json({ message: 'Internal server error' });
   } finally {
-    logger.info("Get posts API called");
+    logger.info('Get posts API called');
   }
 };
+
+
 
 const getPostDetails = async (req, res) => {
   try {

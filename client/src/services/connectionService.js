@@ -33,12 +33,11 @@ export const rejectConnectionRequest = async (data) => {
   });
 };
 
-export const getConnectionRequests = async (status, blocked) => {
+export const getConnectionRequests = async (status) => {
   return new Promise(async (resolve, reject) => {
     try {
       const response = await server.get(
-        `/connections?${status ? `status=${status}` : ""}${
-          blocked ? `&blocked=${blocked}` : ""
+        `/connections?${status ? `status=${status}` : ""}
         }`
       );
       resolve(response);

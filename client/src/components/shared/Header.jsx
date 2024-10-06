@@ -35,7 +35,6 @@ const Header = () => {
 
   const user = useSelector((state) => state?.user);
   const userOrganization = useSelector((state) => state?.organization);
-  console.log(typeof userOrganization);
   console.log(userOrganization);
 
   const updateData = async () => {
@@ -47,7 +46,6 @@ const Header = () => {
       }
       const responseOrg = await getUsersOrganizations();
       if (responseOrg.status >= 200 && responseOrg.status < 300) {
-
         dispatch(setUserOrganization([...responseOrg.data.data]));
       }
     }
@@ -110,12 +108,12 @@ const Header = () => {
                     <ChevronDownIcon className="w-5 h-5 text-primary" />
                   </div>
                   <div className="w-full bg-white px-2 absolute -bottom-28 -mb-3 border rounded shadow-md hidden duration-300 group-hover:block">
-                    {userOrganization?.length > 0 && (
+                    {userOrganization?.organizationData?.length > 0 && (
                       <button
                         className="hover:opacity-60 w-full text-left py-1 border-b"
-                        onClick={() => navigate("/dashboard/profile")}
+                        onClick={() => navigate("/dashboard/organization/list")}
                       >
-                        Manage Organization
+                        View Organization
                       </button>
                     )}
                     <button
@@ -252,6 +250,7 @@ const Search = () => {
   const dispatch = useDispatch();
   const searchKeyword = useSelector((state) => state?.search?.searchKeyword);
   const currentPath = window.location.pathname;
+  const loggedInUser = useSelector((state) => state?.user);
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
@@ -301,39 +300,68 @@ const Search = () => {
         />
         <SearchIcon className="w-6 h-6 text-primary" />
       </div>
-      {searchKeyword?.length > 1 && currentPath !== "/dashboard/search" && (
-        <div className="bg-white shadow-lg flex items-center justify-center absolute top-12 w-96 border p-2 rounded flex-col gap-3">
-          {!loading ? (
-            users?.length > 0 ? (
-              <>
-                {users.map((user) => (
-                  <div
-                    key={user?._id}
-                    className="flex justify-between items-center w-full gap-2"
-                  >
-                    <button
-                      onClick={() => handleRedirect(user?._id)}
-                      className="flex gap-2 items-center w-full"
-                    >
-                      <UserCircleIcon className="w-8 h-8 text-primary" />
-                      <h1 className="text-left truncate">
-                        {user?.firstName + " " + user?.lastName}
-                      </h1>
-                    </button>
+      <Dialog
+        open={searchKeyword?.length > 1 && currentPath !== "/dashboard/search" ? true : false}
+        as="div"
+        className="relative z-10 focus:outline-none"
+        onClose={() => dispatch(setSearchKeyword(""))}
+      >
+        <div className="fixed inset-0 z-10 min-w-screen  overflow-y-auto">
+          <div className="flex min-h-screen items-start justify-end p-4 mt-12 mr-56">
+            <Dialog.Panel
+              transition
+              className="w-full max-w-md rounded-xl shadow-lg bg-white/60 p-2 backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
+            >
+              <Dialog.Title as="h3" className="text-lg text-gray-600 mb-4 px-4">
+                Search Results
+              </Dialog.Title>
+              {!loading ? (
+                users?.length > 0 ? (
+                  <>
+                    {users.map((user) => (
+                      <div
+                        key={user?._id}
+                        className="flex justify-between items-center w-full gap-2 hover:bg-gray-50 p-4 rounded-lg"
+                      >
+                        <button
+                          onClick={() => handleRedirect(user?._id)}
+                          className="flex gap-2 items-center w-full"
+                        >
+                          <UserCircleIcon className="w-8 h-8 text-primary" />
+                          <h1 className="text-left truncate">
+                            {user?.firstName + " " + user?.lastName}
+                          </h1>
+                          {user?._id === loggedInUser?._id && (
+                            <h1 className="text-right truncate ml-auto border rounded-full px-2 border-primary bg-primary bg-opacity-5 text-primary text-xs">
+                              You
+                            </h1>
+                          )}
+                        </button>
+                      </div>
+                    ))}
+                    <div className="flex items-center justify-center mt-4">
+                      <Link
+                        to="/dashboard/search"
+                        className="text-primary underline"
+                      >
+                        See More
+                      </Link>
+                    </div>
+                  </>
+                ) : (
+                  <div className="w-full flex items-center justify-center">
+                    <h1>No user found</h1>
                   </div>
-                ))}
-                <Link to="/dashboard/search" className="text-primary underline">
-                  See More
-                </Link>{" "}
-              </>
-            ) : (
-              <h1>No user found</h1>
-            )
-          ) : (
-            <div className="border-2 rounded-full border-primary border-b-0 animate-spin w-5 h-5 p-4" />
-          )}
+                )
+              ) : (
+                <div className="w-full flex items-center justify-center">
+                  <div className="border-2 rounded-full border-primary border-b-0 animate-spin w-5 h-5 p-4" />
+                </div>
+              )}
+            </Dialog.Panel>
+          </div>
         </div>
-      )}
+      </Dialog>
     </div>
   );
 };

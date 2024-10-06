@@ -20,6 +20,7 @@ const DashboardProfile = lazy(() =>
 const OrganizationProfile = lazy(() =>
   import("../views/dashboardPages/organization/profile")
 );
+const OrganizationsList = lazy(() => import ("../views/dashboardPages/organization/ListOrganizations"));
 const Feed = lazy(() => import("../views/dashboardPages/Feed"));
 const Connections = lazy(() =>
   import("../views/dashboardPages/profile/Connections")
@@ -83,6 +84,10 @@ const router = createBrowserRouter([
       {
         path: "organization/profile",
         element: <OrganizationProfile />,
+      },
+      {
+        path: "organization/list",
+        element: <OrganizationsList />,
       },
     ],
   },

@@ -25,9 +25,9 @@ const PostList = () => {
         <div key={post._id}>
           <h2>{post.title}</h2>
           <p>{post.content}</p>
-          <p>Author: {post.author.name}</p>
+          {/* <p>Author: {post.author.name}</p> */}
           <p>{post.likeCount} Likes</p>
-          <p>Comments: {post.comments.length}</p>
+          {/* <p>Comments: {post.comments.length}</p> */}
         </div>
       ))}
     </div>
