@@ -41,6 +41,18 @@ const getConnectionRequests = async (req, res) => {
       .populate("receiver", "firstName lastName profilePicture introLine")
       .lean();
 
+    connections.forEach((connection) => {
+      if (connection) {
+        if (connection.status === "pending") {
+          if (connection.receiver.toString() === req.user._id.toString()) {
+            actionRequired = "accept";
+          } else if (connection.sender.toString() === req.user._id.toString()) {
+            actionRequired = "waiting";
+          }
+        }
+      }
+    });
+
     if (connections.length === 0) {
       return res
         .status(STATUS_SUCCESS)

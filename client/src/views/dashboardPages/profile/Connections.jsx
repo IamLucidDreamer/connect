@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { getConnectionRequests } from "../../../services/connectionService";
+import ConnectionButtons from "../../../components/connections/ConnectionButtons";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const ConnectionsList = () => {
   const [connections, setConnections] = useState([]);
@@ -7,25 +10,23 @@ const ConnectionsList = () => {
   const [error, setError] = useState(null);
   const [status, setStatus] = useState("accepted");
 
-  useEffect(() => {
-    const fetchConnections = async () => {
-      try {
-        setLoading(true);
-        const response = await getConnectionRequests(status);
-        if (response?.status >= 200 && response?.status < 300) {
-          setConnections(response?.data?.data);
-        }
-        setLoading(false);
-      } catch (error) {
-        setError("Failed to fetch connections");
-        setLoading(false);
+  const fetchConnections = async () => {
+    try {
+      setLoading(true);
+      const response = await getConnectionRequests(status);
+      if (response?.status >= 200 && response?.status < 300) {
+        setConnections(response?.data?.data);
       }
-    };
+      setLoading(false);
+    } catch (error) {
+      setError("Failed to fetch connections");
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchConnections();
   }, [status]);
-
-  console.log(connections);
 
   if (error) {
     return <div>{error}</div>;
@@ -78,7 +79,10 @@ const ConnectionsList = () => {
         <ul>
           {connections?.map((connection) => (
             <li key={connection?._id}>
-              <ConnectionItem connection={connection} />
+              <ConnectionItem
+                connection={connection}
+                updateFn={fetchConnections}
+              />
             </li>
           ))}
         </ul>
@@ -87,19 +91,64 @@ const ConnectionsList = () => {
   );
 };
 
-const ConnectionItem = ({ connection }) => {
-  const { sender, receiver, status, blocked } = connection;
+const ConnectionItem = ({ connection, updateFn }) => {
+  const navigate = useNavigate();
+  const loggedInUser = useSelector((state) => state.user);
+  const {status} = connection
+  const {receiver : user} = connection
 
-  const otherUser = receiver;
+  console.log(connection, "Connect");
 
   return (
-    <div className="border p-4 my-5 bg-white rounded shadow-md">
-      <h3>
-        {otherUser.firstName} {otherUser?.lastName}
-      </h3>
-      <p>Email: {otherUser?.email}</p>
-      <p>Status: {status}</p>
-      {blocked && <p style={{ color: "red" }}>This connection is blocked</p>}
+    <div
+      key={connection._id}
+      className="rounded-xl shadow-lg bg-white/60 p-4 backdrop-blur-2xl flex items-center justify-center flex-col"
+    >
+      {user?._id === loggedInUser?._id && (
+        <h1 className="absolute top-4 right-4 border rounded-full px-2 border-primary bg-primary bg-opacity-5 text-primary text-xs">
+          You
+        </h1>
+      )}
+
+      <img
+        src={
+          user.profilePicture ||
+          "https://static.vecteezy.com/system/resources/previews/000/422/799/original/avatar-icon-vector-illustration.jpg"
+        }
+        alt={`${user.firstName} ${user.lastName}`}
+        className="w-12 h-12 rounded-full mr-4"
+      />
+      <div className="flex items-center">
+        <div>
+          <h2 className="text-lg font-semibold text-center">
+            {user.firstName} {user.lastName}
+          </h2>
+          <h2 className="text-center font-medium">
+            {user.introLine || "Alumns User"}
+          </h2>
+          <p className="text-gray-500 capitalize text-center">
+            {user._id !== loggedInUser._id &&
+              `Connection :
+                  ${
+                    user.connectionStatus === "none"
+                      ? "Not Connected"
+                      : user.connectionStatus
+                  }`}
+          </p>
+        </div>
+      </div>
+      {connection._id !== loggedInUser._id ? (
+        <ConnectionButtons user={user} updateFn={updateFn} />
+      ) : (
+        <button
+          onClick={() => {
+            navigate(`/dashboard/profile`);
+          }}
+          className="text-white bg-primary text-sm px-4 py-2 rounded-md hover:bg-blue-800 mt-4"
+        >
+          View Profile
+        </button>
+      )}
     </div>
   );
 };
