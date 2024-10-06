@@ -49,6 +49,10 @@ const Header = () => {
         dispatch(setUserOrganization([...responseOrg.data.data]));
       }
     }
+    else{
+      localStorage.clear();
+      navigate("/login");
+    }
   };
 
   useEffect(() => {

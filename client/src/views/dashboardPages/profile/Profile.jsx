@@ -12,6 +12,7 @@ import {
   rejectConnectionRequest,
   sendConnectionRequest,
 } from "../../../services/connectionService";
+import ConnectionButtons from "../../../components/connections/ConnectionButtons";
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -41,42 +42,6 @@ const Profile = () => {
       .finally(() => setLoading(false));
   };
 
-  const handleSendRequest = async (receiverId) => {
-    try {
-      const response = await sendConnectionRequest({ receiverId });
-      if (response.status >= 200 && response.status < 300) {
-        toast.success("Connection request sent successfully");
-        getUserDetails();
-      }
-    } catch (error) {
-      console.error("Error sending connection request:", error);
-    }
-  };
-
-  const handleCancelRequest = async (connectionId) => {
-    try {
-      const response = await rejectConnectionRequest({ connectionId });
-      if (response.status >= 200 && response.status < 300) {
-        toast.success("Connection request cancelled successfully");
-        getUserDetails();
-      }
-    } catch (error) {
-      console.error("Error cancelling connection request:", error);
-    }
-  };
-
-  const handleAcceptRequest = async (connectionId) => {
-    try {
-      const response = await acceptConnectionRequest({ connectionId });
-      if (response.status >= 200 && response.status < 300) {
-        toast.success("Connection request accepted successfully");
-        getUserDetails();
-      }
-    } catch (error) {
-      console.error("Error accepting connection request:", error);
-    }
-  };
-
   useEffect(() => {
     getUserDetails();
   }, [userIdFromParams]);
@@ -95,7 +60,7 @@ const Profile = () => {
                 <img
                   src={
                     userData?.profileImage ||
-                    "https://randomuser.me/api/portraits/men/94.jpg"
+                    "https://static.vecteezy.com/system/resources/previews/000/422/799/original/avatar-icon-vector-illustration.jpg"
                   }
                   className="w-32 h-32 bg-gray-300 rounded-full mb-4 shrink-0"
                   alt="Profile"
@@ -117,63 +82,10 @@ const Profile = () => {
                       Contact
                     </a>
                   ) : (
-                    <div className="mt-4 space-x-2">
-                      {userData?.connectionStatus === "none" && (
-                        <button
-                          onClick={() => handleSendRequest(userData?._id)}
-                          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                        >
-                          Send Connection Request
-                        </button>
-                      )}
-
-                      {userData?.connectionStatus === "pending" &&
-                        userData?.actionRequired === "accept" && (
-                          <button
-                            onClick={() =>
-                              handleAcceptRequest(userData?.connectionId)
-                            }
-                            className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
-                          >
-                            Accept Request
-                          </button>
-                        )}
-
-                      {userData?.connectionStatus === "pending" &&
-                        userData?.actionRequired === "waiting" && (
-                          <button
-                            onClick={() =>
-                              handleCancelRequest(userData?.connectionId)
-                            }
-                            className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-                          >
-                            Cancel Request
-                          </button>
-                        )}
-
-                      {userData?.connectionStatus === "pending" &&
-                        userData?.actionRequired === "accept" && (
-                          <button
-                            onClick={() =>
-                              handleCancelRequest(userData?.connectionId)
-                            }
-                            className="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
-                          >
-                            Deny Request
-                          </button>
-                        )}
-
-                      {userData?.connectionStatus === "accepted" && (
-                        <button
-                          onClick={() =>
-                            handleCancelRequest(userData?.connectionId)
-                          }
-                          className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-                        >
-                          Remove Connection
-                        </button>
-                      )}
-                    </div>
+                    <ConnectionButtons
+                      user={userData}
+                      updateFn={getUserDetails}
+                    />
                   )}
                 </div>
               </div>

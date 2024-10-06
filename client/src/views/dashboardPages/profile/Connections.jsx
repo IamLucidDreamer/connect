@@ -13,7 +13,7 @@ const ConnectionsList = () => {
         setLoading(true);
         const response = await getConnectionRequests(status);
         if (response?.status >= 200 && response?.status < 300) {
-          setConnections(response?.data);
+          setConnections(response?.data?.data);
         }
         setLoading(false);
       } catch (error) {
