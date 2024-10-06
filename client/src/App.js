@@ -1,51 +1,11 @@
 import { useEffect, useState } from "react";
 import Routes from "./Routes/Index";
-import { useDispatch } from "react-redux";
-import { setAppInApp } from "./store/actions/appInApp";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { XIcon } from "@heroicons/react/outline";
-import { server } from "./helpers/apiCall";
-import { setUser } from "./store/actions/userActions";
+
 
 function App() {
-  const searchParams = new URLSearchParams(document.location.search);
-
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    window.addEventListener(
-      "message",
-      (event) => {
-        if (event.data === "logout") {
-          localStorage.clear();
-        }
-      },
-      false
-    );
-  }, []);
-
-  useEffect(() => {
-    const appInApp = searchParams.get("app_in_app");
-    const authToken = searchParams.get("auth_token");
-    const userId = searchParams.get("user_id");
-    const refCode = searchParams.get("ref_code");
-    if (refCode) {
-      localStorage.setItem("ref_code", refCode);
-    }
-    if (appInApp) {
-      dispatch(setAppInApp(appInApp));
-    }
-    if (authToken && window.location.pathname !== "/login-success") {
-      localStorage.setItem("authToken", authToken);
-      server
-        .get(`/user/get/${userId}`)
-        .then((res) => {
-          dispatch(setUser(res?.data?.data));
-        })
-        .catch((err) => console.log(err));
-    }
-  }, []);
 
   useEffect(() => {
     AOS.init({ duration: 1200, delay: 500 });
@@ -55,7 +15,7 @@ function App() {
   return (
     <div>
       <Routes />
-      {/* <Development /> */}
+      <Development />
       {/* <Banner /> */}
     </div>
   );

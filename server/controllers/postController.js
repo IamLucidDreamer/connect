@@ -37,16 +37,24 @@ const createPost = async (req, res) => {
 
 const getPosts = async (req, res) => {
   try {
-    const posts = await Post.find()
-      .populate("author", "name")
-      .populate({
-        path: "comments",
-        populate: {
-          path: "userId",
-          select: "name", // Selects only the name field from the User model for comments
-        },
-      })
-      .populate("likes");
+    const posts = await Post.find().populate("author", "name");
+
+    const comments = await Comment.find({
+      postId: { $in: posts.map((post) => post._id) },
+    }).populate("author", "name");
+
+    const likes = await Like.find({
+      postId: { $in: posts.map((post) => post._id) },
+    });
+
+    posts.forEach((post) => {
+      post.comments = comments.filter(
+        (comment) => comment.postId.toString() === post._id.toString()
+      );
+      post.likes = likes.filter(
+        (like) => like.postId.toString() === post._id.toString()
+      );
+    });
     return res
       .status(STATUS_SUCCESS)
       .json({ message: "Posts fetched successfully", data: posts });
@@ -243,7 +251,7 @@ const likePost = async (req, res) => {
         .status(STATUS_BAD_REQUEST)
         .json({ message: "You have already liked this post" });
     }
-    if(like.userId.toString() !== userId.toString()){
+    if (like.userId.toString() !== userId.toString()) {
       return res
         .status(STATUS_BAD_REQUEST)
         .json({ message: "You are not authorized to like this post" });
@@ -273,7 +281,7 @@ const unlikePost = async (req, res) => {
         .status(STATUS_BAD_REQUEST)
         .json({ message: "You have not liked this post" });
     }
-    if(like.userId.toString() !== userId.toString()){
+    if (like.userId.toString() !== userId.toString()) {
       return res
         .status(STATUS_BAD_REQUEST)
         .json({ message: "You are not authorized to unlike this post" });

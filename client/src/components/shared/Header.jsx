@@ -11,7 +11,7 @@ import {
 import { clearAuth } from "../../helpers/auth";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { logout } from "../../store/actions/userActions";
+import { logout, setUser } from "../../store/actions/userActions";
 import { useDispatch } from "react-redux";
 import AppIcon from "../images/AppIcon";
 import { search } from "../../services/searchService";
@@ -22,6 +22,9 @@ import {
   getUserNotifications,
   markNotificationAsRead,
 } from "../../services/notificationService";
+import { getUsersOrganizations } from "../../services/organizationService";
+import { getUser } from "../../services/userService";
+import { setUserOrganization } from "../../store/actions/organizationActions";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -31,6 +34,28 @@ const Header = () => {
   const [noitifcaitonOpen, setNotificationOpen] = useState(false);
 
   const user = useSelector((state) => state?.user);
+  const userOrganization = useSelector((state) => state?.organization);
+  console.log(typeof userOrganization);
+  console.log(userOrganization);
+
+  const updateData = async () => {
+    const accessToken = localStorage.getItem("authToken");
+    if (accessToken && user?._id && window.location.pathname !== "/login") {
+      const response = await getUser(user?._id);
+      if (response.status >= 200 && response.status < 300) {
+        dispatch(setUser(response.data));
+      }
+      const responseOrg = await getUsersOrganizations();
+      if (responseOrg.status >= 200 && responseOrg.status < 300) {
+
+        dispatch(setUserOrganization([...responseOrg.data.data]));
+      }
+    }
+  };
+
+  useEffect(() => {
+    updateData();
+  }, []);
 
   return (
     <>
@@ -85,12 +110,14 @@ const Header = () => {
                     <ChevronDownIcon className="w-5 h-5 text-primary" />
                   </div>
                   <div className="w-full bg-white px-2 absolute -bottom-28 -mb-3 border rounded shadow-md hidden duration-300 group-hover:block">
-                    <button
-                      className="hover:opacity-60 w-full text-left py-1 border-b"
-                      onClick={() => navigate("/dashboard/profile")}
-                    >
-                      Manage Organization
-                    </button>
+                    {userOrganization?.length > 0 && (
+                      <button
+                        className="hover:opacity-60 w-full text-left py-1 border-b"
+                        onClick={() => navigate("/dashboard/profile")}
+                      >
+                        Manage Organization
+                      </button>
+                    )}
                     <button
                       className="hover:opacity-60 w-full text-left py-1 border-b"
                       onClick={() => navigate("/dashboard/profile")}
@@ -357,10 +384,7 @@ const NotifcaitonModal = ({ openModal, closeModal }) => {
             transition
             className="w-full max-w-md rounded-xl shadow-lg bg-white/60 p-6 backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
           >
-            <Dialog.Title
-              as="h3"
-              className="text-lg font-medium text-black"
-            >
+            <Dialog.Title as="h3" className="text-lg font-medium text-black">
               Notifications
             </Dialog.Title>
             {notificaitonList?.length > 0 ? (
@@ -370,7 +394,13 @@ const NotifcaitonModal = ({ openModal, closeModal }) => {
                     key={notification?._id}
                     className="flex gap-2 items-center my-2"
                   >
-                    <BellIcon className="w-5 h-5 text-primary" />
+                    <BellIcon
+                      className={`w-8 h-8 text-primary ${
+                        notification?.status === "pending"
+                          ? "border-2 border-primary rounded-full"
+                          : ""
+                      }`}
+                    />
                     <h1 className="text-sm/6">{notification?.message}</h1>
                   </div>
                 ))}

@@ -8,6 +8,8 @@ const reducer = (state = {}, action) => {
         case SET_USER:
             return { ...state, ...action.payload.user };
         case LOGOUT:
+            localStorage.clear();
+            window.location.href = "/login";
             return null
         default:
             return state;

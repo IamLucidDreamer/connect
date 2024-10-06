@@ -37,7 +37,6 @@ function ProtectedRoute({ children }) {
   try {
     const authToken = getAuthToken();
 
-    console.log(user, "user");
     if (authToken && authToken.length > 0) {
       return <>{children}</>;
     }

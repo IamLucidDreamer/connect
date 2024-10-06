@@ -12,6 +12,7 @@ import {
   UserGroupIcon,
 } from "@heroicons/react/outline";
 import React from "react";
+import PostList from "./post/ListPosts";
 
 const Feed = () => {
   return (
@@ -20,6 +21,7 @@ const Feed = () => {
       <div className="flex gap-5">
         <div className="w-1/4">
           <OrganizationActivity />
+          <PostList />
         </div>
         <div className="w-2/4">
           <div className="rounded-lg border-gray-200 bg-white border-2 pb-2">

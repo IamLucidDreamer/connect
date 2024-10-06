@@ -3,7 +3,7 @@ import server from "../helpers/apiCall";
 export const getUsersOrganizations = async () => {
   return new Promise((resolve, reject) => {
     server
-      .get(`/organizations/user`)
+      .get(`/organization/for-users`)
       .then((response) => {
         resolve(response);
       })
