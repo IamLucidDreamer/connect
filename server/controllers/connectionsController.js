@@ -47,7 +47,9 @@ const getConnectionRequests = async (req, res) => {
         .json({ message: "No connection requests found", data: [] });
     }
 
-    res.json(connections);
+    res
+      .status(STATUS_SUCCESS)
+      .json({ message: "Connection requests found", data: connections });
   } catch (error) {
     res.status(STATUS_SERVER_ERROR).json({
       message: "Error fetching connection requests",

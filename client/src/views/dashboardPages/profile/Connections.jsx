@@ -5,7 +5,7 @@ const ConnectionsList = () => {
   const [connections, setConnections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [status, setStatus] = useState("pending");
+  const [status, setStatus] = useState("accepted");
 
   useEffect(() => {
     const fetchConnections = async () => {
