@@ -13,7 +13,7 @@ const ConnectionsList = () => {
         setLoading(true);
         const response = await getConnectionRequests(status);
         if (response?.status >= 200 && response?.status < 300) {
-          setConnections(response?.data?.data);
+          setConnections(response?.data);
         }
         setLoading(false);
       } catch (error) {
@@ -76,7 +76,7 @@ const ConnectionsList = () => {
         </div>
       ) : (
         <ul>
-          {connections.map((connection) => (
+          {connections?.map((connection) => (
             <li key={connection?._id}>
               <ConnectionItem connection={connection} />
             </li>

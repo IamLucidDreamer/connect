@@ -13,23 +13,26 @@ const getConnectionRequests = async (req, res) => {
     const userId = req.user._id;
     const { status } = req.query;
 
-    const query = {
-      $or: [{ sender: userId }, { reciever: userId }],
-    };
+    const query = {};
 
     if (status) {
       if (status === "accepted") {
         query.status = "accepted";
+        query.$or = [{ sender: userId }, { receiver: userId }];
       } else if (status === "pending") {
         query.status = "pending";
+        query.$or = [{ sender: userId }];
       } else if (status === "recieved") {
         query.reciever = userId;
+        query, (status = "pending");
       } else if (status === "sent") {
         query.sender = userId;
+        query.status = "pending";
       } else if (status === "blocked") {
         query.blocked = true;
       } else {
         query.status = "pending";
+        query.$or = [{ sender: userId }];
       }
     }
 
