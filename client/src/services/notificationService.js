@@ -16,7 +16,7 @@ export const getUserNotifications = async (limit, skip) => {
 export const markNotificationAsRead = async (notificationIds) => {
   return new Promise((resolve, reject) => {
     server
-      .post(`/notification/mark-as-read`, {
+      .post(`/notifications/mark-read`, {
         notifications: [...notificationIds],
       })
       .then((response) => {

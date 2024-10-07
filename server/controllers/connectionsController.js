@@ -65,7 +65,7 @@ const getConnectionRequests = async (req, res) => {
       }
 
       return {
-        otherUser,
+        connectionData : {...otherUser},
         status: connection.status,
         actionRequired,
         createdAt: connection.createdAt,

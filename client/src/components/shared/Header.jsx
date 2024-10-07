@@ -32,6 +32,7 @@ const Header = () => {
 
   const [open, setOpen] = useState(false);
   const [noitifcaitonOpen, setNotificationOpen] = useState(false);
+  const [notificaitonList, setNotificationList] = useState([]);
 
   const user = useSelector((state) => state?.user);
   const userOrganization = useSelector((state) => state?.organization);
@@ -48,10 +49,22 @@ const Header = () => {
       if (responseOrg.status >= 200 && responseOrg.status < 300) {
         dispatch(setUserOrganization([...responseOrg.data.data]));
       }
-    }
-    else{
+    } else {
       localStorage.clear();
       navigate("/login");
+    }
+  };
+
+  const getNotificaitonList = async () => {
+    try {
+      const response = await getUserNotifications(10, 0);
+      if (response.status === 200) {
+        setNotificationList(response?.data?.data);
+      } else {
+        console.log("Error in fetching notifications");
+      }
+    } catch (err) {
+      console.log("Error in fetching notifications");
     }
   };
 
@@ -101,6 +114,13 @@ const Header = () => {
                 className="p-1 hover:bg-gray-100 rounded-full"
                 onClick={() => setNotificationOpen(true)}
               >
+                {notificaitonList.filter(
+                  (notification) => notification?.status === "pending"
+                ).length > 0 && (
+                  <div className="absolute bg-primary w-3.5 h-3.5 rounded-full ml-3.5 animate-pulse bg-opacity-25 flex items-center justify-center">
+                    <div className="w-2.5 h-2.5 bg-primary rounded-full"></div>
+                  </div>
+                )}
                 <BellIcon className="w-7 h-7 text-secondary" />
               </button>
               {user?.firstName ? (
@@ -111,7 +131,13 @@ const Header = () => {
                     </h1>
                     <ChevronDownIcon className="w-5 h-5 text-primary" />
                   </div>
-                  <div className={`w-full bg-white px-2 absolute -mb-3 border rounded shadow-md hidden duration-300 group-hover:block ${userOrganization?.organizationData?.length > 0 ?  "-bottom-28" : "-bottom-14"}`}>
+                  <div
+                    className={`w-full bg-white px-2 absolute -mb-3 border rounded shadow-md hidden duration-300 group-hover:block ${
+                      userOrganization?.organizationData?.length > 0
+                        ? "-bottom-28"
+                        : "-bottom-14"
+                    }`}
+                  >
                     {userOrganization?.organizationData?.length > 0 && (
                       <button
                         className="hover:opacity-60 w-full text-left py-1 border-b"
@@ -167,6 +193,9 @@ const Header = () => {
       <NotifcaitonModal
         openModal={noitifcaitonOpen}
         closeModal={() => setNotificationOpen(false)}
+        notificaitonList={notificaitonList}
+        setNotificationList={setNotificationList}
+        getNotificaitonList={getNotificaitonList}
       />
     </>
   );
@@ -305,7 +334,11 @@ const Search = () => {
         <SearchIcon className="w-6 h-6 text-primary" />
       </div>
       <Dialog
-        open={searchKeyword?.length > 1 && currentPath !== "/dashboard/search" ? true : false}
+        open={
+          searchKeyword?.length > 1 && currentPath !== "/dashboard/search"
+            ? true
+            : false
+        }
         as="div"
         className="relative z-10 focus:outline-none"
         onClose={() => dispatch(setSearchKeyword(""))}
@@ -316,7 +349,10 @@ const Search = () => {
               transition
               className="w-full max-w-md rounded-xl shadow-lg bg-white/60 p-2 backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
             >
-              <Dialog.Title as="h3" className="text-lg text-gray-600 mb-4 px-4 font-medium mt-2">
+              <Dialog.Title
+                as="h3"
+                className="text-lg text-gray-600 mb-4 px-4 font-medium mt-2"
+              >
                 Search Results
               </Dialog.Title>
               {!loading ? (
@@ -354,7 +390,9 @@ const Search = () => {
                   </>
                 ) : (
                   <div className="w-full flex items-center justify-center">
-                    <h1 className="text-gray-700 text-lg mb-4">No user found</h1>
+                    <h1 className="text-gray-700 text-lg mb-4">
+                      No user found
+                    </h1>
                   </div>
                 )
               ) : (
@@ -370,22 +408,13 @@ const Search = () => {
   );
 };
 
-const NotifcaitonModal = ({ openModal, closeModal }) => {
-  const [notificaitonList, setNotificationList] = useState([]);
-
-  const getNotificaitonList = async () => {
-    try {
-      const response = await getUserNotifications(10, 0);
-      if (response.status === 200) {
-        setNotificationList(response?.data?.data);
-      } else {
-        console.log("Error in fetching notifications");
-      }
-    } catch (err) {
-      console.log("Error in fetching notifications");
-    }
-  };
-
+const NotifcaitonModal = ({
+  openModal,
+  closeModal,
+  getNotificaitonList,
+  notificaitonList,
+  setNotificationList,
+}) => {
   const markAsRead = async (notificationIds) => {
     try {
       const response = await markNotificationAsRead(notificationIds);
@@ -398,6 +427,19 @@ const NotifcaitonModal = ({ openModal, closeModal }) => {
       console.log("Error in marking as read");
     }
   };
+
+  useEffect(() => {
+   
+    if (
+      openModal &&
+      notificaitonList?.length > 0 &&
+      notificaitonList?.filter(
+        (notification) => notification?.status === "pending"
+      ).length > 0
+    ) {
+      markAsRead(notificaitonList?.map((notification) => notification?._id));
+    }
+  }, [openModal]);
 
   useEffect(() => {
     getNotificaitonList();
