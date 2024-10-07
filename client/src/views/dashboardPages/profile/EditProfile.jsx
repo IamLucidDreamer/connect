@@ -99,6 +99,46 @@ const ProfileUpdateForm = () => {
                 </p>
               </div>
             )}
+             {user?.address?.street && (
+              <div className="sm:col-span-3">
+                <p className="text-gray-700 pb-1">Street</p>
+                <p className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
+                  {user?.address?.street}
+                </p>
+              </div>
+            )}
+            {user?.address?.city && (
+              <div className="sm:col-span-3">
+                <p className="text-gray-700 pb-1">City</p>
+                <p className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
+                  {user?.address?.city}
+                </p>
+              </div>
+            )}
+            {user?.address?.state && (
+              <div className="sm:col-span-3">
+                <p className="text-gray-700 pb-1">State</p>
+                <p className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
+                  {user?.address?.state}
+                </p>
+              </div>
+            )}
+            {user?.address?.country && (
+              <div className="sm:col-span-3">
+                <p className="text-gray-700 pb-1">Country</p>
+                <p className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
+                  {user?.address?.country}
+                </p>
+              </div>
+            )}
+            {user?.address?.postalCode && (
+              <div className="sm:col-span-3">
+                <p className="text-gray-700 pb-1">Postal Code</p>
+                <p className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
+                  {user?.address?.postalCode}
+                </p>
+              </div>
+            )}
           </div>
 
           {user?.socialLinks?.linkedin ||

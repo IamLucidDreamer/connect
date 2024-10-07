@@ -8,6 +8,7 @@ import EditProfession from "./EditProfessional";
 import EditProfile from "./EditProfile";
 import { useParams } from "react-router-dom";
 import ConnectionButtons from "../../../components/connections/ConnectionButtons";
+import { getPresignedUrl, uploadFileToS3 } from "../../../services/awsService";
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -16,6 +17,7 @@ const Profile = () => {
   const [showTab, setShowTab] = useState(1);
   const [userData, setUserData] = useState(userIdFromParams ? null : user);
   const [loading, setLoading] = useState(false);
+  const [imageData, setImageData] = useState(null);
 
   const isLoggedInUser = userIdFromParams !== user?._id ? false : true;
 
@@ -41,6 +43,33 @@ const Profile = () => {
     getUserDetails();
   }, [userIdFromParams]);
 
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    try {
+      const response = await getPresignedUrl(file);
+      if (response.status >= 200 && response.status < 300) {
+        const presignedUrl = response.data.presignedUrl;
+        const options = {
+          headers: {
+            "Content-Type": file.type,
+          },
+        };
+        const uploadResponse = await uploadFileToS3(
+          presignedUrl,
+          file,
+          options
+        );
+        if (uploadResponse.status >= 200 && uploadResponse.status < 300) {
+          toast.success("Image uploaded successfully");
+          getUserDetails();
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Error uploading image");
+    }
+  };
+
   if (loading) {
     return <div className="text-center">Loading...</div>;
   }
@@ -60,6 +89,10 @@ const Profile = () => {
                   className="w-32 h-32 bg-gray-300 rounded-full mb-4 shrink-0"
                   alt="Profile"
                 />
+                <input
+                  type="file"
+                  onChange={(e) => handleFileUpload(e)}
+                ></input>
                 <h1 className="text-xl font-bold">
                   {`${userData?.firstName || ""} ${
                     userData?.middleName || ""
