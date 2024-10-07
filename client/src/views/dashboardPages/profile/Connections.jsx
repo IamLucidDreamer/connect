@@ -16,6 +16,7 @@ const ConnectionsList = () => {
       const response = await getConnectionRequests(status);
       if (response?.status >= 200 && response?.status < 300) {
         setConnections(response?.data?.data);
+        console.log(response?.data?.data, "Connections");
       }
       setLoading(false);
     } catch (error) {
@@ -67,26 +68,33 @@ const ConnectionsList = () => {
           Recieved
         </button>
       </div>
-      {loading ? (
-        <div className="flex items-center justify-center ">
-          <p className="text-xl text-gray-700 mt-40">Loading...</p>
-        </div>
-      ) : connections?.length === 0 ? (
-        <div className="flex items-center justify-center ">
-          <p className="text-xl text-gray-700 mt-40">No connections found...</p>
-        </div>
-      ) : (
-        <ul>
-          {connections?.map((connection) => (
-            <li key={connection?._id}>
-              <ConnectionItem
-                connection={connection}
-                updateFn={fetchConnections}
-              />
-            </li>
-          ))}
-        </ul>
-      )}
+      <div>
+        {loading ? (
+          <div className="flex items-center justify-center ">
+            <p className="text-xl text-gray-700 mt-40">Loading...</p>
+          </div>
+        ) : connections?.length === 0 ? (
+          <div className="flex items-center justify-center ">
+            <p className="text-xl text-gray-700 mt-40">
+              No connections found...
+            </p>
+          </div>
+        ) : (
+          <ul>
+            {connections?.map((connection) => (
+              <li
+                key={connection?._id}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-8"
+              >
+                <ConnectionItem
+                  connection={connection}
+                  updateFn={fetchConnections}
+                />
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 };
@@ -94,17 +102,13 @@ const ConnectionsList = () => {
 const ConnectionItem = ({ connection, updateFn }) => {
   const navigate = useNavigate();
   const loggedInUser = useSelector((state) => state.user);
-  const {status} = connection
-  const {receiver : user} = connection
-
-  console.log(connection, "Connect");
 
   return (
     <div
       key={connection._id}
       className="rounded-xl shadow-lg bg-white/60 p-4 backdrop-blur-2xl flex items-center justify-center flex-col"
     >
-      {user?._id === loggedInUser?._id && (
+      {connection?.connectionData?._id === loggedInUser?._id && (
         <h1 className="absolute top-4 right-4 border rounded-full px-2 border-primary bg-primary bg-opacity-5 text-primary text-xs">
           You
         </h1>
@@ -112,33 +116,37 @@ const ConnectionItem = ({ connection, updateFn }) => {
 
       <img
         src={
-          user.profilePicture ||
+          connection?.connectionData?.profilePicture ||
           "https://static.vecteezy.com/system/resources/previews/000/422/799/original/avatar-icon-vector-illustration.jpg"
         }
-        alt={`${user.firstName} ${user.lastName}`}
+        alt={`${connection?.connectionData?.firstName} ${connection?.connectionData?.lastName}`}
         className="w-12 h-12 rounded-full mr-4"
       />
       <div className="flex items-center">
         <div>
           <h2 className="text-lg font-semibold text-center">
-            {user.firstName} {user.lastName}
+            {connection?.connectionData?.firstName}{" "}
+            {connection?.connectionData?.lastName}
           </h2>
           <h2 className="text-center font-medium">
-            {user.introLine || "Alumns User"}
+            {connection?.connectionData?.introLine || "Alumns User"}
           </h2>
           <p className="text-gray-500 capitalize text-center">
-            {user._id !== loggedInUser._id &&
+            {connection?.connectionData?._id !== loggedInUser._id &&
               `Connection :
                   ${
-                    user.connectionStatus === "none"
+                    connection?.status === "none"
                       ? "Not Connected"
-                      : user.connectionStatus
+                      : connection?.status
                   }`}
           </p>
         </div>
       </div>
-      {connection._id !== loggedInUser._id ? (
-        <ConnectionButtons user={user} updateFn={updateFn} />
+      {connection?.connectionData?._id !== loggedInUser._id ? (
+        <ConnectionButtons
+          user={{ ...connection, connectionStatus: connection?.status }}
+          updateFn={updateFn}
+        />
       ) : (
         <button
           onClick={() => {

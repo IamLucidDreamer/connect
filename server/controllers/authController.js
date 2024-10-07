@@ -14,6 +14,9 @@ const {
   TOTAL_LOGIN_DEVICES_ALLOWED,
 } = require("../config/constants");
 const sendEmail = require("../utils/sendEmails");
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 const generateAccessToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
