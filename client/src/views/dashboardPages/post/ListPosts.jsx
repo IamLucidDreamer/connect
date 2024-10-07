@@ -87,7 +87,7 @@ const PostList = () => {
               </p>
             </div>
             <img
-              src={`https://picsum.photos/200/300?random=${post._id}`}
+              src={ post?.imageUrl?.length > 0 ? post?.imageUrl : `https://picsum.photos/200/300?random=${post._id}`}
               alt="feed image"
               className="w-full p-0 object-contain max-h-[45vh]"
             />

@@ -1,133 +1,258 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import * as Yup from "yup";
 import { toast } from "react-toastify";
 import server from "../../../helpers/apiCall";
 import { useDispatch, useSelector } from "react-redux";
-// import { setOrganization } from "../../../store/actions/organizationActions";
-// import EditOrganizationDetails from "./EditOrganizationDetails";
+import { setOrganization, setUserOrganization } from "../../../store/actions/organizationActions";
 
-const OrganizationProfile = () => {
+const organizationValidationSchema = Yup.object({
+  name: Yup.string().required("Organization name is required"),
+  type: Yup.string()
+    .required("Organization type is required")
+    .oneOf(["Academic", "Research", "Corporate"], "Invalid type selected"),
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+  website: Yup.string().url("Invalid URL format"),
+  location: Yup.object({
+    country: Yup.string().required("Country is required"),
+    city: Yup.string(),
+    address: Yup.string(),
+  }),
+  contactNumber: Yup.string().matches(
+    /^[0-9]+$/,
+    "Contact number must contain only digits"
+  ),
+  establishmentYear: Yup.number().min(1800, "Year is too old").max(new Date().getFullYear(), "Invalid establishment year"),
+  registeredGovtId: Yup.string(),
+  industry: Yup.string(),
+});
+
+const OrganizationForm = () => {
   const dispatch = useDispatch();
-  const organization = {
-    "location": {
-        "country": "USA",
-        "city": "New York"
-    },
-    "_id": "66ed170798647bfd11ba1862",
-    "name": "Testing Org New",
-    "type": "Corporate",
-    "email": "govow85971@ofionk.com",
-    "website": "https://org1.com",
-    "contactNumber": "+123456789",
-    "establishmentYear": 2001,
-    "registeredGovtId": "ID001",
-    "industry": "Technology",
-    "createdAt": "2024-09-20T06:32:39.471Z",
-    "updatedAt": "2024-09-20T06:32:39.471Z",
-    "__v": 0,
-    "isAdmin": true
-}
-  const [showTab, setShowTab] = useState(1);
+  const organization = useSelector((state) => state.organization); // Assuming organization state contains organization details
+  const [loading, setLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
-  // Fetch organization details from the server
-//   const getOrganizationDetails = async () => {
-//     // const response = await getOrganizationDetails(organizationId);
-//     if (response.status === 200) {
-//     //   dispatch(setOrganization(response.data.data));
-//     } else {
-//       toast.error("Failed to fetch organization details");
-//     }
-//   };
-
-//   useEffect(() => {
-//     getOrganizationDetails();
-//   }, []);
+  const handleSubmitOrganization = async (values, setErrors) => {
+    setLoading(true);
+    try {
+      const response = await server.put(`/organization/update/${organization?._id}`, {
+        organization: { ...values },
+      });
+      if (response.status >= 200 && response.status < 300) {
+        toast.success(response?.data?.message || "Organization Updated Successfully");
+        dispatch(setUserOrganization(response.data.data));
+        setIsEditing(false);
+      }
+    } catch (err) {
+      console.error("Error: ", err);
+      toast.error("Failed to update organization");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="bg-gray-100">
-      <div className="container mx-auto py-8">
-        <div className="grid grid-cols-4 sm:grid-cols-12 gap-6 px-4">
-          <div className="col-span-4 sm:col-span-3">
-            <div className="bg-white shadow rounded-lg p-6">
-              <div className="flex flex-col items-center">
-                <img
-                  src={organization?.logo || "https://via.placeholder.com/150"}
-                  className="w-32 h-32 bg-gray-300 rounded-full mb-4 shrink-0"
-                  alt="Organization Logo"
-                />
-                <h1 className="text-xl font-bold">
-                  {organization?.name || "Organization Name"}
-                </h1>
-                <p className="text-gray-700">
-                  {organization?.industry || "Add Industry"}
-                </p>
-                <div className="mt-6 flex flex-wrap gap-4 justify-center">
-                  <a
-                    href={organization?.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="border-b border-primary px-2 text-primary"
+    <>
+      {!isEditing ? (
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl py-6">Organization</h1>
+          <button
+            onClick={() => setIsEditing(true)}
+            className="bg-transparent px-2 py-1 text-sm border border-primary rounded-lg text-primary"
+          >
+            Edit
+          </button>
+        </div>
+      ) : (
+        <Formik
+          initialValues={{
+            name: organization?.name || "",
+            type: organization?.type || "",
+            email: organization?.email || "",
+            website: organization?.website || "",
+            location: {
+              country: organization?.location?.country || "",
+              city: organization?.location?.city || "",
+              address: organization?.location?.address || "",
+            },
+            contactNumber: organization?.contactNumber || "",
+            establishmentYear: organization?.establishmentYear || "",
+            registeredGovtId: organization?.registeredGovtId || "",
+            industry: organization?.industry || "",
+          }}
+          validationSchema={organizationValidationSchema}
+          onSubmit={(values, { setErrors }) => {
+            handleSubmitOrganization(values, setErrors);
+          }}
+        >
+          {({ isSubmitting }) => (
+            <Form>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="form-group">
+                  <label htmlFor="name">Organization Name</label>
+                  <Field
+                    type="text"
+                    id="name"
+                    name="name"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                  />
+                  <ErrorMessage
+                    name="name"
+                    component="div"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="type">Type</label>
+                  <Field
+                    as="select"
+                    id="type"
+                    name="type"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                   >
-                    Website
-                  </a>
-                  <a
-                    href={`mailto:${organization?.email}`}
-                    className="border-b border-primary px-2 text-primary"
-                  >
-                    Contact
-                  </a>
+                    <option value="">Select Type</option>
+                    <option value="Academic">Academic</option>
+                    <option value="Research">Research</option>
+                    <option value="Corporate">Corporate</option>
+                  </Field>
+                  <ErrorMessage
+                    name="type"
+                    component="div"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="email">Email</label>
+                  <Field
+                    type="email"
+                    id="email"
+                    name="email"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                  />
+                  <ErrorMessage
+                    name="email"
+                    component="div"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="website">Website</label>
+                  <Field
+                    type="text"
+                    id="website"
+                    name="website"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                  />
+                  <ErrorMessage
+                    name="website"
+                    component="div"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="location.country">Country</label>
+                  <Field
+                    type="text"
+                    id="location.country"
+                    name="location.country"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                  />
+                  <ErrorMessage
+                    name="location.country"
+                    component="div"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="location.city">City</label>
+                  <Field
+                    type="text"
+                    id="location.city"
+                    name="location.city"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="location.address">Address</label>
+                  <Field
+                    type="text"
+                    id="location.address"
+                    name="location.address"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="contactNumber">Contact Number</label>
+                  <Field
+                    type="text"
+                    id="contactNumber"
+                    name="contactNumber"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                  />
+                  <ErrorMessage
+                    name="contactNumber"
+                    component="div"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="establishmentYear">Establishment Year</label>
+                  <Field
+                    type="number"
+                    id="establishmentYear"
+                    name="establishmentYear"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                  />
+                  <ErrorMessage
+                    name="establishmentYear"
+                    component="div"
+                    className="text-red-600 text-sm mt-1"
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="registeredGovtId">Registered Govt. ID</label>
+                  <Field
+                    type="text"
+                    id="registeredGovtId"
+                    name="registeredGovtId"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="industry">Industry</label>
+                  <Field
+                    type="text"
+                    id="industry"
+                    name="industry"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                  />
                 </div>
               </div>
-              <hr className="my-6 border-t border-gray-300" />
-              <div className="flex flex-col">
-                <span className="text-gray-700 uppercase font-bold tracking-wider mb-2">
-                  Location
-                </span>
-                <p className="text-gray-700">
-                  {organization?.location?.city},{" "}
-                  {organization?.location?.country}
-                </p>
-                <p className="text-gray-700">
-                  {organization?.location?.address || "No address provided"}
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="col-span-4 sm:col-span-9">
-            <div className="bg-white shadow rounded-lg p-6">
-              <div className="flex items-center justify-between mb-5 gap-4">
+              <div className="flex justify-between items-center mt-6">
                 <button
-                  onClick={() => setShowTab(1)}
-                  className={`text-xs md:text-base px-3 py-1 md:px-4 md:py-2 ${
-                    showTab === 1
-                      ? "bg-primary text-white rounded-lg"
-                      : "border-b border-primary bg-transparent text-primary"
-                  }`}
+                  type="button"
+                  onClick={() => setIsEditing(false)}
+                  className="bg-gray-300 text-gray-800 px-4 py-2 rounded-md"
                 >
-                  Organization Details
+                  Cancel
                 </button>
                 <button
-                  onClick={() => setShowTab(2)}
-                  className={`text-xs md:text-base px-3 py-1 md:px-4 md:py-2 ${
-                    showTab === 2
-                      ? "bg-primary text-white rounded-lg"
-                      : "border-b border-primary bg-transparent text-primary"
-                  }`}
+                  type="submit"
+                  disabled={isSubmitting || loading}
+                  className="bg-primary text-white px-4 py-2 rounded-md"
                 >
-                  Contact Information
+                  {loading ? "Updating..." : "Update"}
                 </button>
               </div>
-              {/* {showTab === 1 && (
-                <EditOrganizationDetails organization={organization} />
-              )}
-              {showTab === 2 && (
-                <EditOrganizationContact organization={organization} />
-              )} */}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+            </Form>
+          )}
+        </Formik>
+      )}
+    </>
   );
 };
 
-export default OrganizationProfile;
+export default OrganizationForm;

@@ -22,6 +22,7 @@ const OrganizationProfile = lazy(() =>
 );
 const OrganizationsList = lazy(() => import ("../views/dashboardPages/organization/ListOrganizations"));
 const Feed = lazy(() => import("../views/dashboardPages/Feed"));
+const PostCreate = lazy(() => import("../views/dashboardPages/post/CreatePost"));
 const Connections = lazy(() =>
   import("../views/dashboardPages/profile/Connections")
 );
@@ -88,6 +89,10 @@ const router = createBrowserRouter([
       {
         path: "organization/list",
         element: <OrganizationsList />,
+      },
+      {
+        path: "post/create",
+        element: <PostCreate />,
       },
     ],
   },

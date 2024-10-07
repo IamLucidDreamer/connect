@@ -7,11 +7,6 @@ import EditEducation from "./EditEducation";
 import EditProfession from "./EditProfessional";
 import EditProfile from "./EditProfile";
 import { useParams } from "react-router-dom";
-import {
-  acceptConnectionRequest,
-  rejectConnectionRequest,
-  sendConnectionRequest,
-} from "../../../services/connectionService";
 import ConnectionButtons from "../../../components/connections/ConnectionButtons";
 
 const Profile = () => {
