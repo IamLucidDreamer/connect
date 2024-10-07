@@ -46,48 +46,48 @@ const ConnectionButtons = ({user, updateFn}) => {
 
   return (
     <div className="mt-4 space-x-2">
-      {user.connectionStatus === "none" && (
+      {user?.connectionStatus === "none" && (
         <button
-          onClick={() => handleSendRequest(user._id)}
+          onClick={() => handleSendRequest(user?._id)}
           className="text-white bg-primary text-sm px-4 py-2 rounded-md hover:bg-blue-800"
         >
           Send Request
         </button>
       )}
 
-      {user.connectionStatus === "pending" &&
-        user.actionRequired === "accept" && (
+      {user?.connectionStatus === "pending" &&
+        user?.actionRequired === "accept" && (
           <button
-            onClick={() => handleAcceptRequest(user.connectionId)}
+            onClick={() => handleAcceptRequest(user?.connectionId)}
             className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 text-sm"
           >
             Accept Request
           </button>
         )}
 
-      {user.connectionStatus === "pending" &&
-        user.actionRequired === "waiting" && (
+      {user?.connectionStatus === "pending" &&
+        user?.actionRequired === "waiting" && (
           <button
-            onClick={() => handleCancelRequest(user.connectionId)}
+            onClick={() => handleCancelRequest(user?.connectionId)}
             className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 text-sm"
           >
             Cancel Request
           </button>
         )}
 
-      {user.connectionStatus === "pending" &&
-        user.actionRequired === "accept" && (
+      {user?.connectionStatus === "pending" &&
+        user?.actionRequired === "accept" && (
           <button
-            onClick={() => handleCancelRequest(user.connectionId)}
+            onClick={() => handleCancelRequest(user?.connectionId)}
             className="bg-white border-2 border-red-500 px-3 text-red-500 py-1.5 rounded-md hover:bg-gray-200 text-sm"
           >
             Deny Request
           </button>
         )}
 
-      {user.connectionStatus === "accepted" && (
+      {user?.connectionStatus === "accepted" && (
         <button
-          onClick={() => handleCancelRequest(user.connectionId)}
+          onClick={() => handleCancelRequest(user?.connectionId)}
           className="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 text-sm "
         >
           Remove Connection
