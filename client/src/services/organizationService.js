@@ -147,7 +147,7 @@ export const getMembersToApprove = async (organizationId) => {
 export const approveMember = async (organizationId, memberId) => {
   return new Promise((resolve, reject) => {
     server
-      .post(`/organization/approve-member/${organizationId}`, { memberId })
+      .post(`/organization/approve-member/${organizationId}`, { userId :memberId })
       .then((response) => {
         resolve(response);
       })

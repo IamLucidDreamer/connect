@@ -1,6 +1,6 @@
 // components/PostList.js
 import React, { useEffect, useState } from "react";
-import { getPosts, likePost } from "../../../services/postService";
+import { getPosts, likePost, unlikePost } from "../../../services/postService";
 import {
   ChatIcon,
   DuplicateIcon,
@@ -8,6 +8,7 @@ import {
   PaperAirplaneIcon,
   ThumbUpIcon,
 } from "@heroicons/react/outline";
+import { ThumbUpIcon as ThumbUpIconSolid } from "@heroicons/react/solid";
 
 const PostList = () => {
   const [posts, setPosts] = useState([]);
@@ -25,20 +26,46 @@ const PostList = () => {
   }, []);
 
   const handleLike = async (postId) => {
-    const response = await likePost(postId);
-    if (response?.status >= 200 && response?.status < 300) {
-      setPosts((prevPosts) =>
-        prevPosts.map((post) =>
-          post._id === postId
-            ? {
-                ...post,
-                likeCount: post.likeCount + 1,
-              }
-            : post
-        )
-      );
+    try {
+      const response = await likePost(postId);
+      if (response?.status >= 200 && response?.status < 300) {
+        setPosts((prevPosts) =>
+          prevPosts.map((post) =>
+            post._id === postId
+              ? {
+                  ...post,
+                  likeCount: post.likeCount + 1,
+                  isLiked: true,
+                }
+              : post
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error liking post", error);
     }
   };
+
+const handleUnlike = async (postId) => {
+    try {
+      const response = await unlikePost(postId);
+      if (response?.status >= 200 && response?.status < 300) {
+        setPosts((prevPosts) =>
+          prevPosts.map((post) =>
+            post._id === postId
+              ? {
+                  ...post,
+                  likeCount: post.likeCount - 1,
+                  isLiked: false,
+                }
+              : post
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error unliking post", error);
+    }
+  }
 
   return (
     <div>
@@ -87,7 +114,11 @@ const PostList = () => {
               </p>
             </div>
             <img
-              src={ post?.imageUrl?.length > 0 ? post?.imageUrl : `https://picsum.photos/200/300?random=${post._id}`}
+              src={
+                post?.imageUrl?.length > 0
+                  ? post?.imageUrl
+                  : `https://picsum.photos/200/300?random=${post._id}`
+              }
               alt="feed image"
               className="w-full p-0 object-contain max-h-[45vh]"
             />
@@ -124,11 +155,19 @@ const PostList = () => {
               <div className="flex flex-row mx-6">
                 <button
                   className="flex flex-row mx-4 items-center"
-                  onClick={() => handleLike(post?._id)}
+                  onClick={() => {
+                    post?.isLiked
+                      ? handleUnlike(post?._id)
+                      : handleLike(post?._id);
+                  }}
                 >
-                  <ThumbUpIcon className="w-6 h-6 mr-1" />
+                  {post?.isLiked ? (
+                    <ThumbUpIconSolid className="w-6 h-6 mr-1" />
+                  ) : (
+                    <ThumbUpIcon className="w-6 h-6 mr-1" />
+                  )}
                   <sm className="flex-grow text-left text-md font-SourceSansProSemibold text-gray-600">
-                    Like
+                    {post?.isLiked ? "Liked" : "Like"}
                   </sm>
                 </button>
                 <div className="flex flex-row mx-4 items-center">

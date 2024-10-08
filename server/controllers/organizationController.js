@@ -455,7 +455,7 @@ const approveMember = async (req, res) => {
     });
 
     if (!userOrganization) {
-      return res.status(404).send("User is not a member of this organization.");
+      return res.status(STATUS_NOT_FOUND).send("User is not a member of this organization.");
     }
 
     userOrganization.isApproved = true;

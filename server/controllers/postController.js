@@ -172,7 +172,7 @@ const deletePost = async (req, res) => {
     }
     await Comment.deleteMany({ postId });
     await Like.deleteMany({ postId });
-    await post.remove();
+    await post.deleteOne();
     return res
       .status(STATUS_SUCCESS)
       .json({ message: "Post deleted successfully" });
@@ -262,7 +262,7 @@ const deleteComment = async (req, res) => {
         .status(STATUS_BAD_REQUEST)
         .json({ message: "You are not authorized to delete this comment" });
     }
-    await comment.remove();
+    await comment.deleteOne();
     return res
       .status(STATUS_SUCCESS)
       .json({ message: "Comment deleted successfully" });
@@ -316,7 +316,7 @@ const unlikePost = async (req, res) => {
         .status(STATUS_BAD_REQUEST)
         .json({ message: "You are not authorized to unlike this post" });
     }
-    await like.remove();
+    await like.deleteOne();
     return res
       .status(STATUS_SUCCESS)
       .json({ message: "Post unliked successfully" });
