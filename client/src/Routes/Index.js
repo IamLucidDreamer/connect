@@ -83,7 +83,7 @@ const router = createBrowserRouter([
         element: <Search />,
       },
       {
-        path: "organization/profile",
+        path: "organization/profile/:organizationId",
         element: <OrganizationProfile />,
       },
       {

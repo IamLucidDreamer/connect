@@ -4,7 +4,9 @@ import server from "../helpers/apiCall";
 export const getPresignedUrl = async (file) => {
   return new Promise((resolve, reject) => {
     server
-      .get(`/aws/get-presigned-url?fileName=${file.name}&fileType=${file.type}`)
+      .get(
+        `/aws/get-presigned-url?fileName=${file.name}&fileType=${file.type}`
+      )
       .then((res) => {
         resolve(res.data.presignedUrl);
       })
@@ -14,7 +16,7 @@ export const getPresignedUrl = async (file) => {
   });
 };
 
-export const uploadFileToS3 = async (file, presignedUrl) => {
+export const uploadFileToS3 = async (presignedUrl, file) => {
   return new Promise((resolve, reject) => {
     const options = {
       headers: {

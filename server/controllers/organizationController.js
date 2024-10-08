@@ -401,6 +401,77 @@ const joinOrganization = async (req, res) => {
   }
 };
 
+const getMembers = async (req, res) => {
+  const { organizationId } = req.params;
+  try {
+    const members = await UserOrganizationRelation.find({
+      organizationId,
+      isApproved: true,
+    }).populate("userId", "firstName lastName email");
+
+    res.status(STATUS_SUCCESS).json({
+      message: "Members fetched successfully.",
+      data: members,
+    });
+  } catch (error) {
+    console.error("Error fetching members:", error);
+    res
+      .status(STATUS_SERVER_ERROR)
+      .send("An error occurred while trying to fetch members.");
+  } finally {
+    logger.info("Get members API called");
+  }
+};
+
+const getMembersToApprove = async (req, res) => {
+  const { organizationId } = req.params;
+  try {
+    const members = await UserOrganizationRelation.find({
+      organizationId,
+      isApproved: false,
+    }).populate("userId", "firstName lastName email");
+
+    res.status(STATUS_SUCCESS).json({
+      message: "Members awaiting approval fetched successfully.",
+      data: members,
+    });
+  } catch (error) {
+    console.error("Error fetching members:", error);
+    res
+      .status(STATUS_SERVER_ERROR)
+      .send("An error occurred while trying to fetch members.");
+  } finally {
+    logger.info("Get members API called");
+  }
+};
+
+const approveMember = async (req, res) => {
+  const { organizationId } = req.params;
+  const { userId } = req.body;
+  try {
+    const userOrganization = await UserOrganizationRelation.findOne({
+      userId,
+      organizationId,
+    });
+
+    if (!userOrganization) {
+      return res.status(404).send("User is not a member of this organization.");
+    }
+
+    userOrganization.isApproved = true;
+    await userOrganization.save();
+
+    res.status(STATUS_SUCCESS).send("User has been approved.");
+  } catch (error) {
+    console.error("Error approving member:", error);
+    res
+      .status(STATUS_SERVER_ERROR)
+      .send("An error occurred while trying to approve member.");
+  } finally {
+    logger.info("Approve member API called");
+  }
+};
+
 module.exports = {
   getUsersOrganizations,
   getOrganization,
@@ -410,4 +481,6 @@ module.exports = {
   verifyOtpAndAssignAdmin,
   updateOrganization,
   joinOrganization,
+  getMembers,
+  getMembersToApprove,
 };

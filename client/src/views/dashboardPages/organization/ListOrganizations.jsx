@@ -1,5 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const ListOrganizations = () => {
   const organizations = useSelector((state) => state.organization);
@@ -19,7 +20,10 @@ const ListOrganizations = () => {
 export default ListOrganizations;
 
 const OrgCard = ({ org }) => {
-  console.log(org);
+  const navigate = useNavigate();
+  const handleRedirectToProfile = () => {
+      navigate(`/dashboard/organization/profile/${org?.organizationId?._id}`);
+  }
   return (
     <div
       key={org._id}
@@ -45,7 +49,7 @@ const OrgCard = ({ org }) => {
           </h2>
         </div>
       </div>
-      <button className="mt-4 border-2 border-primary text-primary rounded-md p-1 px-2">
+      <button className="mt-4 border-2 border-primary text-primary rounded-md p-1 px-2" onClick={handleRedirectToProfile}>
         Edit Details
       </button>
     </div>

@@ -46,18 +46,11 @@ const Profile = () => {
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     try {
-      const response = await getPresignedUrl(file);
-      if (response.status >= 200 && response.status < 300) {
-        const presignedUrl = response.data.presignedUrl;
-        const options = {
-          headers: {
-            "Content-Type": file.type,
-          },
-        };
+      const preSignedUrl = await getPresignedUrl(file);
+      if (preSignedUrl) {
         const uploadResponse = await uploadFileToS3(
-          presignedUrl,
+          preSignedUrl,
           file,
-          options
         );
         if (uploadResponse.status >= 200 && uploadResponse.status < 300) {
           toast.success("Image uploaded successfully");
