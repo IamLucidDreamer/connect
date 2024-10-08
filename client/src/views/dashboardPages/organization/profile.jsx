@@ -10,6 +10,7 @@ import {
 } from "../../../store/actions/organizationActions";
 import { useParams } from "react-router-dom";
 import EditProfile from "./EditProfile";
+import ListMember from "./ListMember";
 
 const OrganizationForm = () => {
   const dispatch = useDispatch();
@@ -84,8 +85,8 @@ const OrganizationForm = () => {
                 </button>
               </div>
               {showTab === 1 && <EditProfile />}
-              {/* {showTab === 2 && <EditProfession user={userData} />}
-              {showTab === 3 && <EditEducation user={userData} />} */}
+              {showTab === 2 && <ListMember />}
+              {/* {showTab === 3 && <EditEducation user={userData} />} */}
             </div>
           </div>
         </div>

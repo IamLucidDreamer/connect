@@ -24,8 +24,8 @@ router.post("/verify-otp", verifyOtpAndAssignAdmin);
 router.put("/update/:organizationId", protect, updateOrganization);
 router.post("/join/:organizationId", protect, joinOrganization);
 
-router.get('/get-members/:organizationId', protect, getMembers);
-router.get('/get-members-to-approve/:organizationId', protect, getMembers);
+router.get('/members/:organizationId', protect, getMembers);
+router.get('/members-to-approve/:organizationId', protect, getMembers);
 router.post('/approve-member/:organizationId', protect, approveMember);
 
 module.exports = router;

@@ -26,7 +26,6 @@ export const getOrganization = async (organizationId) => {
   });
 };
 
-
 export const getAllOrganizationsNames = async () => {
   return new Promise((resolve, reject) => {
     server
@@ -39,7 +38,6 @@ export const getAllOrganizationsNames = async () => {
       });
   });
 };
-
 
 export const createOrganizationsInBulk = async (organizations) => {
   return new Promise((resolve, reject) => {
@@ -54,7 +52,11 @@ export const createOrganizationsInBulk = async (organizations) => {
   });
 };
 
-export const sendOtpForAdminAssignment = async (email, organizationId, password) => {
+export const sendOtpForAdminAssignment = async (
+  email,
+  organizationId,
+  password
+) => {
   return new Promise((resolve, reject) => {
     server
       .post(`/organizations/send-otp`, { email, organizationId, password })
@@ -67,10 +69,20 @@ export const sendOtpForAdminAssignment = async (email, organizationId, password)
   });
 };
 
-export const verifyOtpAndAssignAdmin = async (email, organizationId, otp, otpVerificationId) => {
+export const verifyOtpAndAssignAdmin = async (
+  email,
+  organizationId,
+  otp,
+  otpVerificationId
+) => {
   return new Promise((resolve, reject) => {
     server
-      .post(`/organizations/verify-otp`, { email, organizationId, otp, otpVerificationId })
+      .post(`/organizations/verify-otp`, {
+        email,
+        organizationId,
+        otp,
+        otpVerificationId,
+      })
       .then((response) => {
         resolve(response);
       })
@@ -97,6 +109,19 @@ export const joinOrganization = async (organizationId, role = "member") => {
   return new Promise((resolve, reject) => {
     server
       .post(`/organizations/join`, { organizationId, role })
+      .then((response) => {
+        resolve(response);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
+export const getMembers = async (organizationId) => {
+  return new Promise((resolve, reject) => {
+    server
+      .get(`/organizations/members/${organizationId}`)
       .then((response) => {
         resolve(response);
       })
