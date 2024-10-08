@@ -46,7 +46,7 @@ const getPosts = async (req, res) => {
 
     const comments = await Comment.find({
       postId: { $in: postIds },
-    }).populate("userId", "name");
+    }).populate("userId", "firstName lastName");
 
     const likes = await Like.find({
       postId: { $in: postIds },
@@ -63,6 +63,12 @@ const getPosts = async (req, res) => {
       likeCount: likes.filter(
         (like) => like.postId.toString() === post._id.toString()
       ).length,
+      isLiked:
+        likes.filter(
+          (like) =>
+            like.postId.toString() === post._id.toString() &&
+            like.userId.toString() === req.user._id.toString()
+        ).length > 0,
     }));
 
     return res
@@ -81,13 +87,32 @@ const getPosts = async (req, res) => {
 const getPostDetails = async (req, res) => {
   try {
     const postId = req.params.postId;
-    const post = await Post.findById({ _id: postId })
-      .populate("author", "name")
-      .populate({
-        path: "comments",
-        populate: { path: "userId", select: "name" },
-      })
-      .populate("likes");
+    const post = await Post.findById({ _id: postId }).populate(
+      "author",
+      "firstName lastName"
+    );
+
+    if (!post) {
+      return res.status(STATUS_BAD_REQUEST).json({ message: "Post not found" });
+    }
+
+    const comments = await Comment.find({ postId }).populate(
+      "userId",
+      "firstName lastName"
+    );
+    const likes = await Like.find({ postId });
+    const postWithDetails = {
+      ...post.toObject(),
+      comments,
+      likes,
+      likeCount: likes.length,
+      isLiked:
+        likes.filter(
+          (like) =>
+            like.postId.toString() === post._id.toString() &&
+            like.userId.toString() === req.user._id.toString()
+        ).length > 0,
+    };
     return res
       .status(STATUS_SUCCESS)
       .json({ message: "Post details fetched successfully", data: post });
@@ -335,5 +360,5 @@ module.exports = {
   deleteComment,
   likePost,
   unlikePost,
-  getPostComments
+  getPostComments,
 };
