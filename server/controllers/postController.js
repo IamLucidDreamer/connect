@@ -39,42 +39,44 @@ const getPosts = async (req, res) => {
   try {
     // Fetch posts and populate author
     const posts = await Post.find()
-      .populate('author', 'firstName lastName') 
+      .populate("author", "firstName lastName")
       .lean();
 
     const postIds = posts.map((post) => post._id);
-    
+
     const comments = await Comment.find({
       postId: { $in: postIds },
-    }).populate('userId', 'name'); 
+    }).populate("userId", "name");
 
     const likes = await Like.find({
       postId: { $in: postIds },
     });
 
     const postsWithDetails = posts.map((post) => ({
-      ...post, 
+      ...post,
       comments: comments.filter(
         (comment) => comment.postId.toString() === post._id.toString()
       ),
-      likes: likes.filter((like) => like.postId.toString() === post._id.toString()),
-      likeCount: likes.filter((like) => like.postId.toString() === post._id.toString()).length,
+      likes: likes.filter(
+        (like) => like.postId.toString() === post._id.toString()
+      ),
+      likeCount: likes.filter(
+        (like) => like.postId.toString() === post._id.toString()
+      ).length,
     }));
 
     return res
       .status(STATUS_SUCCESS)
-      .json({ message: 'Posts fetched successfully', data: postsWithDetails });
+      .json({ message: "Posts fetched successfully", data: postsWithDetails });
   } catch (error) {
-    logger.error('Error in fetching posts', error);
+    logger.error("Error in fetching posts", error);
     return res
       .status(STATUS_SERVER_ERROR)
-      .json({ message: 'Internal server error' });
+      .json({ message: "Internal server error" });
   } finally {
-    logger.info('Get posts API called');
+    logger.info("Get posts API called");
   }
 };
-
-
 
 const getPostDetails = async (req, res) => {
   try {
@@ -303,6 +305,25 @@ const unlikePost = async (req, res) => {
   }
 };
 
+const getPostComments = async (req, res) => {
+  try {
+    const postId = req.params.postId;
+    const comments = await Comment.find({ postId })
+      .populate("userId", "name")
+      .lean();
+    return res
+      .status(STATUS_SUCCESS)
+      .json({ message: "Comments fetched successfully", data: comments });
+  } catch (error) {
+    logger.error("Error in fetching comments", error);
+    return res
+      .status(STATUS_SERVER_ERROR)
+      .json({ message: "Internal server error" });
+  } finally {
+    logger.info("Get comments API called");
+  }
+};
+
 module.exports = {
   createPost,
   getPosts,
@@ -314,4 +335,5 @@ module.exports = {
   deleteComment,
   likePost,
   unlikePost,
+  getPostComments
 };

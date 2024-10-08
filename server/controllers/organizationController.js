@@ -483,4 +483,5 @@ module.exports = {
   joinOrganization,
   getMembers,
   getMembersToApprove,
+  approveMember
 };

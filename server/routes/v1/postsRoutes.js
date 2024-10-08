@@ -11,6 +11,7 @@ const {
   createComment,
   updateComment,
   deleteComment,
+  getPostComments,
 } = require("../../controllers/postController");
 
 const router = express.Router();
@@ -27,6 +28,6 @@ router.post("/unlike/:postId", protect, unlikePost);
 router.post("/comment/create/:postId", protect, createComment);
 router.put("/comment/update/:commentId", protect, updateComment);
 router.delete("/comment/delete/:commentId", protect, deleteComment);
-
+router.get("/comment/get/:postId", protect, getPostComments);
 
 module.exports = router;
