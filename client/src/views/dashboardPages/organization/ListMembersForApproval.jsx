@@ -1,17 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { getMembers } from "../../../services/organizationService";
+import { getMembersToApprove } from "../../../services/organizationService";
+import { approveMember } from "../../../services/organizationService";
 
-const ListMember = ({organizationId}) => {
+const ListMemberToApprove = ({ organizationId }) => {
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchMembers = async () => {
     try {
       setLoading(true);
-      const response = await getMembers(organizationId);
+      const response = await getMembersToApprove(organizationId);
       if (response?.status >= 200 && response?.status < 300) {
         setMembers(response?.data?.data);
         console.log(response?.data?.data, "Connections");
+      }
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+    }
+  };
+
+  const handleApproveMember = async (memberId) => {
+    try {
+      setLoading(true);
+      const response = await approveMember(organizationId, memberId);
+      if (response?.status >= 200 && response?.status < 300) {
+        fetchMembers();
       }
       setLoading(false);
     } catch (error) {
@@ -25,7 +39,7 @@ const ListMember = ({organizationId}) => {
 
   return (
     <div className="py-5">
-      <h2 className="text-xl mb-4 font-regular">Members</h2>
+      <h2 className="text-xl mb-4 font-regular">Members waiting Approval</h2>
       <div>
         {loading ? (
           <div className="flex items-center justify-center ">
@@ -33,9 +47,7 @@ const ListMember = ({organizationId}) => {
           </div>
         ) : members?.length === 0 ? (
           <div className="flex items-center justify-center ">
-            <p className="text-xl text-gray-700 mt-40">
-              No Members found...
-            </p>
+            <p className="text-xl text-gray-700 mt-40">No Members found...</p>
           </div>
         ) : (
           <ul>
@@ -57,4 +69,4 @@ const ListMember = ({organizationId}) => {
   );
 };
 
-export default ListMember;
+export default ListMemberToApprove;

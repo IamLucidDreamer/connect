@@ -11,6 +11,7 @@ import {
 import { useParams } from "react-router-dom";
 import EditProfile from "./EditProfile";
 import ListMember from "./ListMember";
+import ListMemberToApprove from "./ListMembersForApproval";
 
 const OrganizationForm = () => {
   const dispatch = useDispatch();
@@ -24,7 +25,7 @@ const OrganizationForm = () => {
   );
 
   const fullOrgData = organizationData?.organizationId || {};
-  
+
   return (
     <div className="bg-gray-100">
       <div className="container mx-auto py-8">
@@ -85,8 +86,14 @@ const OrganizationForm = () => {
                 </button>
               </div>
               {showTab === 1 && <EditProfile />}
-              {showTab === 2 && <ListMember />}
-              {/* {showTab === 3 && <EditEducation user={userData} />} */}
+              {showTab === 2 && (
+                <ListMember organizationId={organizationIdFromParams} />
+              )}
+              {showTab === 3 && (
+                <ListMemberToApprove
+                  organizationId={organizationIdFromParams}
+                />
+              )}
             </div>
           </div>
         </div>

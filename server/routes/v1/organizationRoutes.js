@@ -11,6 +11,7 @@ const {
   getUsersOrganizations,
   getMembers,
   approveMember,
+  getMembersToApprove,
 } = require("../../controllers/organizationController");
 
 const router = express.Router();
@@ -25,7 +26,7 @@ router.put("/update/:organizationId", protect, updateOrganization);
 router.post("/join/:organizationId", protect, joinOrganization);
 
 router.get('/members/:organizationId', protect, getMembers);
-router.get('/members-to-approve/:organizationId', protect, getMembers);
+router.get('/members-to-approve/:organizationId', protect, getMembersToApprove);
 router.post('/approve-member/:organizationId', protect, approveMember);
 
 module.exports = router;

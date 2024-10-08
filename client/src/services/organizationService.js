@@ -16,7 +16,7 @@ export const getUsersOrganizations = async () => {
 export const getOrganization = async (organizationId) => {
   return new Promise((resolve, reject) => {
     server
-      .get(`/organizations/${organizationId}`)
+      .get(`/organization/${organizationId}`)
       .then((response) => {
         resolve(response);
       })
@@ -29,7 +29,7 @@ export const getOrganization = async (organizationId) => {
 export const getAllOrganizationsNames = async () => {
   return new Promise((resolve, reject) => {
     server
-      .get(`/organizations/names`)
+      .get(`/organization/names`)
       .then((response) => {
         resolve(response);
       })
@@ -42,7 +42,7 @@ export const getAllOrganizationsNames = async () => {
 export const createOrganizationsInBulk = async (organizations) => {
   return new Promise((resolve, reject) => {
     server
-      .post(`/organizations/bulk-create`, { organizations })
+      .post(`/organization/bulk-create`, { organizations })
       .then((response) => {
         resolve(response);
       })
@@ -59,7 +59,7 @@ export const sendOtpForAdminAssignment = async (
 ) => {
   return new Promise((resolve, reject) => {
     server
-      .post(`/organizations/send-otp`, { email, organizationId, password })
+      .post(`/organization/send-otp`, { email, organizationId, password })
       .then((response) => {
         resolve(response);
       })
@@ -77,7 +77,7 @@ export const verifyOtpAndAssignAdmin = async (
 ) => {
   return new Promise((resolve, reject) => {
     server
-      .post(`/organizations/verify-otp`, {
+      .post(`/organization/verify-otp`, {
         email,
         organizationId,
         otp,
@@ -95,7 +95,7 @@ export const verifyOtpAndAssignAdmin = async (
 export const updateOrganization = async (organizationId, updates) => {
   return new Promise((resolve, reject) => {
     server
-      .put(`/organizations/update`, { organizationId, updates })
+      .put(`/organization/update`, { organizationId, updates })
       .then((response) => {
         resolve(response);
       })
@@ -108,7 +108,7 @@ export const updateOrganization = async (organizationId, updates) => {
 export const joinOrganization = async (organizationId, role = "member") => {
   return new Promise((resolve, reject) => {
     server
-      .post(`/organizations/join`, { organizationId, role })
+      .post(`/organization/join`, { organizationId, role })
       .then((response) => {
         resolve(response);
       })
@@ -121,7 +121,7 @@ export const joinOrganization = async (organizationId, role = "member") => {
 export const getMembers = async (organizationId) => {
   return new Promise((resolve, reject) => {
     server
-      .get(`/organizations/members/${organizationId}`)
+      .get(`/organization/members/${organizationId}`)
       .then((response) => {
         resolve(response);
       })
@@ -130,3 +130,29 @@ export const getMembers = async (organizationId) => {
       });
   });
 };
+
+export const getMembersToApprove = async (organizationId) => {
+  return new Promise((resolve, reject) => {
+    server
+      .get(`/organization/members-to-approve/${organizationId}`)
+      .then((response) => {
+        resolve(response);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+}
+
+export const approveMember = async (organizationId, memberId) => {
+  return new Promise((resolve, reject) => {
+    server
+      .post(`/organization/approve-member/${organizationId}`, { memberId })
+      .then((response) => {
+        resolve(response);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+}
