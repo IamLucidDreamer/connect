@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import server from "../../../helpers/apiCall";
 import { useSelector } from "react-redux";
 import formatDateToMonthYear from "../../../helpers";
+import { getAllOrganizationsNames } from "../../../services/organizationService";
 
 const EducationForm = () => {
   const userId = useSelector((state) => state?.user?._id);
@@ -13,6 +14,18 @@ const EducationForm = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [editEducationId, setEditEducationId] = useState(null);
   const [formVisible, setFormVisible] = useState(false);
+  const [organizationList, setOrganizationList] = useState([]);
+
+  const getOrganizationList = () => {
+    try {
+      const response = getAllOrganizationsNames();
+      if (response.status >= 200 && response.status < 300) {
+        setOrganizationList(response.data.data);
+      }
+    } catch (err) {
+      console.error("Error : ", err);
+    }
+  };
 
   const [formInitialValues, setFormInitialValues] = useState({
     qualification: "",
@@ -49,6 +62,7 @@ const EducationForm = () => {
   });
 
   useEffect(() => {
+    getOrganizationList();
     fetchEducation();
   }, []);
 
@@ -371,25 +385,20 @@ const EducationForm = () => {
               </div>
 
               <div className="sm:col-span-3">
-                <label
-                  htmlFor="university"
-                  className="block text-sm font-medium leading-6 text-gray-500"
+                <Field
+                  as="select"
+                  name="programType"
+                  className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 >
-                  University/Board
-                </label>
-                <div className="mt-2">
-                  <Field
-                    type="text"
-                    name="university"
-                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                    placeholder="Enter your university/board"
-                  />
-                  <ErrorMessage
-                    name="university"
-                    component="div"
-                    className="text-red-600 text-sm mt-1"
-                  />
-                </div>
+                  <option value="" disabled organization>
+                    Select Your Organization
+                  </option>
+                  {organizationList.map((org) => (
+                    <option key={org._id} value={org._id}>
+                      {org.name}
+                    </option>
+                  ))}
+                </Field>
               </div>
 
               <div className="sm:col-span-3">

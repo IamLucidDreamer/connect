@@ -16,7 +16,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const Feed = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   return (
     <div className="max-w-screen-xl mx-auto py-6">
       {/* search */}
@@ -104,6 +104,7 @@ const Feed = () => {
 export default Feed;
 
 const Profile = () => {
+  const user = useSelector((state) => state.user);
   return (
     <div className="sticky top-20 flex flex-col gap-5">
       <div className="rounded-lg border-gray-200 bg-white border-2 pb-2">
@@ -114,34 +115,30 @@ const Profile = () => {
             className="w-full h-28 object-cover rounded-t-md"
           />
           <img
-            src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/bonnie-green.png"
+            src={
+              user?.imageUrl
+                ? user?.imageUrl
+                : "https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/bonnie-green.png"
+            }
             alt="profile"
             className="relative top-[100%] z-20 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full border-white border-2"
           />
-          <h4 className="font-SourceSansProSemibold text-center text-lg font-bold">
-            Stella Waithera
+          <h4 className="font-medium text-center text-lg font-bold">
+            {user?.firstName} {user?.lastName}
           </h4>
           <p className="text-center font-ArialRegular text-gray-500 text-[13px] mx-4">
-            Founder of AfricanSTEMGirl Org||Creator and Lead Organizer
-            AfricaSTEMsummit||Founder of The Transition Series Kenya||Fullstack
-            developer(ReactJS,Django)||Digital skills Instructor|| Technical
-            Writer(SheCodeAfrica)
+            {user?.introLine || "Alumns User"}
           </p>
           <hr class="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700"></hr>
           <div className="flex flex-row w-full mx-4 mb-1">
             <sm className="flex-grow text-left text-sm font-SourceSansProSemibold text-gray-600">
-              Profile Viewers
+              Total Connection
             </sm>
             <sm className="text-right text-sm mr-10 text-blue-500 font-bold">
-              224
-            </sm>
-          </div>
-          <div className="flex flex-row w-full mx-4 mb-1">
-            <sm className="flex-grow text-left text-sm font-SourceSansProSemibold text-gray-600">
-              Post Impressions
-            </sm>
-            <sm className="text-right text-sm mr-10 text-blue-500 font-bold">
-              1,757
+              xxx{" "}
+              <span className="text-xs text-gray-400 font-extralight">
+                Coming soon
+              </span>
             </sm>
           </div>
         </div>
@@ -296,21 +293,18 @@ const ConnectionsList = () => {
       <div>
         {loading ? (
           <div className="flex items-center justify-center ">
-            <p className="text-xl text-gray-700 mt-40">Loading...</p>
+            <p className="text-xl text-gray-700 mt-10">Loading...</p>
           </div>
         ) : connections?.length === 0 ? (
           <div className="flex items-center justify-center ">
-            <p className="text-xl text-gray-700 mt-40">
+            <p className="text-xl text-gray-700 mt-10">
               No connections found...
             </p>
           </div>
         ) : (
           <ul>
             {connections?.map((connection) => (
-              <li
-                key={connection?._id}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-8"
-              >
+              <li key={connection?._id}>
                 <ConnectionItem
                   connection={connection}
                   updateFn={fetchConnections}
@@ -331,7 +325,7 @@ const ConnectionItem = ({ connection, updateFn }) => {
   return (
     <div
       key={connection._id}
-      className="rounded-xl shadow-lg bg-white/60 p-4 backdrop-blur-2xl flex items-center justify-center flex-col"
+      className="p-1 backdrop-blur-2xl flex items-center justify-start"
     >
       {connection?.connectionData?._id === loggedInUser?._id && (
         <h1 className="absolute top-4 right-4 border rounded-full px-2 border-primary bg-primary bg-opacity-5 text-primary text-xs">
@@ -349,39 +343,15 @@ const ConnectionItem = ({ connection, updateFn }) => {
       />
       <div className="flex items-center">
         <div>
-          <h2 className="text-lg font-semibold text-center">
+          <h2 className="font-medium">
             {connection?.connectionData?.firstName}{" "}
             {connection?.connectionData?.lastName}
           </h2>
-          <h2 className="text-center font-medium">
+          <h2 className="text-sm">
             {connection?.connectionData?.introLine || "Alumns User"}
           </h2>
-          <p className="text-gray-500 capitalize text-center">
-            {connection?.connectionData?._id !== loggedInUser._id &&
-              `Connection :
-                  ${
-                    connection?.status === "none"
-                      ? "Not Connected"
-                      : connection?.status
-                  }`}
-          </p>
         </div>
       </div>
-      {connection?.connectionData?._id !== loggedInUser._id ? (
-        <ConnectionButtons
-          user={{ ...connection, connectionStatus: connection?.status }}
-          updateFn={updateFn}
-        />
-      ) : (
-        <button
-          onClick={() => {
-            navigate(`/dashboard/profile`);
-          }}
-          className="text-white bg-primary text-sm px-4 py-2 rounded-md hover:bg-blue-800 mt-4"
-        >
-          View Profile
-        </button>
-      )}
     </div>
   );
 };

@@ -6,6 +6,7 @@ import server from "../../../helpers/apiCall";
 import { useDispatch, useSelector } from "react-redux";
 import { setUserOrganization } from "../../../store/actions/organizationActions";
 import { parseErrorMessage } from "../../../helpers/apiCallHerlper";
+import { updateOrganization } from "../../../services/organizationService";
 
 // Validation schema
 const organizationValidationSchema = Yup.object({
@@ -28,30 +29,23 @@ const organizationValidationSchema = Yup.object({
     country: Yup.string().required("Country is required"),
     city: Yup.string().required("City is required"),
   }),
-  role: Yup.string().required("Role is required"),
-  isApproved: Yup.boolean(),
 });
 
-const OrganizationUpdateForm = () => {
+const OrganizationUpdateForm = ({ organizationFullData }) => {
   const dispatch = useDispatch();
-  const organizationData = useSelector((state) => state.organization);
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const organizationData = organizationFullData?.organizationId || {};
 
   const handleUpdateOrganization = async (values, setErrors) => {
     setLoading(true);
     try {
-      const response = await server.put(
-        `/organization/update/${organizationData?._id}`,
-        {
-          organization: { ...values },
-        }
-      );
+      const response = await updateOrganization(organizationData?._id, values);
       if (response.status >= 200 && response.status < 300) {
         toast.success(
           response?.data?.message || "Organization Updated Successfully"
         );
-        dispatch(setUserOrganization(response.data.data));
+        window.location.reload();
         setIsEditing(false);
       }
     } catch (err) {
@@ -164,24 +158,6 @@ const OrganizationUpdateForm = () => {
                 </p>
               </div>
             )}
-            {organizationData?.role && (
-              <div className="sm:col-span-3">
-                <p className="text-gray-700 pb-1">Role</p>
-                <p className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
-                  {organizationData?.role}
-                </p>
-              </div>
-            )}
-            <div className="sm:col-span-3">
-              <p className="text-gray-700 pb-1">Approval Status</p>
-              <p
-                className={`${
-                  organizationData?.isApproved ? "text-green-600" : "text-red-600"
-                } bg-white border border-gray-300 text-sm rounded-lg block w-full p-2.5`}
-              >
-                {organizationData?.isApproved ? "Approved" : "Not Approved"}
-              </p>
-            </div>
           </div>
         </>
       ) : (
@@ -199,8 +175,6 @@ const OrganizationUpdateForm = () => {
               country: organizationData?.location?.country || "",
               city: organizationData?.location?.city || "",
             },
-            role: organizationData?.role || "",
-            isApproved: organizationData?.isApproved || false,
           }}
           validationSchema={organizationValidationSchema}
           onSubmit={(values, { setErrors }) => {
@@ -346,38 +320,6 @@ const OrganizationUpdateForm = () => {
                   />
                   <ErrorMessage
                     name="location.city"
-                    component="div"
-                    className="text-red-600 text-sm mt-1"
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="role">Role</label>
-                  <Field
-                    as="select"
-                    id="role"
-                    name="role"
-                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
-                  >
-                    <option value="">Select Role</option>
-                    <option value="admin">Admin</option>
-                    <option value="member">Member</option>
-                  </Field>
-                  <ErrorMessage
-                    name="role"
-                    component="div"
-                    className="text-red-600 text-sm mt-1"
-                  />
-                </div>
-                <div className="form-group flex items-center">
-                  <Field
-                    type="checkbox"
-                    id="isApproved"
-                    name="isApproved"
-                    className="mr-2"
-                  />
-                  <label htmlFor="isApproved">Is Approved</label>
-                  <ErrorMessage
-                    name="isApproved"
                     component="div"
                     className="text-red-600 text-sm mt-1"
                   />

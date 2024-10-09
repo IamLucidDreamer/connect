@@ -85,7 +85,7 @@ const OrganizationForm = () => {
                   New Joiners
                 </button>
               </div>
-              {showTab === 1 && <EditProfile />}
+              {showTab === 1 && <EditProfile organizationFullData={organizationData} />}
               {showTab === 2 && (
                 <ListMember organizationId={organizationIdFromParams} />
               )}

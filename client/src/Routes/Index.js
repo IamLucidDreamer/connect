@@ -20,9 +20,13 @@ const DashboardProfile = lazy(() =>
 const OrganizationProfile = lazy(() =>
   import("../views/dashboardPages/organization/profile")
 );
-const OrganizationsList = lazy(() => import ("../views/dashboardPages/organization/ListOrganizations"));
+const OrganizationsList = lazy(() =>
+  import("../views/dashboardPages/organization/ListOrganizations")
+);
 const Feed = lazy(() => import("../views/dashboardPages/Feed"));
-const PostCreate = lazy(() => import("../views/dashboardPages/post/CreatePost"));
+const PostCreate = lazy(() =>
+  import("../views/dashboardPages/post/CreatePost")
+);
 const Connections = lazy(() =>
   import("../views/dashboardPages/profile/Connections")
 );
@@ -91,7 +95,7 @@ const router = createBrowserRouter([
         element: <OrganizationsList />,
       },
       {
-        path: "post/create",
+        path: "post/create/:postId",
         element: <PostCreate />,
       },
     ],

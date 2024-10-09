@@ -95,7 +95,7 @@ export const verifyOtpAndAssignAdmin = async (
 export const updateOrganization = async (organizationId, updates) => {
   return new Promise((resolve, reject) => {
     server
-      .put(`/organization/update`, { organizationId, updates })
+      .put(`/organization/update/${organizationId}`, { organizationId, updates })
       .then((response) => {
         resolve(response);
       })
