@@ -69,6 +69,7 @@ const getConnectionRequests = async (req, res) => {
         status: connection.status,
         actionRequired,
         createdAt: connection.createdAt,
+        connectionId: connection._id,
       };
     });
 

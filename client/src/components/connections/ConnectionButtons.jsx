@@ -7,6 +7,7 @@ import {
 } from "../../services/connectionService";
 
 const ConnectionButtons = ({user, updateFn}) => {
+  console.log(user)
 
   const handleSendRequest = async (receiverId) => {
     try {
@@ -21,6 +22,7 @@ const ConnectionButtons = ({user, updateFn}) => {
   };
 
   const handleCancelRequest = async (connectionId) => {
+    console.log(connectionId)
     try {
       const response = await rejectConnectionRequest({ connectionId });
       if (response.status >= 200 && response.status < 300) {

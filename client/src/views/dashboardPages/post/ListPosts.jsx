@@ -9,9 +9,11 @@ import {
   ThumbUpIcon,
 } from "@heroicons/react/outline";
 import { ThumbUpIcon as ThumbUpIconSolid } from "@heroicons/react/solid";
+import { useNavigate } from "react-router-dom";
 
 const PostList = () => {
   const [posts, setPosts] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -46,7 +48,7 @@ const PostList = () => {
     }
   };
 
-const handleUnlike = async (postId) => {
+  const handleUnlike = async (postId) => {
     try {
       const response = await unlikePost(postId);
       if (response?.status >= 200 && response?.status < 300) {
@@ -65,24 +67,30 @@ const handleUnlike = async (postId) => {
     } catch (error) {
       console.error("Error unliking post", error);
     }
-  }
+  };
 
   return (
-    <div>
+    <div className="gap-6 flex flex-col">
       {posts.map((post) => (
         <div
           className="rounded-lg border-gray-200 bg-white border-2 pb-2"
           key={post?._id}
         >
           <div className="flex flex-row p-4 items-center">
-            <img
-              src={
-                post?.author.profilePicture ||
-                "https://static.vecteezy.com/system/resources/previews/000/422/799/original/avatar-icon-vector-illustration.jpg"
+            <button
+              onClick={() =>
+                navigate(`/dashboard/profile/${post?.author?._id}`)
               }
-              className="w-14 h-14 rounded-full"
-              alt="profile"
-            />
+            >
+              <img
+                src={
+                  post?.author.profilePicture ||
+                  "https://static.vecteezy.com/system/resources/previews/000/422/799/original/avatar-icon-vector-illustration.jpg"
+                }
+                className="w-14 h-14 rounded-full"
+                alt="profile"
+              />
+            </button>
             <div className="flex flex-col ml-2 ">
               <div className="flex flex-row items-center gap-2">
                 <h4 className="font-SourceSansProSemibold text-center text-md">
@@ -113,15 +121,13 @@ const handleUnlike = async (postId) => {
                 {post?.content}
               </p>
             </div>
-            <img
-              src={
-                post?.imageUrl?.length > 0
-                  ? post?.imageUrl
-                  : `https://picsum.photos/200/300?random=${post._id}`
-              }
-              alt="feed image"
-              className="w-full p-0 object-contain max-h-[45vh]"
-            />
+            {post?.imageUrl?.length > 0 && (
+              <img
+                src={post?.imageUrl}
+                alt="feed image"
+                className="w-full p-0 object-contain max-h-[45vh]"
+              />
+            )}
             <div className="flex flex-col mx-4">
               <div className="flex flex-row w-full mb-1 items-center">
                 <ThumbUpIcon className="w-6 h-6 mr-1" />

@@ -7,10 +7,16 @@ import {
   PencilIcon,
   UserGroupIcon,
 } from "@heroicons/react/outline";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PostList from "../dashboardPages/post/ListPosts";
 
+import { getConnectionRequests } from "../../services/connectionService";
+import ConnectionButtons from "../../components/connections/ConnectionButtons";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 const Feed = () => {
+  const navigate = useNavigate()
   return (
     <div className="max-w-screen-xl mx-auto py-6">
       {/* search */}
@@ -53,12 +59,17 @@ const Feed = () => {
                     Event
                   </sm>
                 </div>
-                <div className="flex flex-row items-center">
+                <button
+                  className="flex flex-row items-center"
+                  onClick={() => {
+                    navigate("/dashboard/post/create");
+                  }}
+                >
                   <PencilIcon className="w-5 h-5" />
                   <sm className="ml-2 text-left text-md font-SourceSansProSemibold text-gray-600">
                     Write article
                   </sm>
-                </div>
+                </button>
               </div>
             </div>
           </div>
@@ -139,7 +150,7 @@ const Profile = () => {
         <h4 className="text-left text-lg font-semibold">Recommendations</h4>
       </div>
       <div className="rounded-lg border-gray-200 bg-white border-2 p-3">
-        <h4 className="text-left text-lg font-semibold">Following</h4>
+        <ConnectionsList />
       </div>
     </div>
   );
@@ -247,6 +258,130 @@ const OrganizationActivity = () => {
           </sm>
         </div>
       </div>
+    </div>
+  );
+};
+
+const ConnectionsList = () => {
+  const [connections, setConnections] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchConnections = async () => {
+    try {
+      setLoading(true);
+      const response = await getConnectionRequests("accepted");
+      if (response?.status >= 200 && response?.status < 300) {
+        setConnections(response?.data?.data);
+        console.log(response?.data?.data, "Connections");
+      }
+      setLoading(false);
+    } catch (error) {
+      setError("Failed to fetch connections");
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchConnections();
+  }, []);
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  return (
+    <div>
+      <h2 className="text-xl mb-4 font-regular">Connections</h2>
+      <div>
+        {loading ? (
+          <div className="flex items-center justify-center ">
+            <p className="text-xl text-gray-700 mt-40">Loading...</p>
+          </div>
+        ) : connections?.length === 0 ? (
+          <div className="flex items-center justify-center ">
+            <p className="text-xl text-gray-700 mt-40">
+              No connections found...
+            </p>
+          </div>
+        ) : (
+          <ul>
+            {connections?.map((connection) => (
+              <li
+                key={connection?._id}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-8"
+              >
+                <ConnectionItem
+                  connection={connection}
+                  updateFn={fetchConnections}
+                />
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const ConnectionItem = ({ connection, updateFn }) => {
+  const navigate = useNavigate();
+  const loggedInUser = useSelector((state) => state.user);
+
+  return (
+    <div
+      key={connection._id}
+      className="rounded-xl shadow-lg bg-white/60 p-4 backdrop-blur-2xl flex items-center justify-center flex-col"
+    >
+      {connection?.connectionData?._id === loggedInUser?._id && (
+        <h1 className="absolute top-4 right-4 border rounded-full px-2 border-primary bg-primary bg-opacity-5 text-primary text-xs">
+          You
+        </h1>
+      )}
+
+      <img
+        src={
+          connection?.connectionData?.profilePicture ||
+          "https://static.vecteezy.com/system/resources/previews/000/422/799/original/avatar-icon-vector-illustration.jpg"
+        }
+        alt={`${connection?.connectionData?.firstName} ${connection?.connectionData?.lastName}`}
+        className="w-12 h-12 rounded-full mr-4"
+      />
+      <div className="flex items-center">
+        <div>
+          <h2 className="text-lg font-semibold text-center">
+            {connection?.connectionData?.firstName}{" "}
+            {connection?.connectionData?.lastName}
+          </h2>
+          <h2 className="text-center font-medium">
+            {connection?.connectionData?.introLine || "Alumns User"}
+          </h2>
+          <p className="text-gray-500 capitalize text-center">
+            {connection?.connectionData?._id !== loggedInUser._id &&
+              `Connection :
+                  ${
+                    connection?.status === "none"
+                      ? "Not Connected"
+                      : connection?.status
+                  }`}
+          </p>
+        </div>
+      </div>
+      {connection?.connectionData?._id !== loggedInUser._id ? (
+        <ConnectionButtons
+          user={{ ...connection, connectionStatus: connection?.status }}
+          updateFn={updateFn}
+        />
+      ) : (
+        <button
+          onClick={() => {
+            navigate(`/dashboard/profile`);
+          }}
+          className="text-white bg-primary text-sm px-4 py-2 rounded-md hover:bg-blue-800 mt-4"
+        >
+          View Profile
+        </button>
+      )}
     </div>
   );
 };
