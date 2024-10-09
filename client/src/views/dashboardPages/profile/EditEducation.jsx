@@ -44,7 +44,7 @@ const EducationForm = () => {
     program: Yup.string().required("Program is required"),
     specialization: Yup.string().required("Specialization is required"),
     programType: Yup.string()
-      .oneOf(["regular", "parttime"], "Invalid Program Type")
+      .oneOf(["Regular", "Parttime"], "Invalid Program Type")
       .required("Program Type is required"),
     university: Yup.string().required("University/Board is required"),
     institute: Yup.string().required("Institute/School/College is required"),
@@ -373,8 +373,8 @@ const EducationForm = () => {
                     className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   >
                     <option value="">Select Program Type</option>
-                    <option value="regular">Regular</option>
-                    <option value="parttime">Part-time</option>
+                    <option value="Regular">Regular</option>
+                    <option value="Parttime">Part-time</option>
                   </Field>
                   <ErrorMessage
                     name="programType"

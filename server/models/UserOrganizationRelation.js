@@ -9,7 +9,7 @@ const userOrganizationRelation = new Schema({
     required: true,
   },
   isApproved: { type: Boolean, default: false },
-  role: { type: String, enum: ["member", "admin"], required: true },
+  role: { type: String, enum: ["member", "admin"], required: true, default: "member" },
   joinedAt: { type: Date, default: Date.now },
 });
 
