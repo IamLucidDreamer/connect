@@ -85,6 +85,7 @@ const getAllOrganizationsNames = async (req, res) => {
       data: [...organizations] || [],
     });
   } catch (error) {
+    logger.error("Error fetching organization names: ", error);
     res
       .status(STATUS_SERVER_ERROR)
       .json({ message: error.message || ERRORS.SERVER.INTERNAL_ERROR });
@@ -92,6 +93,7 @@ const getAllOrganizationsNames = async (req, res) => {
     logger.info("Get all organizations names fetched");
   }
 };
+
 
 const createOrganizationsInBulk = async (req, res) => {
   const { organizations } = req.body; // Expecting an array of organizations
