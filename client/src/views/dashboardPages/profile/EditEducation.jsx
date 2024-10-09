@@ -16,9 +16,9 @@ const EducationForm = () => {
   const [formVisible, setFormVisible] = useState(false);
   const [organizationList, setOrganizationList] = useState([]);
 
-  const getOrganizationList = () => {
+  const getOrganizationList = async () => {
     try {
-      const response = getAllOrganizationsNames();
+      const response = await getAllOrganizationsNames();
       if (response.status >= 200 && response.status < 300) {
         setOrganizationList(response.data.data);
       }
@@ -387,7 +387,7 @@ const EducationForm = () => {
               <div className="sm:col-span-3">
                 <Field
                   as="select"
-                  name="programType"
+                  name="university"
                   className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 >
                   <option value="" disabled organization>
@@ -399,6 +399,11 @@ const EducationForm = () => {
                     </option>
                   ))}
                 </Field>
+                <ErrorMessage
+                  name="university"
+                  component="div"
+                  className="text-red-600 text-sm mt-1"
+                />
               </div>
 
               <div className="sm:col-span-3">

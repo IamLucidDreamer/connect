@@ -29,7 +29,7 @@ export const getOrganization = async (organizationId) => {
 export const getAllOrganizationsNames = async () => {
   return new Promise((resolve, reject) => {
     server
-      .get(`/organization/names`)
+      .get(`/organization/get-all/names`)
       .then((response) => {
         resolve(response);
       })

@@ -7,6 +7,7 @@ const {
   ERRORS,
 } = require("../config/constants");
 const logger = require("../utils/logger");
+const UserOrganizationRelation = require("../models/UserOrganizationRelation");
 
 const getUser = async (req, res) => {
   const { userId } = req.params;
@@ -111,6 +112,13 @@ const addEducation = async (req, res) => {
     if (!user) {
       return res.status(STATUS_BAD_REQUEST).json({ message: "User not found" });
     }
+
+    const userOrganizaitonRelation = new UserOrganizationRelation({
+      userId: userId,
+      organizationId: education.university,
+    });
+
+    await userOrganizaitonRelation.save();
 
     user.education.push(education);
     await user.save();
