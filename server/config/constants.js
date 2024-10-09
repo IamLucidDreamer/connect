@@ -54,7 +54,7 @@ module.exports = {
         },
     },
 
-    ACCESS_TOKEN_EXPIRATION: '15m', // 5 minutes
+    ACCESS_TOKEN_EXPIRATION: '300m', // 300 minutes
     REFRESH_TOKEN_EXPIRATION: '60d', // 60 days
     TOTAL_LOGIN_DEVICES_ALLOWED : 5,
 };

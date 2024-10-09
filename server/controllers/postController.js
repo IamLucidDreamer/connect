@@ -334,7 +334,7 @@ const getPostComments = async (req, res) => {
   try {
     const postId = req.params.postId;
     const comments = await Comment.find({ postId })
-      .populate("userId", "name")
+      .populate("userId", "firstName lastName")
       .lean();
     return res
       .status(STATUS_SUCCESS)
