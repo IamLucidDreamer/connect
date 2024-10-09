@@ -8,6 +8,7 @@ import {
   getPosts,
   likePost,
   unlikePost,
+  updateComment,
 } from "../../../services/postService";
 import {
   ChatIcon,
@@ -23,9 +24,11 @@ import {
 import { useNavigate } from "react-router-dom";
 import { Dialog } from "@headlessui/react";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 const PostList = () => {
   const [posts, setPosts] = useState([]);
+  const loggedInUserId = useSelector((state) => state.user._id);
   const [showComment, setShowComment] = useState("");
   const navigate = useNavigate();
 
@@ -130,7 +133,9 @@ const PostList = () => {
                 </div>
               </div>
             </div>
-            <ActionButton postId={post?._id} setPosts={setPosts} />
+            {post?.author?._id === loggedInUserId && (
+              <ActionButton postId={post?._id} setPosts={setPosts} />
+            )}
           </div>
           <div className="flex flex-col space-y-2 w-full">
             <div className="flex flex-col mx-4">
@@ -268,6 +273,8 @@ const ActionButton = ({ postId, setPosts }) => {
 const CommentEditor = ({ postId }) => {
   const [commentList, setCommentList] = useState([]);
   const [comment, setComment] = useState("");
+  const [edit, setEdit] = useState(null);
+  const loggedInUserId = useSelector((state) => state.user._id);
 
   const handleGetComments = async () => {
     try {
@@ -280,21 +287,34 @@ const CommentEditor = ({ postId }) => {
     }
   };
 
-  const handleAddComment = () => {
-    try {
-      const response = createComment(postId, { content: comment });
-      if (response?.status >= 200 && response?.status < 300) {
-        setCommentList((prevComments) => [...prevComments, response?.data]);
-        setComment("");
+  const handleAddComment = async () => {
+    if (!edit) {
+      try {
+        const response = await createComment(postId, { content: comment });
+        if (response?.status >= 200 && response?.status < 300) {
+          handleGetComments();
+        }
+      } catch (error) {
+        console.log("Error adding comment", error);
       }
-    } catch (error) {
-      console.log("Error adding comment", error);
+    } else {
+      try {
+        const response = await updateComment(edit?._id, { content: comment });
+        if (response?.status >= 200 && response?.status < 300) {
+          handleGetComments();
+          setEdit(null);
+          setComment("");
+        }
+      } catch (error) {
+        console.log("Error adding comment", error);
+      }
     }
   };
 
-  const handleDeleteComment = (commentId) => {
+  const handleDeleteComment = async (commentId) => {
     try {
-      const response = deleteComment(commentId);
+      const response = await deleteComment(commentId);
+      console.log(response);
       if (response?.status >= 200 && response?.status < 300) {
         setCommentList((prevComments) =>
           prevComments.filter((comment) => comment._id !== commentId)
@@ -311,6 +331,8 @@ const CommentEditor = ({ postId }) => {
 
   return (
     <div className="py-2 w-full px-4">
+      <hr className="w-full my-2" />
+      <h1 className="text-gray-500 text-sm">Comments</h1>
       {commentList?.map((comment) => {
         return (
           <div className="p-2 font-medium group relative">
@@ -323,23 +345,42 @@ const CommentEditor = ({ postId }) => {
                     : "https://static.vecteezy.com/system/resources/previews/000/422/799/original/avatar-icon-vector-illustration.jpg"
                 }
               />
-              <div>{comment?.userId?._id}</div>
+              <div>
+                <h1 className="font-medium text-sm mt-1 ml-1 text-gray-500">
+                  {comment?.userId?.firstName + comment?.userId?.lastName}
+                </h1>
+              </div>
             </div>
-            <div>{comment?.content}</div>
-            <div className="absolute right-0 bg-gradient-to-l from-white to-transparent ">
-              <button>Edit</button>
-              <button
-                onClick={() => {
-                  handleDeleteComment(comment?._id);
-                }}
-              >
-                Delete
-              </button>
+            <div className="text-base ml-8 font-medium text-gray-600">
+              {comment?.content}
             </div>
+            {comment?.userId?._id === loggedInUserId && (
+              <div className="absolute top-4 right-0 bg-gradient-to-l from-white to-transparent flex items-center justify-center gap-4">
+                <button
+                  className="text-xs font-regular text-gray-400"
+                  onClick={() => {
+                    setEdit(comment);
+                    setComment(comment?.content);
+                  }}
+                >
+                  Edit
+                </button>
+                <button
+                  className="text-xs font-regular text-gray-400"
+                  onClick={() => {
+                    handleDeleteComment(comment?._id);
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
+            )}
           </div>
         );
       })}
       <input
+        type="text"
+        value={comment}
         onChange={(e) => setComment(e?.currentTarget?.value)}
         placeholder="Add Comment"
         className="p-1.5 text-sm rounded-lg gray-50 w-full focus:outline-none border-2"
