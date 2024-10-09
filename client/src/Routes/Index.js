@@ -95,6 +95,10 @@ const router = createBrowserRouter([
         element: <OrganizationsList />,
       },
       {
+        path: "post/create",
+        element: <PostCreate />,
+      },
+      {
         path: "post/create/:postId",
         element: <PostCreate />,
       },

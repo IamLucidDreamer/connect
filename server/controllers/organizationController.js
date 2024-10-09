@@ -79,7 +79,7 @@ const getOrganization = async (req, res) => {
 
 const getAllOrganizationsNames = async (req, res) => {
   try {
-    const organizations = await Organization.find().select(["name", "_id"]);
+    const organizations = await Organization.find().select("name _id");
     res.status(STATUS_SUCCESS).json({
       message: "Organization Name fetched successfully",
       data: [...organizations] || [],
@@ -93,7 +93,6 @@ const getAllOrganizationsNames = async (req, res) => {
     logger.info("Get all organizations names fetched");
   }
 };
-
 
 const createOrganizationsInBulk = async (req, res) => {
   const { organizations } = req.body; // Expecting an array of organizations
@@ -457,7 +456,9 @@ const approveMember = async (req, res) => {
     });
 
     if (!userOrganization) {
-      return res.status(STATUS_NOT_FOUND).send("User is not a member of this organization.");
+      return res
+        .status(STATUS_NOT_FOUND)
+        .send("User is not a member of this organization.");
     }
 
     userOrganization.isApproved = true;
@@ -485,5 +486,5 @@ module.exports = {
   joinOrganization,
   getMembers,
   getMembersToApprove,
-  approveMember
+  approveMember,
 };
