@@ -47,10 +47,11 @@ const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [organizationList, setOrganizationList] = useState([]);
 
-  const getOrganizationList = () => {
+  const getOrganizationList =async  () => {
     try {
-      const response = getAllOrganizationsNames();
+      const response =await  getAllOrganizationsNames();
       if (response.status >= 200 && response.status < 300) {
+        console.log(response);
         setOrganizationList(response.data.data);
       }
     } catch (err) {
