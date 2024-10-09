@@ -51,7 +51,6 @@ const SignUp = () => {
     try {
       const response =await  getAllOrganizationsNames();
       if (response.status >= 200 && response.status < 300) {
-        console.log(response);
         setOrganizationList(response.data.data);
       }
     } catch (err) {
@@ -64,26 +63,14 @@ const SignUp = () => {
   }, []);
 
   const handleSignUp = async (values, setErrors) => {
-    console.log(values);
     if (!values.consent) {
       setErrors({ consent: "Please accept the terms of service." });
-      return;
-    }
-    if (
-      !organization &&
-      !values.organizationName.length === 0 &&
-      !values.organizationDescription.length === 0
-    ) {
-      setErrors({
-        organizationName: "Organization Name & Description are required.",
-      });
       return;
     }
     setLoading(true);
     try {
       const response = await signup(values, !organization);
       if (response.status >= 200 && response.status < 300) {
-        console.log(response);
         toast.success(response?.data?.message || "Sign Up Successful");
         dispatch(
           setUser({

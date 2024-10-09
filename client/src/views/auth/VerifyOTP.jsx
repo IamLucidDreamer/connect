@@ -59,7 +59,6 @@ const VerifyOTP = () => {
         userId: user?.userId,
         otpVerificationId: user?.otpVerificationId,
       };
-      console.log("data", user);
       const response = await verifyOtp(data);
       if (response?.data) {
         toast.success(response?.data?.message || "OTP Verified Successfully");

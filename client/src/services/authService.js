@@ -28,6 +28,8 @@ export const signup = async (values, organization) =>
       axios
         .post(`${BASE_URL}/organization/send-otp`, values)
         .then((response) => {
+          sessionStorage.setItem("organizationId", JSON.stringify(values?.organizationId));
+          sessionStorage.setItem("userEmail", JSON.stringify(values?.email));
           resolve(response);
         })
         .catch(reject);
@@ -36,12 +38,26 @@ export const signup = async (values, organization) =>
 
 export const verifyOtp = async (values) =>
   await new Promise((resolve, reject) => {
-    axios
-      .post(`${BASE_URL}/auth/verify-otp`, values)
-      .then((response) => {
-        resolve(response);
-      })
-      .catch(reject);
+    const organizationId = JSON.parse(sessionStorage.getItem("organizationId"));
+    if (!organizationId) {
+      axios
+        .post(`${BASE_URL}/auth/verify-otp`, values)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch(reject);
+    } else {
+      values.organizationId = organizationId;
+      values.email = JSON.parse(sessionStorage.getItem("userEmail"));
+      axios
+        .post(`${BASE_URL}/organization/verify-otp`, values)
+        .then((response) => {
+          localStorage.removeItem("organizationId");
+          localStorage.removeItem("userEmail");
+          resolve(response);
+        })
+        .catch(reject);
+    }
   });
 
 export const forgotPassword = async (values) =>
